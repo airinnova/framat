@@ -1,0 +1,15 @@
+usage: framat 0.1.0 [-h] [--no-schema-check] [-v | -d | -q]
+                    [-c | --clean-only]
+                    filename
+
+positional arguments:
+  filename           Input file
+
+optional arguments:
+  -h, --help         show this help message and exit
+  --no-schema-check
+  -v, --verbose
+  -d, --debug
+  -q, --quiet
+  -c, --clean        remove old project files
+  --clean-only       clean and exit

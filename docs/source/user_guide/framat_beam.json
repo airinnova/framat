@@ -1,0 +1,140 @@
+{
+    "beamlines": [
+        {
+            "uid": "cantilever",
+            "nelem": 1,
+            "beamprops": [
+                {
+                    "from": "node_a",
+                    "to": "node_b",
+                    "constant": {
+                        "material": "dummy_material",
+                        "profil": "dummy_profil"
+                    }
+                }
+            ],
+            "loads": {
+                "concentrated": [],
+                "distributed": [],
+                "free_nodes": []
+            },
+            "free_node_mapping": null,
+            "nodes": [
+                {
+                    "uid": "node_a",
+                    "coord": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "up": [
+                        0,
+                        0,
+                        1
+                    ]
+                },
+                {
+                    "uid": "node_b",
+                    "coord": [
+                        1,
+                        0,
+                        0
+                    ],
+                    "up": [
+                        0,
+                        0,
+                        1
+                    ]
+                }
+            ]
+        }
+    ],
+    "materialdata": [
+        {
+            "uid": "dummy_material",
+            "E": 1,
+            "G": 1,
+            "rho": 1
+        }
+    ],
+    "profildata": [
+        {
+            "uid": "dummy_profil",
+            "A": 1,
+            "Iy": 1,
+            "Iz": 1,
+            "J": 1
+        }
+    ],
+    "acceleration": {
+        "turn_on": false,
+        "direction": [
+            0,
+            0,
+            -9.81
+        ],
+        "accel_factor": 1
+    },
+    "boundary_conditions": {
+        "fix": [
+            {
+                "node": "node_a",
+                "fix": [
+                    "all"
+                ]
+            }
+        ]
+    },
+    "analysis": {
+        "static": true,
+        "free_vibrations": false
+    },
+    "postproc": {
+        "plots": [
+            {
+                "show": true,
+                "plot_bc": false,
+                "plot_deformed": false,
+                "plot_rotations": false,
+                "plot_CG_beams": false,
+                "plot_CG_total": false,
+                "plot_accel_vector": false,
+                "plot_bc_labels": false,
+                "plot_beamline_uids": false,
+                "plot_free_node_vectors": false,
+                "plot_free_nodes": false,
+                "plot_global_axes": false,
+                "plot_inertia_load_labels": false,
+                "plot_inertia_loads": false,
+                "plot_inertia_symbols": false,
+                "plot_load_labels": false,
+                "plot_loads": false,
+                "plot_local_axes": false,
+                "plot_named_nodes": false,
+                "plot_nodes": false,
+                "plot_undeformed": true,
+                "plot_undeformed_perimeter": false,
+                "set_amplify_displacement": 1,
+                "set_amplify_rotation": 1,
+                "set_dpi": 300,
+                "set_format": "png",
+                "set_fontsize": 8,
+                "set_linewidth": 1.5,
+                "set_markersize": 10,
+                "set_savefig": false,
+                "set_scale_conc_loads": 1,
+                "set_scale_conc_moments": 1,
+                "set_scale_dist_loads": 1,
+                "set_scale_free_node_force": 1,
+                "set_scale_inertia_loads": 1,
+                "set_vectorwidth": 1
+            }
+        ],
+        "save_results": {
+            "nodal_deformation": false,
+            "perimeter_lines": false,
+            "mass_breakdown": false,
+            "work_breakdown": false
+        }
+    }
+}

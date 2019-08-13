@@ -1,0 +1,59 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+# ----------------------------------------------------------------------
+# Copyright 2019 Airinnova AB and the FramAT authors
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# ----------------------------------------------------------------------
+
+# Author: Aaron Dettmann
+
+"""
+FEMAD
+
+Template generator
+"""
+
+import os
+import argparse
+
+from framat.stdfun import __prog_name__, __version__, DEFAULT_MODEL_FILENAME
+import framat.fem.modelgenerator as mg
+
+
+def create_template_file():
+    """
+    Create a template file
+    """
+
+    parser = argparse.ArgumentParser(prog=f'{__prog_name__}_template {__version__}')
+    parser.add_argument("-o", "--output", help="Output file", type=str, default=DEFAULT_MODEL_FILENAME)
+    parser.add_argument("-f", "--force", help="Overwrite existing file", action="store_true")
+    args = parser.parse_args()
+
+    outfile = args.output
+    overwrite = args.force
+
+    if os.path.isfile(outfile) and not overwrite:
+        print(f"ERROR: File '{outfile}' does already exist.")
+        return
+
+    print(f"Creating file '{outfile}'... ", end='')
+    modelobj = mg.Model.make_template()
+    modelobj.serialise(filename=outfile)
+    print("Done!")
+
+
+if __name__ == '__main__':
+    create_template_file()
