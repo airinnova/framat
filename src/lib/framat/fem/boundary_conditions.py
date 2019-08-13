@@ -24,8 +24,6 @@
 Boundary conditions
 """
 
-# Author: Aaron Dettmann
-
 import numpy as np
 
 

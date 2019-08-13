@@ -23,8 +23,6 @@
 Beamline
 """
 
-# Author: Aaron Dettmann
-
 from collections import defaultdict
 from copy import copy
 import logging

@@ -23,8 +23,6 @@
 Frame model generator
 """
 
-# Author: Aaron Dettmann
-
 import uuid
 import json
 from collections import OrderedDict, defaultdict

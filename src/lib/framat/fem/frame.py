@@ -33,8 +33,6 @@ Frame structure hierarchie::
     |   NODES
 """
 
-# Author: Aaron Dettmann
-
 from collections import defaultdict
 import logging
 

@@ -7,7 +7,7 @@
     :alt: Documentation Status
 
 .. image:: https://img.shields.io/badge/license-Apache%202-blue.svg
-    :target: https://github.com/aarondettmann/ambiance/blob/master/LICENSE.txt
+    :target: https://github.com/airinnova/framat/blob/master/LICENSE.txt
     :alt: License
 
 |

@@ -23,8 +23,6 @@
 Interpolate
 """
 
-# Author: Aaron Dettmann
-
 from collections import namedtuple
 from operator import attrgetter
 import logging

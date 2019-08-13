@@ -23,8 +23,6 @@
 Beam element definition
 """
 
-# Author: Aaron Dettmann
-
 from collections import defaultdict
 import logging
 
