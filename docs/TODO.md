@@ -1,5 +1,7 @@
 # TODO
 
+* Fix Codecov (path issue?)
+
 ## Important issues
 * Mass matrix --> get definitions correct --> "torsional constant"/"polar moment of inertia"?
 * In `Element()` --> Cover case --> Some loads may be given in global system and some given in local system (currently: if some loads defined in global system and some in local system, this might not work)
