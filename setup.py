@@ -49,7 +49,7 @@ setuptools.setup(
     package_dir={'': PACKAGE_DIR},
     license=LICENSE,
     # packages=[NAME],
-    packages=setuptools.find_namespace_packages(where=PACKAGE_DIR),
+    packages=setuptools.find_packages(where=PACKAGE_DIR),
     python_requires=REQUIRES_PYTHON,
     install_requires=REQUIRED,
     # See: https://pypi.org/classifiers/

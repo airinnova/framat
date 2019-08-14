@@ -10,6 +10,14 @@
     :target: https://github.com/airinnova/framat/blob/master/LICENSE.txt
     :alt: License
 
+.. image:: https://travis-ci.org/airinnova/framat.svg?branch=master
+    :target: https://travis-ci.org/airinnova/framat
+    :alt: Build status
+
+.. image:: https://codecov.io/gh/airinnova/framat/branch/master/graph/badge.svg
+    :target: https://codecov.io/gh/airinnova/framat
+    :alt: Coverage
+
 |
 
 .. image:: https://raw.githubusercontent.com/airinnova/framat/master/docs/source/_static/images/logo/logo006.svg?sanitize=true
