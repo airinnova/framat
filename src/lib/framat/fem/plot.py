@@ -30,7 +30,7 @@ from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.cm as cm
 import numpy as np
 from commonlibs.logger import truncate_filepath
-from commonlibs.mathtools.vectors import rotate_vector_around_axis, unit_vector
+from commonlibs.math.vectors import rotate_vector_around_axis, unit_vector
 
 from framat.fem.element import GlobalSystem
 import framat.fileio.utils as fu

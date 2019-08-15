@@ -7,9 +7,9 @@
 # -- Path setup --------------------------------------------------------------
 import os
 import sys
-import re
 
-from framat.stdfun import DEFAULT_MODEL_FILENAME, __version__
+from framat.stdfun import DEFAULT_MODEL_FILENAME
+from framat.__version__ import __version__
 
 
 sys.path.insert(0, os.path.abspath('../../src/lib/framat'))

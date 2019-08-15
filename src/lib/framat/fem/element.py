@@ -27,7 +27,7 @@ from collections import defaultdict
 import logging
 
 import numpy as np
-from commonlibs.mathtools.vectors import unit_vector, direction_cosine, vector_rejection
+from commonlibs.math.vectors import unit_vector, direction_cosine, vector_rejection
 
 logger = logging.getLogger(__name__)
 

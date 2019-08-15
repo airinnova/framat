@@ -28,7 +28,8 @@ Template generator
 import os
 import argparse
 
-from framat.stdfun import __prog_name__, __version__, DEFAULT_MODEL_FILENAME
+from framat.stdfun import __prog_name__, DEFAULT_MODEL_FILENAME
+from framat.__version__ import __version__
 import framat.fem.modelgenerator as mg
 
 

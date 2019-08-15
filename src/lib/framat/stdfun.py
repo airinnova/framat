@@ -28,6 +28,7 @@ import os
 
 import commonlibs.logger as hlogger
 
+from framat.__version__ import __version__
 from framat.fem.analysis import static_load_analysis, free_vibration_analysis
 from framat.fem.frame import Frame
 from framat.fem.properties import Materials, Profiles
@@ -38,7 +39,6 @@ import framat.fileio.utils as fu
 
 logger = logging.getLogger(__name__)
 
-__version__ = '0.0.1'
 __prog_name__ = 'framat'
 
 DEFAULT_MODEL_FILENAME = f"{__prog_name__}_beam.json"

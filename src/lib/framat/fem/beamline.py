@@ -34,7 +34,7 @@ from framat.fem.element import Element
 from framat.fem.element import GlobalSystem as GS
 from framat.fem.interpolate import PointInterpolator, PropertyInterpolator
 from framat.helpers.iterators import pairwise
-from commonlibs.mathtools.vectors import rotate_vector_around_axis
+from commonlibs.math.vectors import rotate_vector_around_axis
 
 logger = logging.getLogger(__name__)
 
