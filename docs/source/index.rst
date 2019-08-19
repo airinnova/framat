@@ -1,8 +1,8 @@
 Welcome to |name|'s documentation!
 ==================================
 
-.. image:: _static/images/logo/logo005.svg
-   :width: 100 px
+.. image:: _static/images/logo/logo.svg
+   :width: 200 px
    :alt: Logo
    :align: right
 
@@ -18,7 +18,7 @@ Introduction
     * Model generation can be highly automated
 
 .. image:: _static/images/main.png
-   :scale: 50
+   :scale: 50 %
    :alt: Example
    :align: center
 

@@ -20,7 +20,7 @@
 
 |
 
-.. image:: https://raw.githubusercontent.com/airinnova/framat/master/docs/source/_static/images/logo/logo006.svg?sanitize=true
+.. image:: https://raw.githubusercontent.com/airinnova/framat/master/docs/source/_static/images/logo/logo.png
     :alt: FramAT
     :width: 100 px
     :scale: 100 %
@@ -30,27 +30,14 @@
 .. image:: https://raw.githubusercontent.com/airinnova/framat/master/docs/source/_static/images/main.png
     :target: https://github.com/airinnova/framat
     :alt: Example
-    :width: 300 px
+    :scale: 50 %
 
-Installation
-------------
+How to get started
+------------------
 
-.. code::
+Please refer to the documentation for installation instructions and a user guide:
 
-    pip install framat
-
-Usage
------
-
-Quickstart
-~~~~~~~~~~
-
-TODO
-
-Detailed guide
-~~~~~~~~~~~~~~
-
-TODO
+* https://framat.readthedocs.io/
 
 Additional information for developers
 -------------------------------------

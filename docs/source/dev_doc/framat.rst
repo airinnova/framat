@@ -8,6 +8,7 @@ Subpackages
 
     framat.fem
     framat.fileio
+    framat.helpers
 
 Submodules
 ----------
