@@ -1,4 +1,4 @@
-usage: framat 0.1.0 [-h] [--no-schema-check] [-v | -d | -q]
+usage: framat 0.1.1 [-h] [--no-schema-check] [-v | -d | -q]
                     [-c | --clean-only]
                     filename
 

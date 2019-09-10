@@ -88,7 +88,8 @@ rst_prolog = f"""
 .. _DLR: https://www.dlr.de/
 .. _Airinnova: http://airinnova.se/
 .. _Airinnova AB: http://airinnova.se/
-.. _PyPI: https://pypi.org/
+.. _PyPI: https://pypi.org/project/framat/
+.. |pypi_long| replace:: Python Package Index
 .. _pip: https://pip.pypa.io/en/stable/
 .. |author1| replace:: {AUTHOR}
 .. |license| replace:: {LICENCE_NAME}
