@@ -95,6 +95,8 @@ rst_prolog = f"""
 .. |license| replace:: {LICENCE_NAME}
 """
 
+numfig = True
+
 # -- Options for HTML output -------------------------------------------------
 
 # html_theme = 'classic'

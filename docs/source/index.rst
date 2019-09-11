@@ -8,11 +8,11 @@ Welcome to |name|'s documentation!
 
 |name_bold| (|name_long|) is a FEM_ implementation of the |eb| beam theory (also known as classical or engineering beam theory). The tool was initially written for a low-fidelity aeroelasticity_ model, but |name| is a general purpose FE_ beam implementation. Most notably, |name| provides the following functionality.
 
-* |eb| beam model in 3D
+* |eb| beam analyses in 3D
 * Assembly of complex beam structures
 * Model definition with JSON files or with a model generator library
-* Model generation can be highly automated
-* Elaborate definition of the beam geometry and properties
+* Highly automatable model generation
+* Elaborate definition of beam geometry and properties
 * Elaborate definition of loads
 * Python library for model generation
 * Highly customisable plots
@@ -35,10 +35,24 @@ Welcome to |name|'s documentation!
    user_guide/caveats
 
 .. toctree::
+   :maxdepth: 2
+   :caption: Theory
+
+   theory/index
+   theory/fem
+
+.. toctree::
    :maxdepth: 1
    :caption: Changelog
 
    CHANGELOG.md
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Links
+
+   references
+   related_projects
 
 .. toctree::
    :maxdepth: 1
