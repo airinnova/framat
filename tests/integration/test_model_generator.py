@@ -60,7 +60,7 @@ def test_generate_template():
     assert os.path.isfile(TEST_FILENAME)
 
     args = StdRunArgs()
-    args._make_plots = False
+    args.no_plots = False
     standard_run(args=args, model=model)
 
 
@@ -100,7 +100,7 @@ def test_generate_spiral_beam():
     model = modelobj.serialise()
 
     args = StdRunArgs()
-    args._make_plots = False
+    args.no_plots = False
     standard_run(args=args, model=model)
 
 

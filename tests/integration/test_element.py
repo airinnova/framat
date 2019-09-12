@@ -48,7 +48,7 @@ def test_shapefunction_boundaries(cantilever):
     model = cantilever.serialise()
 
     args = StdRunArgs()
-    args._make_plots = False
+    args.no_plots = False
     results = standard_run(args=args, model=model)
     frame = results['frame']
 

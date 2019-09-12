@@ -69,7 +69,7 @@ def test_cantilever_pointload1(cantilever):
     model = cantilever.serialise()
 
     args = StdRunArgs()
-    args._make_plots = False
+    args.no_plots = False
     results = standard_run(args=args, model=model)
     frame = results['frame']
 
@@ -95,7 +95,7 @@ def test_cantilever_pointload2(cantilever):
     model = cantilever.serialise()
 
     args = StdRunArgs()
-    args._make_plots = False
+    args.no_plots = False
     results = standard_run(args=args, model=model)
     frame = results['frame']
 
@@ -121,7 +121,7 @@ def test_cantilever_pointload3(cantilever):
     model = cantilever.serialise()
 
     args = StdRunArgs()
-    args._make_plots = False
+    args.no_plots = False
     results = standard_run(args=args, model=model)
     frame = results['frame']
 
@@ -147,7 +147,7 @@ def test_cantilever_dist_load1(cantilever):
     model = cantilever.serialise()
 
     args = StdRunArgs()
-    args._make_plots = False
+    args.no_plots = False
     results = standard_run(args=args, model=model)
     frame = results['frame']
 
@@ -176,7 +176,7 @@ def test_cantilever_dist_load2(cantilever):
     model = cantilever.serialise()
 
     args = StdRunArgs()
-    args._make_plots = False
+    args.no_plots = False
     results = standard_run(args=args, model=model)
     frame = results['frame']
 
@@ -202,7 +202,7 @@ def test_cantilever_dist_load3(cantilever):
     model = cantilever.serialise()
 
     args = StdRunArgs()
-    args._make_plots = False
+    args.no_plots = False
     results = standard_run(args=args, model=model)
     frame = results['frame']
 
@@ -286,7 +286,7 @@ def test_point_load1(modelobj):
     model = modelobj.serialise()
 
     args = StdRunArgs()
-    args._make_plots = False
+    args.no_plots = False
     results = standard_run(args=args, model=model)
     frame = results['frame']
 
@@ -312,7 +312,7 @@ def test_point_load2(modelobj):
     model = modelobj.serialise()
 
     args = StdRunArgs()
-    args._make_plots = False
+    args.no_plots = False
     results = standard_run(args=args, model=model)
     frame = results['frame']
 
@@ -338,7 +338,7 @@ def test_dist_load1(modelobj):
     model = modelobj.serialise()
 
     args = StdRunArgs()
-    args._make_plots = False
+    args.no_plots = False
     results = standard_run(args=args, model=model)
     frame = results['frame']
 
@@ -363,7 +363,7 @@ def test_dist_load1(modelobj):
 #     model = modelobj.serialise()
 
 #     args = StdRunArgs()
-#     args._make_plots = False
+#     args.no_plots = False
 #     results = standard_run(args=args, model=model)
 #     frame = results['frame']
 
@@ -393,7 +393,7 @@ def test_gravity_load1(modelobj):
     model = modelobj.serialise()
 
     args = StdRunArgs()
-    args._make_plots = False
+    args.no_plots = False
     results = standard_run(args=args, model=model)
     frame = results['frame']
 
