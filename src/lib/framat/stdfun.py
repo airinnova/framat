@@ -59,9 +59,7 @@ class StdRunArgs:
     debug = False
     quiet = False
     no_schema_check = False
-
-    # Additional developer options
-    _make_plots = True
+    no_plots = False
 
 
 def get_filestructure(filename, filecheck=True):
@@ -101,9 +99,7 @@ def standard_run(args=None, filestructure=None, model=None):
     if filestructure is None:
         filestructure = get_filestructure(args.filename, filecheck)
 
-    make_plots = True
-    if hasattr(args, '_make_plots'):
-        make_plots = args._make_plots
+    make_plots = args.no_plots
 
     # ===== Logging =====
     if args.verbose:

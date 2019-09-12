@@ -32,7 +32,8 @@ Welcome to |name|'s documentation!
    user_guide/installation
    user_guide/getting_started
    user_guide/detailed_user_guide
-   user_guide/caveats
+   user_guide/tutorials
+   user_guide/limitations
 
 .. toctree::
    :maxdepth: 2
@@ -42,17 +43,17 @@ Welcome to |name|'s documentation!
    theory/fem
 
 .. toctree::
-   :maxdepth: 1
-   :caption: Changelog
-
-   CHANGELOG.md
-
-.. toctree::
    :maxdepth: 2
    :caption: Links
 
    references
    related_projects
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Changelog
+
+   CHANGELOG.md
 
 .. toctree::
    :maxdepth: 1

@@ -4,13 +4,26 @@ Changelog
 Changelog for FramAT. Version numbers try to follow `Semantic
 Versioning <https://semver.org/spec/v2.0.0.html>`__.
 
+[0.2.0] -- 2019-09-12
+---------------------
+
+Changed
+~~~~~~~
+
+* Changed the command line argument structure.
+
+Removed
+~~~~~~~
+
+* Removed `framat_template` executable. Instead we only have `framat` and different *command line interface* operating modes.
+
 [0.1.1] -- 2019-08-19
 ---------------------
 
 Changed
 ~~~~~~~
 
-* Updated to `commonlibs` v.0.1.1 which is imcompatible with previous version.
+* Updated to `commonlibs` v.0.1.1 which is incompatible with previous version.
 
 [0.1.0] -- 2019-08-12
 ---------------------
@@ -22,9 +35,3 @@ Added
 
 Fixed
 ~~~~~
-
-Removed
-~~~~~~~
-
-Changed
-~~~~~~~

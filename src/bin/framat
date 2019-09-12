@@ -26,10 +26,14 @@ FEMAD
 """
 
 import argparse
+import os
+import sys
 
-from framat.stdfun import standard_run, clean_project_dir, __prog_name__
+from framat.stdfun import __prog_name__, DEFAULT_MODEL_FILENAME
 from framat.__version__ import __version__
 from framat.fileio.utils import FileStructure
+from framat.stdfun import standard_run, clean_project_dir, __prog_name__
+import framat.fem.modelgenerator as mg
 
 
 def cmd_interface():
@@ -38,30 +42,71 @@ def cmd_interface():
     """
 
     # ===== Arguments =====
-    parser = argparse.ArgumentParser(prog=f'{__prog_name__} {__version__}')
+    parser = argparse.ArgumentParser(prog=f'{__prog_name__}')
+    subparsers = parser.add_subparsers(help='execution modes', dest='exec_mode')
 
-    parser.add_argument("filename", help="Input file", type=str)
-    parser.add_argument("--no-schema-check", action="store_false")
+    # ----- Mode 'run' -----
+    sub = subparsers.add_parser('run', help='run a FEM analysis')
+    sub.add_argument('filename', metavar='filename', help='Input file', type=str)
+    sub.add_argument('--no-schema-check', action='store_false')
+    sub.add_argument('--no-plots', action='store_false', help='do not show any plots')
 
-    group = parser.add_mutually_exclusive_group()
-    group.add_argument("-v", "--verbose", action="store_true")
-    group.add_argument("-d", "--debug", action="store_true")
-    group.add_argument("-q", "--quiet", action="store_true")
+    group = sub.add_mutually_exclusive_group()
+    group.add_argument('-c', '--clean', help='remove old project files', action='store_true')
+    group.add_argument('--clean-only', help='clean and exit', action='store_true')
 
-    group = parser.add_mutually_exclusive_group()
-    group.add_argument("-c", "--clean", help="remove old project files", action="store_true")
-    group.add_argument("--clean-only", help="clean and exit", action="store_true")
+    group = sub.add_mutually_exclusive_group()
+    group.add_argument('-v', '--verbose', action='store_true')
+    group.add_argument('-d', '--debug', action='store_true')
+    group.add_argument('-q', '--quiet', action='store_true')
+
+    # ----- Mode 'example' -----
+    sub = subparsers.add_parser('example', help='create an example file')
+    sub.add_argument("-o", "--output", help="output file", type=str, default=DEFAULT_MODEL_FILENAME)
+    sub.add_argument('-f', '--force', help='overwrite existing file', action='store_true')
 
     args = parser.parse_args()
 
-    if any((args.clean, args.clean_only)):
-        clean_project_dir(FileStructure(args.filename))
+    # ----- Mode 'run' -----
+    if args.exec_mode == 'run':
+        if args.filename:
+            if any((args.clean, args.clean_only)):
+                clean_project_dir(FileStructure(args.filename))
+                if args.clean_only:
+                    return
+            standard_run(args)
 
-        if args.clean_only:
-            return
+        else:
+            parser.print_help()
 
-    standard_run(args)
+    # ----- Mode 'example' -----
+    elif args.exec_mode == 'example':
+        overwrite = args.force
+        outfile = args.output
+
+        if os.path.isfile(outfile) and not overwrite:
+            print(f"ERROR: File '{outfile}' does already exist.")
+            sys.exit(1)
+
+        print(f"Creating file '{outfile}'... ", end='')
+        modelobj = mg.Model.make_template()
+        modelobj.beamlines['cantilever'].nelem = 20
+        modelobj.beamlines['cantilever'].add_concentrated_load(
+            node_uid='node_b',
+            load=[0, 0, -1, 0, 0, 0],
+        )
+        modelobj.postproc.plots[0]['plot_deformed'] = True
+        modelobj.postproc.plots[0]['plot_bc'] = True
+        modelobj.postproc.plots[0]['plot_nodes'] = True
+        modelobj.postproc.plots[0]['set_savefig'] = True
+
+        modelobj.serialise(filename=outfile)
+        print("Done!")
+
+    else:
+        parser.print_help()
 
 
 if __name__ == '__main__':
     cmd_interface()
+    sys.exit(0)

@@ -1,6 +1,6 @@
 # TODO
 
-* Fix Codecov (path issue?)
+* Better iterface work batch analyses...
 
 ## Important issues
 * Mass matrix --> get definitions correct --> "torsional constant"/"polar moment of inertia"?

@@ -49,7 +49,7 @@ def test_cantilever_point_load():
     model = modelobj.serialise()
 
     args = StdRunArgs()
-    args._make_plots = False
+    args.no_plots = False
     results = standard_run(args=args, model=model)
     frame = results['frame']
     def_interpolator = frame.deformation.get_beamline_interpolator('cantilever', frame)
@@ -98,7 +98,7 @@ def test_cantilever_point_load():
 #     model = modelobj.serialise("m-test.json")
 
 #     args = StdRunArgs()
-#     args._make_plots = False
+#     args.no_plots = False
 #     results = standard_run(args=args, model=model)
 #     frame = results['frame']
 #     def_interpolator = frame.deformation.get_beamline_interpolator('cantilever', frame)
