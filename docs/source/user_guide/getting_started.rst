@@ -1,9 +1,14 @@
+.. _sec_getting_started:
+
 Getting started
 ===============
 
-This page gives a very brief overview about how to get started with |name|. A more detailed user guide can be found here: :ref:`detailed_user_guide`
+This page briefly explains how to get started with a very simple example using |name|'s command line interface. Notice that a more detailed user guide can be found here: :ref:`detailed_user_guide`.
 
-**Step 1: Installation**
+First, open a terminal and try to simply run the command ``framat -h``. A short help page should show up.
+
+One of the available arguments is ``--make-example`` which we will use in this tutorial to create a minimal working example. Now, in your terminal run:
+
 
 Make sure you have installed |name| and its external dependencies correctly (see also :ref:`installation`). If |name| is has been properly installed, you should be able to run the main executable. In a terminal, type ``framat -h``. This will generate a short help page for the command line arguments. The output should look something like this:
 

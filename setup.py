@@ -18,7 +18,7 @@ REQUIRES_PYTHON = '>=3.6.0'
 REQUIRED = [
     'commonlibs',
     'jsonschema',
-    'matplotlib',
+    'matplotlib==3.0.2',
     'numpy',
     'scipy',
 ]

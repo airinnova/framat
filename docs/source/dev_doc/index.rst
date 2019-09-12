@@ -1,13 +1,8 @@
 General remarks
 ===============
 
-TODO
+.. note::
 
-Development environment
------------------------
+    The *Information for developers* page gives a general overview about the development environment, testing and documentation.
 
-.. hint::
-
-    **For developers**: There are additional packages which are recommended for developement. You can install the additional packages using the `requirements.txt`.
-
-    ``pip install -r requirements.txt``
+    * https://github.com/airinnova/README/blob/master/README.rst
