@@ -54,7 +54,7 @@ class StdRunArgs:
         :debug: boolean flag, true for debug logger setting
     """
 
-    filename = None
+    run = None
     verbose = False
     debug = False
     quiet = False
