@@ -27,7 +27,6 @@ PACKAGE_DIR = 'src/lib/'
 LICENSE = 'Apache License 2.0'
 SCRIPTS = [
     'src/bin/framat',
-    'src/bin/framat_template',
 ]
 
 
