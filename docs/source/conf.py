@@ -37,7 +37,7 @@ version = __version__
 # ====================================
 os.system('bash ./dev_doc/gen_auto_doc.sh')
 os.system('bash ./_gen_help_page.sh')
-os.system('bash ./_gen_model_template.sh')
+os.system('python ./user_guide/make_example.py')
 
 # -- General configuration ---------------------------------------------------
 extensions = [

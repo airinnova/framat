@@ -2,7 +2,7 @@
     "beamlines": [
         {
             "uid": "cantilever",
-            "nelem": 1,
+            "nelem": 20,
             "beamprops": [
                 {
                     "from": "node_a",
@@ -14,7 +14,19 @@
                 }
             ],
             "loads": {
-                "concentrated": [],
+                "concentrated": [
+                    {
+                        "node": "node_b",
+                        "load": [
+                            0,
+                            0,
+                            -1,
+                            0,
+                            0,
+                            0
+                        ]
+                    }
+                ],
                 "distributed": [],
                 "free_nodes": []
             },
@@ -92,9 +104,9 @@
     "postproc": {
         "plots": [
             {
-                "show": true,
-                "plot_bc": false,
-                "plot_deformed": false,
+                "show": false,
+                "plot_bc": true,
+                "plot_deformed": true,
                 "plot_rotations": false,
                 "plot_CG_beams": false,
                 "plot_CG_total": false,
@@ -111,7 +123,7 @@
                 "plot_loads": false,
                 "plot_local_axes": false,
                 "plot_named_nodes": false,
-                "plot_nodes": false,
+                "plot_nodes": true,
                 "plot_undeformed": true,
                 "plot_undeformed_perimeter": false,
                 "set_amplify_displacement": 1,
@@ -121,7 +133,7 @@
                 "set_fontsize": 8,
                 "set_linewidth": 1.5,
                 "set_markersize": 10,
-                "set_savefig": false,
+                "set_savefig": true,
                 "set_scale_conc_loads": 1,
                 "set_scale_conc_moments": 1,
                 "set_scale_dist_loads": 1,

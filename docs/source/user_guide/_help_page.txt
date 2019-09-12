@@ -1,15 +1,9 @@
-usage: framat 0.1.1 [-h] [--no-schema-check] [-v | -d | -q]
-                    [-c | --clean-only]
-                    filename
+usage: framat [-h] {run,example} ...
 
 positional arguments:
-  filename           Input file
+  {run,example}  execution modes
+    run          run a FEM analysis
+    example      create an example file
 
 optional arguments:
-  -h, --help         show this help message and exit
-  --no-schema-check
-  -v, --verbose
-  -d, --debug
-  -q, --quiet
-  -c, --clean        remove old project files
-  --clean-only       clean and exit
+  -h, --help     show this help message and exit

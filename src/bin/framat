@@ -90,6 +90,16 @@ def cmd_interface():
 
         print(f"Creating file '{outfile}'... ", end='')
         modelobj = mg.Model.make_template()
+        modelobj.beamlines['cantilever'].nelem = 20
+        modelobj.beamlines['cantilever'].add_concentrated_load(
+            node_uid='node_b',
+            load=[0, 0, -1, 0, 0, 0],
+        )
+        modelobj.postproc.plots[0]['plot_deformed'] = True
+        modelobj.postproc.plots[0]['plot_bc'] = True
+        modelobj.postproc.plots[0]['plot_nodes'] = True
+        modelobj.postproc.plots[0]['set_savefig'] = True
+
         modelobj.serialise(filename=outfile)
         print("Done!")
 
