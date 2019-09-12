@@ -1,0 +1,16 @@
+usage: framat run [-h] [--no-schema-check] [--no-plots] [-c | --clean-only]
+                  [-v | -d | -q]
+                  filename
+
+positional arguments:
+  filename           Input file
+
+optional arguments:
+  -h, --help         show this help message and exit
+  --no-schema-check
+  --no-plots         do not show any plots
+  -c, --clean        remove old project files
+  --clean-only       clean and exit
+  -v, --verbose
+  -d, --debug
+  -q, --quiet

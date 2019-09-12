@@ -18,6 +18,7 @@ sys.setrecursionlimit(1500)
 NAME = 'FramAT'
 NAME_LONG = 'Frame Analysis Tool'
 NAME_LC = NAME.lower()
+NAME_CLI = NAME_LC
 COPYRIGHT = '2019, A. Dettmann'
 AUTHOR = 'Aaron Dettmann'
 LICENCE_NAME = "Apache-2.0"
@@ -77,6 +78,7 @@ pygments_style = None
 rst_prolog = f"""
 .. |name| replace:: {NAME}
 .. |name_long| replace:: {NAME_LONG}
+.. |name_cli| replace:: ``{NAME_CLI}``
 .. |eb| replace:: Euler-Bernoulli
 .. |std_model_filename| replace:: ``{DEFAULT_MODEL_FILENAME}``
 .. |std_model_filename_unformatted| replace:: {DEFAULT_MODEL_FILENAME}

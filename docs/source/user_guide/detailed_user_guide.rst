@@ -1,6 +1,12 @@
-.. _detailed_user_guide:
+.. _sec_user_guide:
 
 User guide
 ==========
 
-TODO
+This user guide summarises features of |name| in a more general manner. Notice that you can also find usage examples in the tutorial section (:ref:`sec_tutorials`).
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Basic usage
+
+   command_line_interface
