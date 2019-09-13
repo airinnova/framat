@@ -1,6 +1,7 @@
 # TODO
 
-* Better iterface work batch analyses...
+* Better interface work batch analyses...
+* GUI... sometime... based on model generator
 
 ## Important issues
 * Mass matrix --> get definitions correct --> "torsional constant"/"polar moment of inertia"?
