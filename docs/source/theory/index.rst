@@ -13,7 +13,6 @@ Introduction
 
    Undeformed beam element in equilibrium. All loads are thought to act on the elastic axis (dashed line). The tilde symbols indicates internal loads rather than externally applied loads.
 
-
 The Euler-Bernoulli beam model is well covered in literature (see for instance [Andersen2008]_, [Bauchau2009]_, [Megson2016]_, [Young2012]_), thus only a brief overview will be given here. The governing equations can be derived from the equilibrium state of an infinitesimal beam element with length :math:`\text{d}x` in its undeformed state (:numref:`fig_beam_element_in_equilibrium`). The internal loads, the force :math:`\mathbf{\widetilde{F}}` and the moment :math:`\mathbf{\widetilde{M}}`, may differ between the left and right cut. Externally applied distributed forces :math:`\mathbf{q}` (dimension force per length) and distributed moments :math:`\mathbf{m}` (dimension moment per length) are assumed to be constant over the beam element length :math:`\text{d}x`. The force equilibrium stated in the local coordinate system yields
 
 .. math::
