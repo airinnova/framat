@@ -524,3 +524,41 @@ class PostProc:
 
     def clear_plots(self):
         self.plots = []
+
+
+def get_example(model_name='cantilever'):
+    """
+    Return an example model object
+
+    Args:
+        :model_name: TODO
+
+    Returns:
+        :modelobj: Model object instance
+    """
+
+    modelobj = Model.make_template()
+    modelobj.beamlines['cantilever'].nelem = 20
+    modelobj.beamlines['cantilever'].add_concentrated_load(
+        node_uid='node_b',
+        load=[0, 0, -1, 0, 0, 0],
+    )
+
+    settings = [
+        ('plot_deformed', True),
+        ('plot_bc', True),
+        ('plot_nodes', True),
+        ('set_savefig', True),
+        ('plot_loads', True),
+        ('plot_beamline_uids', True),
+        ('plot_load_labels', True),
+        ('plot_named_nodes', True),
+        ('set_scale_conc_loads', 0.2),
+        ('set_vectorwidth', 2),
+        ('set_linewidth', 2),
+    ]
+
+    for key, value in settings:
+        modelobj.postproc.plots[0][key] = value
+
+    return modelobj
