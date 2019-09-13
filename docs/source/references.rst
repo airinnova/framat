@@ -27,7 +27,10 @@ Theoretical background
 
 .. [Smith2014] Smith, I. M. ; Griffiths, D. V. ; Margetts, L.: Programming Finite Element Computations. 5. 2014. -- ISBN 1–118–53592–8
 
-Other references
-----------------
+.. [Wijker2004] Wijker, J.: Mechanical Vibrations in Spacecraft Design. Berlin, Heidelberg : Springer, 2004. -- ISBN 9783662085875
 
-TODO
+..
+    Other references
+    ----------------
+
+    TODO

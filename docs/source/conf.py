@@ -84,6 +84,7 @@ rst_prolog = f"""
 .. |std_model_filename_unformatted| replace:: {DEFAULT_MODEL_FILENAME}
 .. |name_bold| replace:: **{NAME}**
 .. |dof| replace:: d.o.f.
+.. |dof_long| replace:: degrees of freedom
 .. _FEM: https://en.wikipedia.org/wiki/Finite_element_method
 .. _JSON: https://json.org/
 .. _FE: https://en.wikipedia.org/wiki/Finite_element_method

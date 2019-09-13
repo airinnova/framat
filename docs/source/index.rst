@@ -69,7 +69,6 @@ Welcome to |name|'s documentation!
    dev_doc/index
    dev_doc/program_structure
    dev_doc/conventions
-   dev_doc/theory
    dev_doc/modules_main
 
 
