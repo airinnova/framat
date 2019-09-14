@@ -45,70 +45,69 @@ where :math:`\widetilde{F}_x` is the axial force component, :math:`\widetilde{F}
 where :math:`\mathbf{r} = (-\text{d}{x}, 0, 0)^T` is the lever arm for the force contributions. As the term :math:`\mathbf{r} \cdot \text{d}{x}` is small of higher order, the moment contribution from the distributed force is henceforth neglected. The shear forces :math:`\widetilde{F}_y` and :math:`\widetilde{F}_z` in eq. :eq:`beam_moment_equilibrium` can be eliminated after a derivation of :eq:`beam_moment_equilibrium` by :math:`x` and a substitution of the shear loads using eq. :eq:`beam_force_equilibrium`.
 
 .. math::
-    \begin{align}
-        \frac{\text{d}}{\text{d}{x}}%
-        \begin{pmatrix}
-            \widetilde{M}_x \\
-            \widetilde{M}_y \\
-            \widetilde{M}_z
-        \end{pmatrix}
-        +
-        \begin{pmatrix}
-            m_x \\
-            m_y \\
-            m_z
-        \end{pmatrix}
-        +
-        \begin{pmatrix}
-            0 \\
-            -\widetilde{F}_z \\
-            \widetilde{F}_y
-        \end{pmatrix}
-        = \mathbf{0}
-        %%
-        \Rightarrow %
-        \frac{\text{d}^2}{\text{d}{x}^2}
-        %%
-        \begin{pmatrix}
-            \widetilde{M}_x \\
-            \widetilde{M}_y \\
-            \widetilde{M}_z
-        \end{pmatrix}
-        +
-        \frac{\text{d}}{\text{d}{x}}
-        %%
-        \begin{pmatrix}
-            m_x \\
-            m_y \\
-            m_z
-        \end{pmatrix}
-        +
-        \begin{pmatrix}
-            0 \\
-            q_z \\
-            -q_y
-        \end{pmatrix}
-        = \mathbf{0}
-    \end{align}
+    \frac{\text{d}}{\text{d}{x}}%
+    \begin{pmatrix}
+        \widetilde{M}_x \\
+        \widetilde{M}_y \\
+        \widetilde{M}_z
+    \end{pmatrix}
+    +
+    \begin{pmatrix}
+        m_x \\
+        m_y \\
+        m_z
+    \end{pmatrix}
+    +
+    \begin{pmatrix}
+        0 \\
+        -\widetilde{F}_z \\
+        \widetilde{F}_y
+    \end{pmatrix}
+    &= \mathbf{0} \\
+    %%
+    %%
+    %%
+    \Rightarrow %
+    \frac{\text{d}^2}{\text{d}{x}^2}
+    %%
+    \begin{pmatrix}
+        \widetilde{M}_x \\
+        \widetilde{M}_y \\
+        \widetilde{M}_z
+    \end{pmatrix}
+    +
+    \frac{\text{d}}{\text{d}{x}}
+    %%
+    \begin{pmatrix}
+        m_x \\
+        m_y \\
+        m_z
+    \end{pmatrix}
+    +
+    \begin{pmatrix}
+        0 \\
+        q_z \\
+        -q_y
+    \end{pmatrix}
+    &= \mathbf{0}
 
 The internal loads :math:`\mathbf{\widetilde{F}}` and :math:`\mathbf{\widetilde{M}}` may also be formulated as integrals of stresses over the cross section area. Using kinematic relations based on the geometry of the deformed beam, normal and shear strains can be derived. As mentioned above, stresses and strains are connected using Hooke's law. Together, these equations can be written as a system of linear fourth order differential equations [#]_.
 
 .. [#] A more elaborate derivation of the governing equations can be found in [Andersen2008]_, [Bauchau2009]_.
 
 .. math::
-    \begin{align}
+    :label: u_x
+
         \frac{\text{d}}{\text{d}{x}} \left( E \cdot A \cdot \frac{\text{d}{u_x}}{\text{d}{x}} \right) + q_x &= 0 \\
         %%
         %%
-            \frac{\text{d}^2}{\text{d}{x}^2} \left( E \cdot I_z \cdot \frac{\text{d}^2 u_y}{\text{d}{x}^2} \right) +\frac{\text{d}{F}{m_z}}{\text{d}{x}} -q_y &= 0 \\
+            \frac{\text{d}^2}{\text{d}{x}^2} \left( E \cdot I_z \cdot \frac{\text{d}^2 u_y}{\text{d}{x}^2} \right) +\frac{\text{d}{m_z}}{\text{d}{x}} -q_y &= 0 \\
         %%
         %%
-            \frac{\text{d}^2}{\text{d}{x}^2} \left( E \cdot I_y \cdot \frac{\text{d}^2 u_z}{\text{d}{x}^2} \right) -\frac{\text{d}{F}{m_y}}{\text{d}{x}} -q_z &= 0 \\
+            \frac{\text{d}^2}{\text{d}{x}^2} \left( E \cdot I_y \cdot \frac{\text{d}^2 u_z}{\text{d}{x}^2} \right) -\frac{\text{d}{m_y}}{\text{d}{x}} -q_z &= 0 \\
         %%
         %%
             \frac{\text{d}}{\text{d}{x}} \left( G \cdot J \cdot \frac{\text{d}{\Theta_x}}{\text{d}{x}} \right) + m_x &= 0
-    \end{align}
-    :label: u_x
 
 The beam stiffness is described by both geometry and material parameters. The beam cross section area :math:`A`, the second moments of area about the local :math:`y`- and :math:`z`-axes, denoted :math:`I_y` and :math:`I_z`, as well as the torsion constant :math:`J` are defined by the local cross section geometry. The *Young's modulus* :math:`E` and the shear modulus :math:`G` are material properties. The beam deformation is described by displacements :math:`u_x`, :math:`u_y` and :math:`u_z`, and by rotations :math:`\Theta_x`, :math:`\Theta_y` and :math:`\Theta_z`, where the subscripts :math:`x`, :math:`y` and :math:`z` refer to the local coordinate system. Equation :eq:`u_x`, **TODO** are fully *uncoupled* differential equations which is a result of the simplifying assumptions mentioned above. In the preceding development it was also assumed that the :math:`y`- and :math:`z`-axes are principal centroidal axes of the cross section. This implies that the bending about the :math:`y`- and :math:`z`-axes is uncoupled (no skew bending).
 
@@ -116,13 +115,11 @@ It is further noted that rotations :math:`\Theta_y` and :math:`\Theta_z`, assumi
 
 .. math::
 
-    \begin{align}
-        \Theta_y = - \frac{\text{d}{u_z}}{\text{d}{x}}
-        %%
-        \quad \text{and} \qquad
-        %%
-        \Theta_z = \frac{\text{d}{u_y}}{\text{d}{x}}
-    \end{align}
+    \Theta_y = - \frac{\text{d}{u_z}}{\text{d}{x}}
+    %%
+    \quad \text{and} \qquad
+    %%
+    \Theta_z = \frac{\text{d}{u_y}}{\text{d}{x}}
 
 Practically, the governing equations are solved using a FE formulation which is well suited for computational analyses. Details on the matrix formulation are covered in **TODO**.
 

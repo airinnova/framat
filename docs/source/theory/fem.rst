@@ -84,23 +84,23 @@ In this case, the domain :math:`V` is the entire bar structure, i.e. the length 
     :label: eq_galerkin_residual_for_bar_proc2
 
     \sum_{j=1}^n \underbrace{ E \cdot A \displaystyle\int_0^L N'_\text{i} \cdot N'_\text{j} \,\text{d}{x} }_{K_{\text{i}\text{j}}} \cdot d_\text{j}
-    - \sum_{j=1}^n \underbrace{ \varrho \cdot A \displaystyle\int_0^L N_\text{i} \cdot N_\text{j} \,\text{d}{x} }_{M_{\text{i}\text{j}}} \cdot \ddot{d}_\text{j} \nonumber \\
-    = \displaystyle\int_0^L N_\text{i} \cdot q_x \,\text{d}{x} + \left[ N_\text{i} \sum_{j=1}^n F_{x,\text{j}} \right]_0^L
+    &- \sum_{j=1}^n \underbrace{ \varrho \cdot A \displaystyle\int_0^L N_\text{i} \cdot N_\text{j} \,\text{d}{x} }_{M_{\text{i}\text{j}}} \cdot \ddot{d}_\text{j} \nonumber \\
+    &= \displaystyle\int_0^L N_\text{i} \cdot q_x \,\text{d}{x} + \left[ N_\text{i} \sum_{j=1}^n F_{x,\text{j}} \right]_0^L
 
 This equation pretty much resembles the sought-after FEM_ formulation. The highlighted terms :math:`K_{\text{i}\text{j}}` and :math:`M_{\text{i}\text{j}}` are elements of the global stiffness matrix :math:`\mathbf{K}` and mass matrix :math:`\mathbf{M}`, respectively. The summation symbolises the assembly process. The result becomes even clearer when choosing shape functions and performing the integrations. For the sake of simplicity, the bar is divided into a single element (:math:`i, j = 1, 2`). As a result of the integration by parts, the second order derivative from \cref{eq:gov_eq_bar_element} disappeared. Therefore, the approximating function :math:`\widetilde{u}_x` can be of lower order than required by the original governing equation \eqref{eq:gov_eq_bar_element}. For a bar it is sufficient to approximate the displacement field using element-wise *linear* functions.
 
 .. math::
 
-    \widetilde{u}_x(x,t) = \mathbf{N}(x) \cdot \mathbf{d}(t) \\
+    \widetilde{u}_x(x,t) &= \mathbf{N}(x) \cdot \mathbf{d}(t) \\
     \quad \text{with} \quad
-    \mathbf{N} = \left( N_1, N_2 \right) =
-    \left( 1 - \frac{x}{l_e}, \frac{x}{l_e} \right)
+    \mathbf{N} &= \left( N_1, N_2 \right) =
+    \left( 1 - \frac{x}{l_e}, \frac{x}{l_e} \right) \\
     \quad \text{and} \quad
-    \mathbf{d} =
+    \mathbf{d} &=
     \begin{pmatrix}
         u_1(t)\\
         u_2(t)
-    \end{pmatrix} \nonumber
+    \end{pmatrix}
 
 where :math:`x=0` at the left end of the element. The coefficients :math:`u_1` and :math:`u_2` have the same purpose as the :math:`a_\text{i}` mentioned above. Here, they are nodal displacements of the element (notice that :math:`N_\text{i}` is either 0 or 1 at the ends of the element, here :math:`l_e=L`). For a bar made up of a single element, \cref{eq:galerkin_residual_for_bar_proc2} becomes
 
@@ -108,12 +108,16 @@ where :math:`x=0` at the left end of the element. The coefficients :math:`u_1` a
     :label: eq_bar_galerkin_almost_there
 
     E \cdot A \cdot \displaystyle\int_0^{L} \mathbf{B}^T \cdot \mathbf{B} \,\text{d}{x} \cdot \mathbf{d}
-    - \varrho \cdot A \cdot \displaystyle\int_0^{L} \mathbf{N}^T \cdot \mathbf{N} \,\text{d}{x} \cdot \ddot{\mathbf{d}}
+    &- \varrho \cdot A \cdot \displaystyle\int_0^{L} \mathbf{N}^T \cdot \mathbf{N} \,\text{d}{x} \cdot \ddot{\mathbf{d}}
     = \displaystyle\int_0^{L} \mathbf{N}^T \cdot q_x \,\text{d}{x}
-    + \bigl[ \mathbf{N}^T \cdot F_x \bigr]_0^{L} \\[3mm]
-
-    \text{where} \qquad \mathbf{B} {:=} \mathbf{N}' \nonumber \\[3mm]
-
+    + \bigl[ \mathbf{N}^T \cdot F_x \bigr]_0^{L} \\
+    %%
+    %%
+    %%
+    \text{where} \qquad \mathbf{B} &{:=} \mathbf{N}' \nonumber \\
+    %%
+    %%
+    %%
     \label{eq:bar_galerkin_more_like_fem}
     \underbrace{
     \frac{E \cdot A}{L} \cdot
@@ -128,7 +132,7 @@ where :math:`x=0` at the left end of the element. The coefficients :math:`u_1` a
         u_2 \\
     \end{pmatrix}
     }_{\mathbf{d} = \mathbf{U}}
-    +
+    &+
     \underbrace{
     \frac{-\varrho \cdot A \cdot L}{6} \cdot
     \begin{bmatrix}
@@ -175,37 +179,213 @@ As indicated in \cref{sec:structure_general_approach}, beams are divided into *e
 
 Each beam element has six translational and six rotational |dof|. These may be summarised in an *element displacement vector*,
 
-**TODO** {\input{contents/maths/fem/element_displacement_vector.tex}}%
+.. math::
+    :label: eq_element_displacement_vector
+
+    \mathbf{U}_\text{e,loc} &=
+    (\mathbf{U}_1, \boldsymbol{\Theta}_1, \mathbf{U}_2, \boldsymbol{\Theta}_2)^T_\text{loc} \\
+    &= \left(
+        u_{x,1}, u_{y,1}, u_{z,1},
+        \Theta_{x,1}, \Theta_{y,1}, \Theta_{z,1},
+        %%
+        u_{x,2}, u_{y,2}, u_{z,2},
+        \Theta_{x,2}, \Theta_{y,2}, \Theta_{z,2}
+    \right)_\text{loc}^T
 
 where the subscript *e* indicates the *element* and *loc* the formulation with respect to the *local* system. The deformation in between two nodes is given by *shape functions* as :math:`\mathbf{U}_{\text{e},\xi} = (u_x, u_y, u_z, \Theta_x, \Theta_y, \Theta_z)_{\text{e},\xi}^T = \mathbf{N} \cdot \mathbf{U}_\text{e, loc}`. The shape function matrix :math:`\mathbf{N}` for the \EulerBernoulli beam is (c.f. [Cook2002]_)
 
-**TODO** {\input{contents/maths/fem/shape_functions.tex} }
+.. math::
+    :label: eq_shape_funtion_matrix
+
+    \mathbf{N} =
+    \begin{bmatrix}
+        N_1 & 0    & 0   & 0   & 0    & 0   & N_2 & 0    & 0   & 0   & 0    & 0 \\
+        0   & N_3  & 0   & 0   & 0    & N_5 & 0   & N_4  & 0   & 0   & 0    & N_6 \\
+        0   & 0    & N_3 & 0   & -N_5 & 0   & 0   & 0    & N_4 & 0   & -N_6 & 0 \\
+        0   & 0    & 0   & M_1 & 0    & 0   & 0   & 0    & 0   & M_2 & 0    & 0 \\
+        0   & 0    & M_3 & 0   & M_5  & 0   & 0   & 0    & M_4 & 0   & M_6  & 0 \\
+        0   & -M_3 & 0   & 0   & 0    & M_5 & 0   & -M_4 & 0   & 0   & 0    & M_6
+    \end{bmatrix}
+
+with the shape functions
 
 .. math::
 
-    \text{with} \quad \xi := \frac{\bar{x}}{l_e} \qquad \text{where} \quad \bar{x} := \frac{l_e}{2} + x
+        N_1 &= 1 - \xi \\[2mm]
+        N_2 &= \xi \\[2mm]
+        N_3 &= 1 - 3 \cdot \xi^2 +  2 \cdot \xi^3 \\[2mm]
+        N_4 &= 3 \cdot \xi^2 - 2 \cdot \xi^3 \\[2mm]
+        N_5 &= l_e ( \xi - 2 \cdot \xi^2 + \xi^3) \\[2mm]
+        N_6 &= l_e ( -\xi^2 + \xi^3) \\
+        M_1 &= 1 - \xi \\
+        M_2 &= \xi \\
+        M_3 &= \frac{\text{d}{N_3}}{\text{d}{\bar{x}}} = -\frac{6}{l_e} \cdot (\xi - \xi^2) \\
+        M_4 &= \frac{\text{d}{N_4}}{\text{d}{\bar{x}}} = \frac{6}{l_e} \cdot (\xi - \xi^2) \\
+        M_5 &= \frac{\text{d}{N_5}}{\text{d}{\bar{x}}} = 1 - 4 \cdot \xi + 3 \cdot \xi^2 \\
+        M_6 &= \frac{\text{d}{N_6}}{\text{d}{\bar{x}}} = -2 \cdot \xi + 3 \cdot \xi^2
+
+        \text{with} \quad \xi := \frac{\bar{x}}{l_e} \qquad \text{where} \quad \bar{x} := \frac{l_e}{2} + x
 
 The variable :math:`\xi` is a relative element coordinate. At the "left" element node :math:`\xi` is zero and at the "right" node :math:`\xi` is one (see \cref{fig:element_dof}). The last two rows in the shape function matrix are used to describe :math:`\Theta_y(\xi)` and :math:`\Theta_z(\xi)` which are related through the kinematic relations stated in \cref{eq:angles_euler_bernoulli} (see p.\,\pageref{eq:angles_euler_bernoulli}).
 
 The *element stiffness matrix* is (c.f. [Cook2002]_, [Przemieniecki1985]_)
 
-**TODO** {\input{contents/maths/fem/element_stiffness_matrix.tex}}
+.. math::
+    :label: eq_element_stiffness_matrix
 
-The stiffness matrix for a *Timoshenko beam element* which accounts for shear deformations can be found in [Cook2002]_, [Przemieniecki1985]_.
+    \mathbf{K}_\text{e,loc} =
+    \begin{bmatrix}
+        %% line 1
+        \frac{E \cdot A}{l_e} & 0 & 0 & 0 & 0 & 0 &
+        -\frac{E \cdot A}{l_e} & 0 & 0 & 0 & 0 & 0 \\
+        %% line 2
+        ~ & \frac{12 E \cdot I_z}{l_e^3} & 0 & 0 & 0 & \frac{6 E \cdot I_z}{l_e^2} &
+        0 & -\frac{12 E \cdot I_z}{l_e^3} & 0 & 0 & 0 & \frac{6 E \cdot I_z}{l_e^2} \\
+        %% line 3
+        ~ & ~ & \frac{12 E \cdot I_y}{l_e^3} & 0 & -\frac{6 E \cdot I_y}{l_e^2} & 0 &
+        0 & 0 & -\frac{12 E \cdot I_y}{l_e^3} & 0 & -\frac{6 E \cdot I_y}{l_e^2} & 0 \\
+        %% line 4
+        ~ & ~ & ~ & \frac{G \cdot J}{l_e} & 0 & 0 &
+        0 & 0 & 0 & -\frac{G \cdot J}{l_e} & 0 & 0 \\
+        %% line 5
+        ~ & ~ & ~ & ~ & \frac{4 E \cdot I_y}{l_e} & 0 &
+        0 & 0 & \frac{6 E \cdot I_y}{l_e^2} & 0 & \frac{2 E \cdot I_y}{l_e} & 0 \\
+        %% line 6
+        ~ & ~ & ~ & ~ & ~ & \frac{4 E \cdot I_z}{l_e} &
+        0 & -\frac{6 E \cdot I_z}{l_e^2} & 0 & 0 & 0 & \frac{2 E \cdot I_z}{l_e} \\
+        %% line 7
+        ~ & ~ & ~ & ~ & ~ & ~ &
+        \frac{E \cdot A}{l_e} & 0 & 0 & 0 & 0 & 0 \\
+        %% line 8
+        ~ & ~ & ~ & ~ & ~ & ~ &
+        ~ & \frac{12 E \cdot I_z}{l_e^3} & 0 & 0 & 0 & -\frac{6 E \cdot I_z}{l_e^2} \\
+        %% line 9
+        ~ & ~ & ~ & \text{sym.} & ~ & ~ &
+        ~ & ~ & \frac{12 E \cdot I_y}{l_e^3} & 0 & \frac{6 E \cdot I_y}{l_e^2} & 0 \\
+        %% line 10
+        ~ & ~ & ~ & ~ & ~ & ~ &
+        ~ & ~ & ~ & \frac{G \cdot J}{l_e} & 0 & 0 \\
+        %% line 11
+        ~ & ~ & ~ & ~ & ~ & ~ &
+        ~ & ~ & ~ & ~ & \frac{4 E \cdot I_y}{l_e} & 0 \\
+        %% line 12
+        ~ & ~ & ~ & ~ & ~ & ~ &
+        ~ & ~ & ~ & ~ & ~ & \frac{4 E \cdot I_z}{l_e} \\
+    \end{bmatrix}
 
-Assuming that the mass is concentrated on the *elastic axis*, the consistent *element mass matrix* is (c.f. [Przemieniecki1985]_)
+The stiffness matrix for a *Timoshenko beam element* which accounts for shear deformations can be found in [Cook2002]_, [Przemieniecki1985]_. Assuming that the mass is concentrated on the *elastic axis*, the consistent *element mass matrix* is (c.f. [Przemieniecki1985]_)
 
-**TODO** {\input{contents/maths/fem/element_mass_matrix.tex}}
+.. math::
+    :label: eq_element_mass_matrix
+
+    \mathbf{M}_\text{e,dist,loc} =
+    \frac{\varrho \cdot A \cdot l_e}{420}
+    \begin{bmatrix}
+        %% line 1
+        140 & 0 & 0 & 0 & 0 & 0 &
+        70 & 0 & 0 & 0 & 0 & 0 \\
+        %% line 2
+        ~ & 156 & 0 & 0 & 0 & 22 \cdot l_e &
+        0 & 54 & 0 & 0 & 0 & -13 \cdot l_e \\
+        %% line 3
+        ~ & ~ & 156 & 0 & -22 \cdot l_e & 0 &
+        0 & 0 & 54 & 0 & 13 \cdot l_e & 0 \\
+        %% line 4
+        ~ & ~ & ~ & \frac{140 \cdot I_x}{A} & 0 & 0 &
+        0 & 0 & 0 & 70 \cdot \frac{I_x}{A} & 0 & 0 \\
+        %% line 5
+        ~ & ~ & ~ & ~ & 4 \cdot l_e^2 & 0 &
+        0 & 0 & -13 \cdot l_e & 0 & -3 \cdot l_e^2 & 0 \\
+        %% line 6
+        ~ & ~ & ~ & ~ & ~ & 4 \cdot l_e^2 &
+        0 & 13 \cdot l_e & 0 & 0 & 0 & -3 \cdot l_e^2 \\
+        %% line 7
+        ~ & ~ & ~ & ~ & ~ & ~ &
+        140 & 0 & 0 & 0 & 0 & 0 \\
+        %% line 8
+        ~ & ~ & ~ & ~ & ~ & ~ &
+        ~ & 156 & 0 & 0 & 0 & -22 \cdot l_e \\
+        %% line 9
+        ~ & ~ & ~ & \text{sym.} & ~ & ~ &
+        ~ & ~ & 156 & 0 & 22 \cdot l_e & 0 \\
+        %% line 10
+        ~ & ~ & ~ & ~ & ~ & ~ &
+        ~ & ~ & ~ & \frac{140 \cdot I_x}{A} & 0 & 0 \\
+        %% line 11
+        ~ & ~ & ~ & ~ & ~ & ~ &
+        ~ & ~ & ~ & ~ & 4 \cdot l_e^2 & 0 \\
+        %% line 12
+        ~ & ~ & ~ & ~ & ~ & ~ &
+        ~ & ~ & ~ & ~ & ~ & 4 \cdot l_e^2 \\
+    \end{bmatrix}
 
 where :math:`I_x` denotes the polar moment of inertia. The effect of shear deformations can be accounted for in the mass matrix which is shown by Przemieniecki [Przemieniecki1985]_. Additional *point masses* can be lumped into specific nodes. Consider two masses, :math:`m_1` and :math:`m_2`, assigned to nodes 1 and 2 of an element, respectively. Disregarding rotational inertia, the *element point mass matrix* becomes
 
-**TODO** {\footnotesize \input{contents/maths/fem/element_pointmass_matrix.tex}}
+.. math::
+    :label: eq_element_pointmass_matrix
+
+    & \mathbf{M}_\text{e,point,loc} =
+    \begin{bmatrix}
+        \mathbf{M}_{m_1} & \mathbf{0} & \mathbf{0} & \mathbf{0} \\
+        \mathbf{0} & \mathbf{0} & \mathbf{0} & \mathbf{0} \\
+        \mathbf{0} & \mathbf{0} & \mathbf{M}_{m_2} & \mathbf{0} \\
+        \mathbf{0} & \mathbf{0} & \mathbf{0} & \mathbf{0} \\
+    \end{bmatrix} \\
+    &\text{where}~
+    \mathbf{M}_{m_1} =
+    \begin{bmatrix}
+        {m_1} & 0 & 0 \\
+        0 & {m_1} & 0 \\
+        0 & 0 & {m_1}
+    \end{bmatrix}
+    , ~
+    \mathbf{M}_{m_2} =
+    \begin{bmatrix}
+        {m_2} & 0 & 0 \\
+        0 & {m_2} & 0 \\
+        0 & 0 & {m_2}
+    \end{bmatrix}
 
 where the zero matrices are of size :math:`3 \times 3`. The final element mass matrix is given as the sum :math:`\mathbf{M}_\text{e,loc} = \mathbf{M}_\text{e,dist,loc} + \mathbf{M}_\text{e,point,loc}`.
 
 Generally, loads may be formulated as being concentrated on a specific node or as being distributed over the length of the element. Distributed loads will eventually be translated into equivalent (concentrated) nodal loads as a result of the Galerkin method. Thus, the load :math:`\mathbf{f}_\text{e,loc}` acting on an element can be written as a sum of concentrated loads :math:`\mathbf{f}_\text{e,conc,loc}` and distributed loads :math:`\mathbf{f}_\text{e,dist,loc}`, forming the *element load vector* (c.f. [Andersen2008]_).
 
-**TODO** {\footnotesize \input{contents/maths/fem/element_load_vector.tex}}
+.. math::
+    :label: eq_element_load_vector
+
+    \mathbf{f}_\text{e,loc} = \mathbf{f}_\text{e,dist,loc} + \mathbf{f}_\text{e,conc,loc}
+    \begin{pmatrix}
+    q_x \cdot l_e / 2 \\
+    q_y \cdot l_e / 2 - m_z \\
+    q_z \cdot l_e / 2 + m_y \\
+    m_x \cdot l_e / 2 \\
+    - q_z \cdot l_e^2 / 12\\
+    q_y \cdot l_e^2 / 12\\
+    q_x \cdot l_e / 2 \\
+    q_y \cdot l_e / 2  + m_z\\
+    q_z \cdot l_e / 2 - m_y \\
+    m_x \cdot l_e / 2 \\
+    q_z \cdot l_e^2 / 12\\
+    - q_y \cdot l_e^2 / 12\\
+    \end{pmatrix}
+    %%
+    +
+    %%
+    \begin{pmatrix}
+    F_{x,1} \\
+    F_{y,1} \\
+    F_{z,1} \\
+    M_{x,1} \\
+    M_{y,1} \\
+    M_{z,1} \\
+    F_{x,2} \\
+    F_{y,2} \\
+    F_{z,2} \\
+    M_{x,2} \\
+    M_{y,2} \\
+    M_{z,2} \\
+    \end{pmatrix}
+
 
 The distributed loads (:math:`q_x`, :math:`q_y`, :math:`q_z`, :math:`m_x`, :math:`m_y` and :math:`m_z` as defined in \cref{sec:theory_structural_modelling}) are assumed to be *constant* over the length of the element. Therefore, it may be necessary to use a finer discretisation if varying distributed loads are to be modelled accurately.
 
@@ -214,7 +394,25 @@ Transformation into the global system
 
 So far, the element tensors have been formulated in the element *local* coordinate system. In order to assemble a global system of equations reflecting the full structure it is first necessary to transform the element tensors using a transformation matrix :math:`\mathbf{T}`, given as (c.f. [Cook2002]_, [Young2012]_)
 
-**TODO** {\input{contents/maths/fem/element_transformation_matrix.tex}}
+.. math::
+    :label: eq_element_transformation_matrix
+
+    \mathbf{T} =
+    \begin{bmatrix}
+        \boldsymbol{\Lambda} & \mathbf{0} & \mathbf{0} & \mathbf{0} \\
+        \mathbf{0} & \boldsymbol{\Lambda} & \mathbf{0} & \mathbf{0} \\
+        \mathbf{0} & \mathbf{0} & \boldsymbol{\Lambda} & \mathbf{0} \\
+        \mathbf{0} & \mathbf{0} & \mathbf{0} & \boldsymbol{\Lambda} \\
+    \end{bmatrix}
+    %%
+    \quad \text{where} \quad
+    %%
+    \boldsymbol{\Lambda} =
+    \begin{bmatrix}
+        l_x & m_x & n_x \\
+        l_y & m_y & n_y \\
+        l_z & m_z & n_z \\
+    \end{bmatrix}
 
 and where :math:`l_\text{i}`, :math:`m_\text{i}` and :math:`n_\text{i}` (:math:`i = x, y, z`) are direction cosines defined by
 
