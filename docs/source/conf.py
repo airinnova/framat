@@ -102,6 +102,9 @@ rst_prolog = f"""
 
 numfig = True
 
+math_numfig = True
+math_eqref_format = "({number})"
+
 # -- Options for HTML output -------------------------------------------------
 
 # html_theme = 'classic'

@@ -1,3 +1,5 @@
+.. _sec_fem_formulation:
+
 FEM formulation
 ===============
 
@@ -7,12 +9,12 @@ FEM formulation
 
 **TODO** Add missing equations (see input...)
 
-The governing equations **TODO** to **TODO** for the |eb| beam are conveniently solved using a FE formulation which is well suited for computational analyses. The FE discretisation can be constructed from the governing equations using the *Galerkin weighted residual method*. This section summarises the basic idea of the Galerkin method as well as the FE formulation implemented in the structure tool |name|. More detailed theoretical background on the FEM_ can be found in [Cook2002]_, [Przemieniecki1985]_, [Bathe2014]_, [Smith2014]_.
+The governing equations **TODO** to **TODO** for the |eb| beam are conveniently solved using a FE formulation which is well suited for computational analyses. The FE discretisation can be constructed from the governing equations using the *Galerkin weighted residual method*. This section summarises the basic idea of the Galerkin method as well as the FE formulation implemented in the structure tool |name|. More detailed theoretical background on the FEM_ can be found in [CMPW02]_, [Prze85]_, [Bath14]_, [SmGM14]_.
 
 Galerkin weighted residual method
 ---------------------------------
 
-In the following, the *Galerkin weighted residual method* (henceforth simply called Galerkin method) is outlined. This summary is partly based on [Cook2002]_, [Przemieniecki1985]_ where further details are given. The Galerkin method "converts" the governing differential equations into a discretised problem, eventually formulating a system of linear equations from which an approximate solution can be obtained. In general terms, a physical problem may be stated in the form
+In the following, the *Galerkin weighted residual method* (henceforth simply called Galerkin method) is outlined. This summary is partly based on [CMPW02]_, [Prze85]_ where further details are given. The Galerkin method "converts" the governing differential equations into a discretised problem, eventually formulating a system of linear equations from which an approximate solution can be obtained. In general terms, a physical problem may be stated in the form
 
 .. math::
     :label: eq_galerkin_problem_general
@@ -62,7 +64,7 @@ where :math:`\sigma_x` and :math:`\epsilon_x` are the axial stress and strain, r
    :alt: Bar element
    :align: center
 
-   **(a)** 1D bar element under distributed axial loading :math:`q_x = q_x(x)`. **(b)** Two adjacent elements from the discretised bar. After the resulting system of equations is assembled, node *b* is shared (figure adapted from [Cook2002]_ ).
+   **(a)** 1D bar element under distributed axial loading :math:`q_x = q_x(x)`. **(b)** Two adjacent elements from the discretised bar. After the resulting system of equations is assembled, node *b* is shared (figure adapted from [CMPW02]_ ).
 
 With a separation of variables an approximating solution for \cref{eq:gov_eq_bar_element} of a discretised bar (\cref{fig:bar_element}b) may be formulated in the form
 
@@ -192,7 +194,7 @@ Each beam element has six translational and six rotational |dof|. These may be s
         \Theta_{x,2}, \Theta_{y,2}, \Theta_{z,2}
     \right)_\text{loc}^T
 
-where the subscript *e* indicates the *element* and *loc* the formulation with respect to the *local* system. The deformation in between two nodes is given by *shape functions* as :math:`\mathbf{U}_{\text{e},\xi} = (u_x, u_y, u_z, \Theta_x, \Theta_y, \Theta_z)_{\text{e},\xi}^T = \mathbf{N} \cdot \mathbf{U}_\text{e, loc}`. The shape function matrix :math:`\mathbf{N}` for the \EulerBernoulli beam is (c.f. [Cook2002]_)
+where the subscript *e* indicates the *element* and *loc* the formulation with respect to the *local* system. The deformation in between two nodes is given by *shape functions* as :math:`\mathbf{U}_{\text{e},\xi} = (u_x, u_y, u_z, \Theta_x, \Theta_y, \Theta_z)_{\text{e},\xi}^T = \mathbf{N} \cdot \mathbf{U}_\text{e, loc}`. The shape function matrix :math:`\mathbf{N}` for the \EulerBernoulli beam is (c.f. [CMPW02]_)
 
 .. math::
     :label: eq_shape_funtion_matrix
@@ -228,7 +230,7 @@ with the shape functions
 
 The variable :math:`\xi` is a relative element coordinate. At the "left" element node :math:`\xi` is zero and at the "right" node :math:`\xi` is one (see \cref{fig:element_dof}). The last two rows in the shape function matrix are used to describe :math:`\Theta_y(\xi)` and :math:`\Theta_z(\xi)` which are related through the kinematic relations stated in \cref{eq:angles_euler_bernoulli} (see p.\,\pageref{eq:angles_euler_bernoulli}).
 
-The *element stiffness matrix* is (c.f. [Cook2002]_, [Przemieniecki1985]_)
+The *element stiffness matrix* is (c.f. [CMPW02]_, [Prze85]_)
 
 .. math::
     :label: eq_element_stiffness_matrix
@@ -273,7 +275,7 @@ The *element stiffness matrix* is (c.f. [Cook2002]_, [Przemieniecki1985]_)
         ~ & ~ & ~ & ~ & ~ & \frac{4 E \cdot I_z}{l_e} \\
     \end{bmatrix}
 
-The stiffness matrix for a *Timoshenko beam element* which accounts for shear deformations can be found in [Cook2002]_, [Przemieniecki1985]_. Assuming that the mass is concentrated on the *elastic axis*, the consistent *element mass matrix* is (c.f. [Przemieniecki1985]_)
+The stiffness matrix for a *Timoshenko beam element* which accounts for shear deformations can be found in [CMPW02]_, [Prze85]_. Assuming that the mass is concentrated on the *elastic axis*, the consistent *element mass matrix* is (c.f. [Prze85]_)
 
 .. math::
     :label: eq_element_mass_matrix
@@ -319,7 +321,7 @@ The stiffness matrix for a *Timoshenko beam element* which accounts for shear de
         ~ & ~ & ~ & ~ & ~ & 4 \cdot l_e^2 \\
     \end{bmatrix}
 
-where :math:`I_x` denotes the polar moment of inertia. The effect of shear deformations can be accounted for in the mass matrix which is shown by Przemieniecki [Przemieniecki1985]_. Additional *point masses* can be lumped into specific nodes. Consider two masses, :math:`m_1` and :math:`m_2`, assigned to nodes 1 and 2 of an element, respectively. Disregarding rotational inertia, the *element point mass matrix* becomes
+where :math:`I_x` denotes the polar moment of inertia. The effect of shear deformations can be accounted for in the mass matrix which is shown by Przemieniecki [Prze85]_. Additional *point masses* can be lumped into specific nodes. Consider two masses, :math:`m_1` and :math:`m_2`, assigned to nodes 1 and 2 of an element, respectively. Disregarding rotational inertia, the *element point mass matrix* becomes
 
 .. math::
     :label: eq_element_pointmass_matrix
@@ -348,7 +350,7 @@ where :math:`I_x` denotes the polar moment of inertia. The effect of shear defor
 
 where the zero matrices are of size :math:`3 \times 3`. The final element mass matrix is given as the sum :math:`\mathbf{M}_\text{e,loc} = \mathbf{M}_\text{e,dist,loc} + \mathbf{M}_\text{e,point,loc}`.
 
-Generally, loads may be formulated as being concentrated on a specific node or as being distributed over the length of the element. Distributed loads will eventually be translated into equivalent (concentrated) nodal loads as a result of the Galerkin method. Thus, the load :math:`\mathbf{f}_\text{e,loc}` acting on an element can be written as a sum of concentrated loads :math:`\mathbf{f}_\text{e,conc,loc}` and distributed loads :math:`\mathbf{f}_\text{e,dist,loc}`, forming the *element load vector* (c.f. [Andersen2008]_).
+Generally, loads may be formulated as being concentrated on a specific node or as being distributed over the length of the element. Distributed loads will eventually be translated into equivalent (concentrated) nodal loads as a result of the Galerkin method. Thus, the load :math:`\mathbf{f}_\text{e,loc}` acting on an element can be written as a sum of concentrated loads :math:`\mathbf{f}_\text{e,conc,loc}` and distributed loads :math:`\mathbf{f}_\text{e,dist,loc}`, forming the *element load vector* (c.f. [AnNi08]_).
 
 .. math::
     :label: eq_element_load_vector
@@ -392,7 +394,7 @@ The distributed loads (:math:`q_x`, :math:`q_y`, :math:`q_z`, :math:`m_x`, :math
 Transformation into the global system
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-So far, the element tensors have been formulated in the element *local* coordinate system. In order to assemble a global system of equations reflecting the full structure it is first necessary to transform the element tensors using a transformation matrix :math:`\mathbf{T}`, given as (c.f. [Cook2002]_, [Young2012]_)
+So far, the element tensors have been formulated in the element *local* coordinate system. In order to assemble a global system of equations reflecting the full structure it is first necessary to transform the element tensors using a transformation matrix :math:`\mathbf{T}`, given as (c.f. [CMPW02]_, [YoBS12]_)
 
 .. math::
     :label: eq_element_transformation_matrix
@@ -433,7 +435,7 @@ where :math:`\Phi_{\text{i}\text{j}}` is the angle between a local axis :math:`i
    :alt: Direction cosines
    :align: center
 
-   The orientation of the local :math:`x`-axis with respect to the global coordinate system is defined by angles :math:`\Phi_\text{xX}`, :math:`\Phi_\text{xY}` and :math:`\Phi_\text{xZ}` (modified from [Young2012]_)
+   The orientation of the local :math:`x`-axis with respect to the global coordinate system is defined by angles :math:`\Phi_\text{xX}`, :math:`\Phi_\text{xY}` and :math:`\Phi_\text{xZ}` (modified from [YoBS12]_)
 
 Using the transformation matrix, the *element* stiffness-, mass- and load tensors can be transformed into the *global* coordinate system (subscript *glob*).
 
@@ -473,7 +475,7 @@ A static equilibrium is described by
 
     \mathbf{K} \cdot \mathbf{U} = \mathbf{F} + \mathbf{F}_\text{accel} \qquad \text{with} \quad \mathbf{F}_\text{accel} := \mathbf{M} \cdot \mathbf{A}
 
-where :math:`\mathbf{U}` is the *global vector of nodal deformations* (nodal deformations with respect to the global system). The additional term :math:`\mathbf{F}_\text{accel}` allows to take loads due to gravity or due to quasi-steady flight manoeuvres into account, when the acceleration is known (inertia relief method [Wijker2004]_). The (translational) acceleration vector is
+where :math:`\mathbf{U}` is the *global vector of nodal deformations* (nodal deformations with respect to the global system). The additional term :math:`\mathbf{F}_\text{accel}` allows to take loads due to gravity or due to quasi-steady flight manoeuvres into account, when the acceleration is known (inertia relief method [Wijk04]_). The (translational) acceleration vector is
 
 .. math::
     :label: eq_accel_vector
@@ -485,7 +487,7 @@ where :math:`a_x`, :math:`a_y` and :math:`a_z` are accelerations in :math:`X`-, 
 Boundary conditions
 ~~~~~~~~~~~~~~~~~~~
 
-\Cref{eq:fem_static_with_gravity} is to be solved for the global vector of nodal deformations :math:`\mathbf{U}`. Without fixing the structure in space, :math:`\mathbf{K}` is singular and the system of equations cannot be uniquely solved. To find a unique solution, boundary conditions have to be applied. Linear constraints imposed on the structure can be formulated as :math:`\mathbf{B} \cdot \mathbf{U} = \mathbf{b}` where the matrix :math:`\mathbf{B}` and the vector :math:`\mathbf{b}` contain constants. This formulation can be used to impose both *single point constraints* (e.g. setting single |dof| to known values, often zero) as well as *multipoint constraints* (e.g. a rigid connector between two nodes) [Cook2002]_. As shown in [Cook2002]_, Lagrange's method of undetermined multipliers can be used to formulate a system of equations for the structure including the applied boundary conditions.
+\Cref{eq:fem_static_with_gravity} is to be solved for the global vector of nodal deformations :math:`\mathbf{U}`. Without fixing the structure in space, :math:`\mathbf{K}` is singular and the system of equations cannot be uniquely solved. To find a unique solution, boundary conditions have to be applied. Linear constraints imposed on the structure can be formulated as :math:`\mathbf{B} \cdot \mathbf{U} = \mathbf{b}` where the matrix :math:`\mathbf{B}` and the vector :math:`\mathbf{b}` contain constants. This formulation can be used to impose both *single point constraints* (e.g. setting single |dof| to known values, often zero) as well as *multipoint constraints* (e.g. a rigid connector between two nodes) [CMPW02]_. As shown in [CMPW02]_, Lagrange's method of undetermined multipliers can be used to formulate a system of equations for the structure including the applied boundary conditions.
 
 .. math::
     :label: eq_static_analysis
@@ -505,8 +507,8 @@ Boundary conditions
         \mathbf{0}
     \end{pmatrix}
 
-Here, :math:`\boldsymbol{\lambda}` is a vector with the Lagrange multipliers of length equal to the number of linear constraints. \Cref{eq:static_analysis} is solved for :math:`\mathbf{U}` and :math:`\boldsymbol{\lambda}`, where the Lagrange multipliers may be interpreted as forces of constraint [Cook2002]_.
+Here, :math:`\boldsymbol{\lambda}` is a vector with the Lagrange multipliers of length equal to the number of linear constraints. \Cref{eq:static_analysis} is solved for :math:`\mathbf{U}` and :math:`\boldsymbol{\lambda}`, where the Lagrange multipliers may be interpreted as forces of constraint [CMPW02]_.
 
 .. note::
 
-    This summary is based on/copied from [Dettmann2019]_ with the authors permission.
+    This summary is based on/copied from [Dett19]_ with the authors permission.
