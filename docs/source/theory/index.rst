@@ -124,6 +124,7 @@ The beam stiffness is described by both geometry and material parameters. The be
 It is further noted that rotations :math:`\Theta_y` and :math:`\Theta_z`, assuming small-angle approximations, are related through basic kinematic relations.
 
 .. math::
+    :label: eq_angles_euler_bernoulli
 
     \Theta_y = - \frac{\text{d}{u_z}}{\text{d}{x}}
     %%

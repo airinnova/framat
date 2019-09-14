@@ -86,4 +86,5 @@
 
 ## Documentation
 * Numbers in numbered equations misaligned (on top instead of on right side)
+* Large matrices don't fit on page (smaller math font? smaller matrix?)
 * NOTE: `tkinter` may have to be installed separately for matplotlib to work (not included in matplotlib PyPI package?)

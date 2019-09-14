@@ -3,13 +3,7 @@
 FEM formulation
 ===============
 
-**TODO** fix references to equations and figures
-
-**TODO** fix alignment of multi-line equations
-
-**TODO** Add missing equations (see input...)
-
-The governing equations **TODO** to **TODO** for the |eb| beam are conveniently solved using a FE formulation which is well suited for computational analyses. The FE discretisation can be constructed from the governing equations using the *Galerkin weighted residual method*. This section summarises the basic idea of the Galerkin method as well as the FE formulation implemented in the structure tool |name|. More detailed theoretical background on the FEM_ can be found in [CMPW02]_, [Prze85]_, [Bath14]_, [SmGM14]_.
+The governing equations :eq:`u_x` to :eq:`t_x` for the |eb| beam are conveniently solved using a FE formulation which is well suited for computational analyses. The FE discretisation can be constructed from the governing equations using the *Galerkin weighted residual method*. This section summarises the basic idea of the Galerkin method as well as the FE formulation implemented in the structure tool |name|. More detailed theoretical background on the FEM_ can be found in [CMPW02]_, [Prze85]_, [Bath14]_, [SmGM14]_.
 
 Galerkin weighted residual method
 ---------------------------------
@@ -23,7 +17,7 @@ In the following, the *Galerkin weighted residual method* (henceforth simply cal
 
 where :math:`D` is a differential operator, :math:`u = u(x)` are dependent variables (e.g. displacements of a material point), :math:`x` are independent variables (e.g. coordinates of a material point) and :math:`f` is a function of :math:`x` (:math:`f` may be constant or zero). Note that the governing equations for the |eb| beam are stated in this form.
 
-The next step in the Galerkin method is to choose an approximating solution :math:`\widetilde{u}` for :math:`u` which does not (have to) satisfy \cref{eq:galerkin_problem_general} in *every* point. Due to the approximation a residual :math:`R = R(x)` may remain. \Cref{eq:galerkin_problem_general} becomes
+The next step in the Galerkin method is to choose an approximating solution :math:`\widetilde{u}` for :math:`u` which does not (have to) satisfy eq. :eq:`eq_galerkin_problem_general` in *every* point. Due to the approximation a residual :math:`R = R(x)` may remain. Equation :eq:`eq_galerkin_problem_general` becomes
 
 .. math::
     :label: eq_galerkin_problem_general_residual
@@ -42,14 +36,14 @@ The :math:`W_\text{i} = W_\text{i} (x)` are so-called weight functions. In the F
 Example
 ~~~~~~~
 
-To illustrate the Galerkin method, the procedure will be shown for a uniform bar in axial loading (\cref{fig:bar_element}a). The equation of motion is
+To illustrate the Galerkin method, the procedure will be shown for a uniform bar in axial loading (:numref:`fig_bar_element` a). The equation of motion is
 
 .. math::
     :label: eq_gov_eq_bar_element
 
     \frac{\partial{}}{\partial{x}} \left( E \cdot A \cdot \frac{\partial{u_x}}{\partial{x}} \right) + q_x - \varrho \cdot A \frac{\partial{}^2 u_x}{\partial{t}^2} = 0
 
-This equation has already been stated in \cref{eq:beam_gov_eq_ux} as part of the beam equations, though without the inertia term which introduces a time dependency ($t$). \Cref{eq:gov_eq_bar_element} is also referred to as the *strong form* of the governing equations, since a solution :math:`u_x(x,t)` has to satisfy the equation in every point :math:`x` and for every point in time :math:`t`. At any arbitrary :math:`x`, the axial force in the bar is
+This equation has already been stated in eq. :eq:`u_x` as part of the beam equations, though without the inertia term which introduces a time dependency (:math:`t`). Equation :eq:`eq_gov_eq_bar_element` is also referred to as the *strong form* of the governing equations, since a solution :math:`u_x(x,t)` has to satisfy the equation in every point :math:`x` and for every point in time :math:`t`. At any arbitrary :math:`x`, the axial force in the bar is
 
 .. math::
     :label: eq_bar_element_Fx
@@ -64,23 +58,23 @@ where :math:`\sigma_x` and :math:`\epsilon_x` are the axial stress and strain, r
    :alt: Bar element
    :align: center
 
-   **(a)** 1D bar element under distributed axial loading :math:`q_x = q_x(x)`. **(b)** Two adjacent elements from the discretised bar. After the resulting system of equations is assembled, node *b* is shared (figure adapted from [CMPW02]_ ).
+   **(a)** 1D bar element under distributed axial loading :math:`q_x = q_x(x)`. **(b)** Two adjacent elements from the discretised bar. After the resulting system of equations is assembled, node *b* is shared (figure adapted from [CMPW02]_).
 
-With a separation of variables an approximating solution for \cref{eq:gov_eq_bar_element} of a discretised bar (\cref{fig:bar_element}b) may be formulated in the form
+With a separation of variables an approximating solution for eq. :eq:`eq_gov_eq_bar_element` of a discretised bar (:numref:`fig_bar_element` b) may be formulated in the form
 
 .. math::
     :label: eq_ux_approx
 
     \widetilde{u}_x(x,t) = \sum_{j=1}^n d_\text{j}(t) \cdot N_\text{j} (x)
 
-where :math:`d_\text{j}` are unknown coefficients (here the nodal displacements), and :math:`N_\text{j}` are referred to as FEM_ *shape functions* which also serve as Galerkin weight functions. The Galerkin residual equation \eqref{eq:galerkin_residual_equation} becomes
+where :math:`d_\text{j}` are unknown coefficients (here the nodal displacements), and :math:`N_\text{j}` are referred to as FEM_ *shape functions* which also serve as Galerkin weight functions. The Galerkin residual eq. :eq:`eq_galerkin_residual_equation` becomes
 
 .. math::
     :label: eq_galerkin_residual_for_bar
 
     \displaystyle\int_0^L N_\text{i} \cdot \left[ \sum_{j=1}^n \left( E \cdot A \cdot d_\text{j} \cdot N_\text{j}^\prime \right)' + q_x - \sum_{j=1}^n \varrho \cdot A \cdot \ddot{d}_\text{j} \cdot N_\text{j}  \right] \text{d}{x} = 0
 
-In this case, the domain :math:`V` is the entire bar structure, i.e. the length of the bar :math:`L`. The indices :math:`i` and :math:`j` range over all shape functions (:math:`i, j = 1, 2, \dots, n`). Integrating by parts, rearranging the order of operations and substituting the force :math:`F_x` from \cref{eq:bar_element_Fx} yields
+In this case, the domain :math:`V` is the entire bar structure, i.e. the length of the bar :math:`L`. The indices :math:`i` and :math:`j` range over all shape functions (:math:`i, j = 1, 2, \dots, n`). Integrating by parts, rearranging the order of operations and substituting the force :math:`F_x` from eq. :eq:`eq_bar_element_Fx` yields
 
 .. math::
     :label: eq_galerkin_residual_for_bar_proc2
@@ -89,7 +83,7 @@ In this case, the domain :math:`V` is the entire bar structure, i.e. the length 
     &- \sum_{j=1}^n \underbrace{ \varrho \cdot A \displaystyle\int_0^L N_\text{i} \cdot N_\text{j} \,\text{d}{x} }_{M_{\text{i}\text{j}}} \cdot \ddot{d}_\text{j} \nonumber \\
     &= \displaystyle\int_0^L N_\text{i} \cdot q_x \,\text{d}{x} + \left[ N_\text{i} \sum_{j=1}^n F_{x,\text{j}} \right]_0^L
 
-This equation pretty much resembles the sought-after FEM_ formulation. The highlighted terms :math:`K_{\text{i}\text{j}}` and :math:`M_{\text{i}\text{j}}` are elements of the global stiffness matrix :math:`\mathbf{K}` and mass matrix :math:`\mathbf{M}`, respectively. The summation symbolises the assembly process. The result becomes even clearer when choosing shape functions and performing the integrations. For the sake of simplicity, the bar is divided into a single element (:math:`i, j = 1, 2`). As a result of the integration by parts, the second order derivative from \cref{eq:gov_eq_bar_element} disappeared. Therefore, the approximating function :math:`\widetilde{u}_x` can be of lower order than required by the original governing equation \eqref{eq:gov_eq_bar_element}. For a bar it is sufficient to approximate the displacement field using element-wise *linear* functions.
+This equation pretty much resembles the sought-after FEM_ formulation. The highlighted terms :math:`K_{\text{i}\text{j}}` and :math:`M_{\text{i}\text{j}}` are elements of the global stiffness matrix :math:`\mathbf{K}` and mass matrix :math:`\mathbf{M}`, respectively. The summation symbolises the assembly process. The result becomes even clearer when choosing shape functions and performing the integrations. For the sake of simplicity, the bar is divided into a single element (:math:`i, j = 1, 2`). As a result of the integration by parts, the second order derivative from eq. :eq:`eq_gov_eq_bar_element` disappeared. Therefore, the approximating function :math:`\widetilde{u}_x` can be of lower order than required by the original governing eq. :eq:`eq_gov_eq_bar_element`. For a bar it is sufficient to approximate the displacement field using element-wise *linear* functions.
 
 .. math::
 
@@ -104,7 +98,7 @@ This equation pretty much resembles the sought-after FEM_ formulation. The highl
         u_2(t)
     \end{pmatrix}
 
-where :math:`x=0` at the left end of the element. The coefficients :math:`u_1` and :math:`u_2` have the same purpose as the :math:`a_\text{i}` mentioned above. Here, they are nodal displacements of the element (notice that :math:`N_\text{i}` is either 0 or 1 at the ends of the element, here :math:`l_e=L`). For a bar made up of a single element, \cref{eq:galerkin_residual_for_bar_proc2} becomes
+where :math:`x=0` at the left end of the element. The coefficients :math:`u_1` and :math:`u_2` have the same purpose as the :math:`a_\text{i}` mentioned above. Here, they are nodal displacements of the element (notice that :math:`N_\text{i}` is either 0 or 1 at the ends of the element, here :math:`l_e=L`). For a bar made up of a single element, eq. :eq:`eq_galerkin_residual_for_bar_proc2` becomes
 
 .. math::
     :label: eq_bar_galerkin_almost_there
@@ -169,7 +163,7 @@ In general, the discretised formulation is not equal to the exact solution but t
 The beam element
 ----------------
 
-As indicated in \cref{sec:structure_general_approach}, beams are divided into *elements* which form the core of the FE formulation. A beam element consists of two nodes, numbered :math:`i` and :math:`i+1` in a global "bookkeeping" system (\cref{fig:element_dof}). It is worth to point out that a 3D beam element is not uniquely defined by two points (nodes) in space. As the element contains directional information, namely bending stiffness :math:`E \cdot I_y` and :math:`E \cdot I_z` defined in a local (cross section) coordinate system, such a local system has to be defined as part of the user input. The orientation of the local coordinate system may be provided as an "upwards" direction (:math:`z`-direction), or using angles with respect to the global coordinate system.
+Beams are divided into *elements* which form the core of the FE formulation. A beam element consists of two nodes, numbered :math:`i` and :math:`i+1` in a global "bookkeeping" system (:numref:`fig_beam_element`). It is worth to point out that a 3D beam element is not uniquely defined by two points (nodes) in space. As the element contains directional information, namely bending stiffness :math:`E \cdot I_y` and :math:`E \cdot I_z` defined in a local (cross section) coordinate system, such a local system has to be defined as part of the user input. The orientation of the local coordinate system may be provided as an "upwards" direction (:math:`z`-direction), or using angles with respect to the global coordinate system.
 
 .. _fig_beam_element:
 .. figure:: ../_static/images/theory/beam_element_dof.svg
@@ -228,7 +222,7 @@ with the shape functions
 
         \text{with} \quad \xi := \frac{\bar{x}}{l_e} \qquad \text{where} \quad \bar{x} := \frac{l_e}{2} + x
 
-The variable :math:`\xi` is a relative element coordinate. At the "left" element node :math:`\xi` is zero and at the "right" node :math:`\xi` is one (see \cref{fig:element_dof}). The last two rows in the shape function matrix are used to describe :math:`\Theta_y(\xi)` and :math:`\Theta_z(\xi)` which are related through the kinematic relations stated in \cref{eq:angles_euler_bernoulli} (see p.\,\pageref{eq:angles_euler_bernoulli}).
+The variable :math:`\xi` is a relative element coordinate. At the "left" element node :math:`\xi` is zero and at the "right" node :math:`\xi` is one (see :numref:`fig_beam_element`). The last two rows in the shape function matrix are used to describe :math:`\Theta_y(\xi)` and :math:`\Theta_z(\xi)` which are related through the kinematic relations stated in eq. :eq:`eq_angles_euler_bernoulli`.
 
 The *element stiffness matrix* is (c.f. [CMPW02]_, [Prze85]_)
 
@@ -389,7 +383,7 @@ Generally, loads may be formulated as being concentrated on a specific node or a
     \end{pmatrix}
 
 
-The distributed loads (:math:`q_x`, :math:`q_y`, :math:`q_z`, :math:`m_x`, :math:`m_y` and :math:`m_z` as defined in \cref{sec:theory_structural_modelling}) are assumed to be *constant* over the length of the element. Therefore, it may be necessary to use a finer discretisation if varying distributed loads are to be modelled accurately.
+The distributed loads (:math:`q_x`, :math:`q_y`, :math:`q_z`, :math:`m_x`, :math:`m_y` and :math:`m_z` as defined in :ref:`sec_theory`) are assumed to be *constant* over the length of the element. Therefore, it may be necessary to use a finer discretisation if varying distributed loads are to be modelled accurately.
 
 Transformation into the global system
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -427,9 +421,9 @@ and where :math:`l_\text{i}`, :math:`m_\text{i}` and :math:`n_\text{i}` (:math:`
         l_z = \cos \Phi_\text{zX}, & \quad & m_z = \cos \Phi_\text{zY}, & \quad & n_z = \cos \Phi_\text{zZ}
     \end{matrix}
 
-where :math:`\Phi_{\text{i}\text{j}}` is the angle between a local axis :math:`i` and a global axis :math:`j` (:math:`i = x, y, z` and :math:`j = X, Y, Z`) as illustrated in \cref{fig:direction_cosines}.
+where :math:`\Phi_{\text{i}\text{j}}` is the angle between a local axis :math:`i` and a global axis :math:`j` (:math:`i = x, y, z` and :math:`j = X, Y, Z`) as illustrated in :numref:`fig_direction_cosines`.
 
-.. _fig_dir_cosines:
+.. _fig_direction_cosines:
 .. figure:: ../_static/images/theory/direction_cosines.svg
    :width: 300 px
    :alt: Direction cosines
@@ -440,15 +434,24 @@ where :math:`\Phi_{\text{i}\text{j}}` is the angle between a local axis :math:`i
 Using the transformation matrix, the *element* stiffness-, mass- and load tensors can be transformed into the *global* coordinate system (subscript *glob*).
 
 .. math::
+    :label: eq_element_stiffness_matrix_glob
 
-    \mathbf{K}_\text{e,glob} &= \mathbf{T}^T \cdot \mathbf{K}_\text{e,loc} \cdot \mathbf{T} \\
-    \mathbf{M}_\text{e,glob} &= \mathbf{T}^T \cdot \mathbf{M}_\text{e,loc} \cdot \mathbf{T} \\
-    \mathbf{f}_\text{e,glob} &= \mathbf{T}^T \cdot \mathbf{f}_\text{e,loc}
+    \mathbf{K}_\text{e,glob} = \mathbf{T}^T \cdot \mathbf{K}_\text{e,loc} \cdot \mathbf{T}
+
+.. math::
+    :label: eq_element_mass_matrix_glob
+
+    \mathbf{M}_\text{e,glob} = \mathbf{T}^T \cdot \mathbf{M}_\text{e,loc} \cdot \mathbf{T}
+
+.. math::
+    :label: eq_element_load_vector_global_glob
+
+    \mathbf{f}_\text{e,glob} = \mathbf{T}^T \cdot \mathbf{f}_\text{e,loc}
 
 Assembly of the global system of equations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The entire structure system can finally be *assembled* into a system of equations, now consistently formulated with respect to the global coordinate system. As described in \cref{sec:structure_general_approach}, a full structure (here referred to as frame) is made up of individual beams (substructures). \Cref{fig:matrix_vector_assembly} illustrates how the *global stiffness matrix* :math:`\mathbf{K}`, the *global mass matrix* :math:`\mathbf{M}` and the *global load vector* :math:`\mathbf{F}` are assembled based on the transformed element matrices, \cref{eq:element_stiffness_matrix_glob,eq:element_mass_matrix_glob,eq:element_load_vector_global_glob}.
+The entire structure system can finally be *assembled* into a system of equations, now consistently formulated with respect to the global coordinate system. A full structure (here referred to as frame) is made up of individual beams (substructures). :numref:`fig_matrix_assembly` and :numref:`fig_vector_assembly` illustrates how the *global stiffness matrix* :math:`\mathbf{K}`, the *global mass matrix* :math:`\mathbf{M}` and the *global load vector* :math:`\mathbf{F}` are assembled based on the transformed element matrices, :eq:`eq_element_stiffness_matrix_glob`, :eq:`eq_element_mass_matrix_glob`, :eq:`eq_element_load_vector_global_glob`.
 
 .. _fig_matrix_assembly:
 .. figure:: ../_static/images/theory/matrix_assembly.svg
@@ -482,12 +485,12 @@ where :math:`\mathbf{U}` is the *global vector of nodal deformations* (nodal def
 
     \mathbf{A} = \left( a_x, a_y, a_z, 0, 0, 0, a_x, a_y, a_z, 0, 0, 0, \dots \right)^T
 
-where :math:`a_x`, :math:`a_y` and :math:`a_z` are accelerations in :math:`X`-, :math:`Y`- and :math:`Z`-directions of the global coordinate system. Gravity in :math:`Z`-direction, for instance, can be modelled by setting :math:`a_x = a_y = 0` and :math:`a_z = -g` with :math:`g` being the gravitational acceleration. By performing the multiplication :math:`\mathbf{M} \cdot \mathbf{A}` it can be shown that the weight of each element is modelled as a constant distributed load, and analogous to \cref{eq:element_load_vector}, divided between the two nodes of the element.
+where :math:`a_x`, :math:`a_y` and :math:`a_z` are accelerations in :math:`X`-, :math:`Y`- and :math:`Z`-directions of the global coordinate system. Gravity in :math:`Z`-direction, for instance, can be modelled by setting :math:`a_x = a_y = 0` and :math:`a_z = -g` with :math:`g` being the gravitational acceleration. By performing the multiplication :math:`\mathbf{M} \cdot \mathbf{A}` it can be shown that the weight of each element is modelled as a constant distributed load, and analogous to eq. :eq:`eq_element_load_vector`, divided between the two nodes of the element.
 
 Boundary conditions
 ~~~~~~~~~~~~~~~~~~~
 
-\Cref{eq:fem_static_with_gravity} is to be solved for the global vector of nodal deformations :math:`\mathbf{U}`. Without fixing the structure in space, :math:`\mathbf{K}` is singular and the system of equations cannot be uniquely solved. To find a unique solution, boundary conditions have to be applied. Linear constraints imposed on the structure can be formulated as :math:`\mathbf{B} \cdot \mathbf{U} = \mathbf{b}` where the matrix :math:`\mathbf{B}` and the vector :math:`\mathbf{b}` contain constants. This formulation can be used to impose both *single point constraints* (e.g. setting single |dof| to known values, often zero) as well as *multipoint constraints* (e.g. a rigid connector between two nodes) [CMPW02]_. As shown in [CMPW02]_, Lagrange's method of undetermined multipliers can be used to formulate a system of equations for the structure including the applied boundary conditions.
+Equation :eq:`eq_fem_static_with_gravity` is to be solved for the global vector of nodal deformations :math:`\mathbf{U}`. Without fixing the structure in space, :math:`\mathbf{K}` is singular and the system of equations cannot be uniquely solved. To find a unique solution, boundary conditions have to be applied. Linear constraints imposed on the structure can be formulated as :math:`\mathbf{B} \cdot \mathbf{U} = \mathbf{b}` where the matrix :math:`\mathbf{B}` and the vector :math:`\mathbf{b}` contain constants. This formulation can be used to impose both *single point constraints* (e.g. setting single |dof| to known values, often zero) as well as *multipoint constraints* (e.g. a rigid connector between two nodes) [CMPW02]_. As shown in [CMPW02]_, Lagrange's method of undetermined multipliers can be used to formulate a system of equations for the structure including the applied boundary conditions.
 
 .. math::
     :label: eq_static_analysis
@@ -507,7 +510,7 @@ Boundary conditions
         \mathbf{0}
     \end{pmatrix}
 
-Here, :math:`\boldsymbol{\lambda}` is a vector with the Lagrange multipliers of length equal to the number of linear constraints. \Cref{eq:static_analysis} is solved for :math:`\mathbf{U}` and :math:`\boldsymbol{\lambda}`, where the Lagrange multipliers may be interpreted as forces of constraint [CMPW02]_.
+Here, :math:`\boldsymbol{\lambda}` is a vector with the Lagrange multipliers of length equal to the number of linear constraints. Euquation :eq:`eq_static_analysis` is solved for :math:`\mathbf{U}` and :math:`\boldsymbol{\lambda}`, where the Lagrange multipliers may be interpreted as forces of constraint [CMPW02]_.
 
 .. note::
 
