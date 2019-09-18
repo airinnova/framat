@@ -15,5 +15,7 @@ Related projects
    :alt: AeroFrame
    :align: right
 
-**AeroFrame** is a framework for static aeroelastic analyses. The framework was developed in a master thesis at *KTH Royal Institute of Technology* and `Airinnova AB`_. Note however, that *AeroFrame* is not being actively developed at the moment. For more information see [Dett19]_.
+**AeroFrame** is a framework for modular, partitioned aeroelastic analyses. The framework was initially developed as part of a master thesis at *KTH Royal Institute of Technology* and `Airinnova AB`_. |name| has been used as a structure solver in AeroFrame. For more information see:
 
+* https://github.com/airinnova/aeroframe
+* [Dett19]_
