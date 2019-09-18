@@ -68,7 +68,6 @@ class Frame:
 
         Args:
             :beamlines: list of beamline objects
-
         """
 
         logger.info("Assembling frame structure...")
@@ -119,6 +118,12 @@ class Frame:
 
         self._apply_boundary_conditions()
         self._assemble_global_tensors()
+
+    def __str__(self):
+        return self.__class__.__name__ + f' object with {self.counter.nodes} nodes'
+
+    def __repr__(self):
+        return self.__str__()
 
     @property
     def accel_direction(self):
@@ -475,7 +480,7 @@ class Deformation:
             interpol[key] = CubicSpline(xsi_values, deformation[key])
 
         def def_interpolator(xsi):
-            def_list = [interpol[key](xsi) for key in Element.DEFORM_TYPES]
+            def_list = np.array([interpol[key](xsi) for key in Element.DEFORM_TYPES])
             return def_list
 
         self.beamline_interpolators[beamline_uid] = def_interpolator
@@ -487,19 +492,41 @@ class Deformation:
 
         Args:
             :frame: Frame object
-            :n_sup: Number of support points
+            :n_sup: Number of support points (linearly spaced along the beam)
 
         Returns:
             :displacement_fields: Dictionary with arrays of displacement fields
+
+        Example:
+
+        For a frame with two beamlines, say 'main_wing' and 'fuselage', a dictionary
+        with the following form will be created:
+
+        .. code:: python
+
+            displacement_fields = {
+                'main_wing': array([
+                    [x1, y1, z1, ux1, uy1, uz1, tx1, ty1, tz1],
+                    [x2, y2, z2, ux2, uy2, uz2, tx2, ty2, tz2],
+                    ...
+                    [x3, y3, z3, ux3, uy3, uz3, tx3, ty3, tz3],
+                ]),
+                'fuselage': array([
+                    [x1, y1, z1, ux1, uy1, uz1, tx1, ty1, tz1],
+                    [x2, y2, z2, ux2, uy2, uz2, tx2, ty2, tz2],
+                    ...
+                    [x3, y3, z3, ux3, uy3, uz3, tx3, ty3, tz3],
+                ]),
+            }
         """
 
         displacement_fields = {}
-        for node in frame.finder.nodes.by_beamline_uid[beamline_uid]:
-            raise NotImplementedError
-
+        for beamline in frame.beamlines:
+            def_interpolator = self.get_beamline_interpolator(beamline.uid, frame)
+            displacement_fields[beamline.uid] = np.zeros((n_sup, 9))
+            for i, xsi in enumerate(np.linspace(0, 1, num=n_sup)):
+                point = beamline.interpolator(xsi)
+                def_vec = def_interpolator(xsi)
+                entry = np.concatenate([point, def_vec])
+                displacement_fields[beamline.uid][i, :] = entry
         return displacement_fields
-
-        # output should be
-        # dict :
-        # -- beamline names are key
-        # -- value: --> array with x, y, z, ux, uy, uz, tx, tx, tz

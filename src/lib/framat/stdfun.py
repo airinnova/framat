@@ -105,7 +105,11 @@ def standard_run(args=None, filestructure=None, model=None):
     if filestructure is None:
         filestructure = get_filestructure(args.filename, filecheck)
 
-    make_plots = args.no_plots
+    # TODO : MAKE BETTER
+    if args.no_plots:
+        make_plots = False
+    else:
+        make_plots = True
 
     # ===== Logging =====
     if args.verbose:
