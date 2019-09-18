@@ -45,21 +45,27 @@ DEFAULT_MODEL_FILENAME = f"{__prog_name__}_beam.json"
 
 
 class StdRunArgs:
-    """
-    Arguments used in 'standard_run'
 
-    Attributes:
-        :filename: name of file to be loaded
-        :verbose: boolean flag, true for verbose logger setting
-        :debug: boolean flag, true for debug logger setting
-    """
+    def __init__(self, filename=None, verbose=False, debug=False,
+                 quiet=False, no_schema_check=False, no_plots=False):
+        """
+        Arguments used in 'standard_run'
 
-    filename = None
-    verbose = False
-    debug = False
-    quiet = False
-    no_schema_check = False
-    no_plots = False
+        Attributes:
+            :filename: (str) Name of file to be loaded
+            :verbose: (bool) If True, verbose logger setting
+            :debug: (bool) If True, debug logger setting
+            :quiet: (bool) If True, quiet logger setting
+            :no_schema_check: (bool) If True, disable JSON schema validation
+            :no_plots: (bool) If True, no plots will be generated
+        """
+
+        self.filename = filename
+        self.verbose = verbose
+        self.debug = debug
+        self.quiet = quiet
+        self.no_schema_check = no_schema_check
+        self.no_plots = no_plots
 
 
 def get_filestructure(filename, filecheck=True):
