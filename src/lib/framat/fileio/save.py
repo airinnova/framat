@@ -83,8 +83,7 @@ def save_nodal_deformation(frame, U, filestructure):
     logger.info(f"Writing to file '{truncate_filepath(filename)}'")
 
     output = []
-    nnodes = frame.counter.nodes
-    for i in range(nnodes):
+    for i in range(frame.counter.nodes):
         line = {
             "node_num": i,
             "uid": frame.finder.nodes.by_number[i].uid,
@@ -134,9 +133,11 @@ def save_perimeter_line_def(frame, filestructure, n_points=20):
 
                 deformation = []
                 for s in np.linspace(0, 1, n_points):
-                    dline = {"s": s,
-                             "coord": list(perim_line.get_point(s)),
-                             "deform": list(perim_line.get_deformation(s))}
+                    dline = {
+                        "s": s,
+                        "coord": list(perim_line.get_point(s)),
+                        "deform": list(perim_line.get_deformation(s))
+                    }
                     deformation.append(dline)
 
                 line = {

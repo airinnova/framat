@@ -480,3 +480,26 @@ class Deformation:
 
         self.beamline_interpolators[beamline_uid] = def_interpolator
         return def_interpolator
+
+    def get_displacement_fields(self, frame, n_sup=20):
+        """
+        Returns beam displacement field
+
+        Args:
+            :frame: Frame object
+            :n_sup: Number of support points
+
+        Returns:
+            :displacement_fields: Dictionary with arrays of displacement fields
+        """
+
+        displacement_fields = {}
+        for node in frame.finder.nodes.by_beamline_uid[beamline_uid]:
+            raise NotImplementedError
+
+        return displacement_fields
+
+        # output should be
+        # dict :
+        # -- beamline names are key
+        # -- value: --> array with x, y, z, ux, uy, uz, tx, tx, tz
