@@ -3,6 +3,10 @@
 * Better interface work batch analyses...
 * GUI... sometime... based on model generator
 
+## Deprecate
+* `PerimeterLines()` (only marginally useful)
+* `get_deformation_of_point()` (potential bug)
+
 ## Important issues
 * Mass matrix --> get definitions correct --> "torsional constant"/"polar moment of inertia"?
 * In `Element()` --> Cover case --> Some loads may be given in global system and some given in local system (currently: if some loads defined in global system and some in local system, this might not work)
