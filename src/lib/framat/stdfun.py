@@ -112,16 +112,7 @@ def standard_run(args=None, filestructure=None, model=None):
         make_plots = True
 
     # ===== Logging =====
-    if args.verbose:
-        level = 'info'
-    elif args.debug:
-        level = 'debug'
-    elif args.quiet:
-        level = 'quiet'
-    else:
-        level = 'default'
-
-    hlogger.init(filestructure.files['log'], level)
+    hlogger.init(filestructure.files['log'], level=args)
     logger = logging.getLogger(__name__)
 
     # ===== LOAD THE MODEL =====

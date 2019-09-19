@@ -16,7 +16,7 @@ DESCRIPTION = 'FramAT (Frame Analysis Tool) is a tool for 3D FEM beam analyses'
 URL = 'https://github.com/airinnova/framat'
 REQUIRES_PYTHON = '>=3.6.0'
 REQUIRED = [
-    'commonlibs',
+    'commonlibs>=0.3.3',
     'jsonschema',
     'matplotlib==3.0.2',
     'numpy',
