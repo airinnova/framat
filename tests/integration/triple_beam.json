@@ -141,7 +141,6 @@
         ],
         "save_results":{
             "nodal_deformation":true,
-            "perimeter_lines":true,
             "mass_breakdown": true
         }
     }

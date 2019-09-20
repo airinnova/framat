@@ -46,9 +46,6 @@ def save_all(frame, save_results, filestructure):
         U = frame.deformation.U
         save_nodal_deformation(frame, U, filestructure)
 
-    if save_results.get('perimeter_lines', False):
-        save_perimeter_line_def(frame, filestructure)
-
     if save_results.get('mass_breakdown', False):
         save_mass_breakdown(frame, filestructure)
 
@@ -109,46 +106,6 @@ def save_nodal_reaction_loads(F_react, filestructure):
 
     # TODO: to be implemented
     pass
-
-
-def save_perimeter_line_def(frame, filestructure, n_points=20):
-    """
-    Save perimeter line deformation to a JSON file
-
-    Args:
-        :n_points: number of support points
-        :filestructure: file structure
-        :n_points: number of support points
-    """
-
-    filename = filestructure.files['results']['perimeter_lines']
-    logger.info(f"Writing to file '{truncate_filepath(filename)}'")
-
-    output = []
-    nbeamlines = frame.counter.beams
-    for i in range(nbeamlines):
-        beam = frame.finder.beamlines.by_number[i]
-        if beam.perimeter_line_list:
-            for perim_line in beam.perimeter_line_list:
-
-                deformation = []
-                for s in np.linspace(0, 1, n_points):
-                    dline = {
-                        "s": s,
-                        "coord": list(perim_line.get_point(s)),
-                        "deform": list(perim_line.get_deformation(s))
-                    }
-                    deformation.append(dline)
-
-                line = {
-                    "beam": beam.uid,
-                    "perimeter": perim_line.uid,
-                    "mirror": beam.mirror,
-                    "deform": deformation
-                }
-                output.append(line)
-
-    writejson(filename, output)
 
 
 def save_mass_breakdown(frame, filestructure):

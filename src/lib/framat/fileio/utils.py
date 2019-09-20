@@ -53,7 +53,6 @@ class FileStructure:
             "results": {
                 "nodal_displacements": os.path.join(self.dirname, self.basename, DIR_RESULTS, "nodal_displacements.json"),
                 "nodal_reactions": os.path.join(self.dirname, self.basename, DIR_RESULTS, "nodal_reactions.json"),
-                "perimeter_lines": os.path.join(self.dirname, self.basename, DIR_RESULTS, "perimeter_lines.json"),
                 "mass_breakdown": os.path.join(self.dirname, self.basename, DIR_RESULTS, "mass_breakdown.json"),
                 "work_breakdown": os.path.join(self.dirname, self.basename, DIR_RESULTS, "work_breakdown.json"),
                 }
