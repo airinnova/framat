@@ -52,13 +52,16 @@ class BeamLine:
     GET_CLOSEST_Y = '__GET_CLOSEST_Y'
     GET_CLOSEST_Z = '__GET_CLOSEST_Z'
 
-    FINDER_KEYWORDS = [GET_CLOSEST_NODE,
-                       GET_CLOSEST_X, GET_CLOSEST_Y, GET_CLOSEST_Z]
+    FINDER_KEYWORDS = [
+        GET_CLOSEST_NODE,
+        GET_CLOSEST_X,
+        GET_CLOSEST_Y,
+        GET_CLOSEST_Z,
+    ]
 
     def __init__(self, uid, nodes, nelem, beamprops, loads=None,
-                 perimeter_lines=None, symmetry=None, make_mirror=False,
-                 mirror_loads=None, mirror_beamprops=None, parent_frame=None,
-                 free_node_mapping=None):
+                 symmetry=None, make_mirror=False, mirror_loads=None,
+                 mirror_beamprops=None, parent_frame=None, free_node_mapping=None):
         """
         Beam line object (line in 3D space)
 
@@ -80,7 +83,6 @@ class BeamLine:
         self.input_nelem = nelem
         self.beamprops = beamprops
         self.loads = loads
-        self.perimeter_lines = perimeter_lines
         self.symmetry = symmetry
         self.mirror = make_mirror
         self.parent_frame = parent_frame
@@ -131,12 +133,10 @@ class BeamLine:
         # List of child objects
         self.elements = []
         self.free_nodes = []
-        self.perimeter_line_list = []
 
         self._make_elements()
         self._add_beam_properties()
         self._add_loads()
-        self._make_perimeter_lines()
 
     def __repr__(self):
         return self.__class__.__name__ + f" '{self.uid}' (no. {self.num})"
@@ -396,15 +396,6 @@ class BeamLine:
                 element = dest_node.parent_element
                 element.update_concentrated_loads(load_proj, elem_loc, is_loc_system=False)
 
-    def _make_perimeter_lines(self):
-        """
-        Make perimeter lines
-        """
-
-        if self.perimeter_lines is not None:
-            for line in self.perimeter_lines:
-                self.perimeter_line_list.append(PerimeterLine(self, line))
-
     @staticmethod
     def _get_dist_load_interpolator(load_list, from_xsi, to_xsi, keys):
         """
@@ -513,19 +504,6 @@ class BeamLine:
             node['uid'] += uid_suffix
             node['coord'] = mirror_point(node['coord'], self.symmetry)
             node['up'] = mirror_point(node['up'], self.symmetry)
-
-        # Modify perimeter lines
-        if self.perimeter_lines is not None:
-            for line in self.perimeter_lines:
-                line['uid'] += uid_suffix
-                line['from']['coord'] = mirror_point(line['from']['coord'], self.symmetry)
-                line['to']['coord'] = mirror_point(line['to']['coord'], self.symmetry)
-
-                if line['from']['node'].upper() not in PerimeterLine.SPECIAL_KEYWORDS:
-                    line['from']['node'] += uid_suffix
-
-                if line['to']['node'].upper() not in PerimeterLine.SPECIAL_KEYWORDS:
-                    line['to']['node'] += uid_suffix
 
         # ===== BEAM PROPERTIES =====
         if not self.has_mirror_beamprops:
@@ -695,51 +673,6 @@ class BeamLine:
         def_interpolator = self.parent_frame.deformation.get_beamline_interpolator(self.uid, self.parent_frame)
         return np.array(def_interpolator(xsi))
 
-    def get_deformation_of_point(self, point, in_range=(0, 1), use_xsi=None):
-        """
-        Return the deformation of a point which does not lie on the beam line
-
-        By default the deformation at the point in interpolated based on the
-        nearest beam node. If the parameter 'use_xsi' is given, this xsi
-        value is used instead.
-
-        Args:
-            :point: point at which deformation is to be interpolated
-            :in_range: xsi range (closest beam line point will be restricted to xsi range)
-            :use_xsi: use a specified xsi position (default is nearest node)
-
-        Returns:
-            :deformation: relative deformation at point
-        """
-
-        # If beam xsi position is specified, use it
-        if use_xsi is not None:
-            if not (0 <= use_xsi <= 1):
-                raise ValueError("use_xsi must be in range [0, 1]")
-
-            U_b = self.get_deformation(use_xsi)
-            beam_point = self.get_point(use_xsi)
-        # If beam xsi position is not specified, use nearest node position
-        else:
-            node, _ = self.get_closest_beam_node(point, in_range)
-            U_b = self.get_deformation(node.xsi)
-            beam_point = node.coord
-
-        # Deformation on the target (p)oint
-        U_p = np.zeros((6))
-        U_p += U_b
-
-        # Additional translation due to point being a distance r away from beam point
-        r = point - beam_point
-
-        r_rot = copy(r)
-        r_rot = rotate_vector_around_axis(r_rot, GS.UnitVectors.X, U_b[3])
-        r_rot = rotate_vector_around_axis(r_rot, GS.UnitVectors.Y, U_b[4])
-        r_rot = rotate_vector_around_axis(r_rot, GS.UnitVectors.Z, U_b[5])
-        U_p[0:3] += r_rot - r
-
-        return U_p
-
     def get_nodes_by_xsi(self, xsi):
         """
         Get a beam node for a given xsi position
@@ -804,91 +737,3 @@ def mirror_point(point, plane):
         raise ValueError("Invalid plane (plane: {})".format(plane))
 
     return point
-
-
-class PerimeterLine:
-
-    GET_CLOSEST_NODE = '__GET_CLOSEST_NODE'
-    SPECIAL_KEYWORDS = [GET_CLOSEST_NODE]
-
-    def __init__(self, beamline, perimeter_line):
-        """
-        Perimeter lines are optional child objects of beamline objects
-
-        Perimeter lines provide a geometric interpolation method. They can
-        be used to track the deformation of a line at some distance away from
-        the actual elastic beam axis.
-
-        Args:
-            :beamline: parent beamline object
-            :perimeter_line: data to generate the perimeter line
-
-        Attributes:
-            :uid: name of the perimeter line
-            :p1: coordinates of the first line point
-            :p2: coordinates of the second line point
-            :node1: first border
-            :node2: second border
-        """
-
-        self.parent_beamline = beamline
-        self.parent_frame = self.parent_beamline.parent_frame
-
-        self.uid = perimeter_line['uid']
-        self.p1 = perimeter_line['from']['coord']
-        self.p2 = perimeter_line['to']['coord']
-
-        # Names of nodes to which perimeter line is to be connected
-        self.node1_uid = perimeter_line['from']['node']
-        self.node2_uid = perimeter_line['to']['node']
-
-        # Get references to nodes one and two
-        if self.node1_uid.upper() == self.GET_CLOSEST_NODE:
-            self.node1, _ = self.parent_beamline.get_closest_beam_node(self.p1)
-            logger.debug(f"Perimeter line '{self.uid}': using closest node {self.node1.num} for point 1")
-        else:
-            self.node1 = self.parent_frame.finder.nodes.by_uid[self.node1_uid]
-
-        if self.node2_uid.upper() == self.GET_CLOSEST_NODE:
-            self.node2, _ = self.parent_beamline.get_closest_beam_node(self.p2)
-            logger.debug(f"Perimeter line '{self.uid}': using closest node {self.node2.num} for point 2")
-        else:
-            self.node2 = self.parent_frame.finder.nodes.by_uid[self.node2_uid]
-
-        self.interpolator = PointInterpolator((self.p1, self.p2))
-
-    def get_point(self, s):
-        """
-        Return a point on the perimeter line
-
-        Args:
-            :s: relative line coordinate [0, 1]
-
-        Returns:
-            :point: point on the perimeter line
-        """
-
-        return self.interpolator(s)
-
-    def get_deformation(self, s, same_rel_position=True):
-        """
-        Get the deformation for a point on the perimeter line
-
-        Args:
-            :s: relative line coordinate [0, 1]
-
-        Returns:
-            :def_point: deformed point on the perimeter line
-        """
-
-        point = self.get_point(s)
-
-        node1 = self.parent_frame.finder.nodes.by_number[self.node1.num]
-        node2 = self.parent_frame.finder.nodes.by_number[self.node2.num]
-        in_range = (node1.xsi, node2.xsi)
-
-        if same_rel_position:
-            xsi = node1.xsi + s*(node2.xsi - node1.xsi)
-            return self.parent_beamline.get_deformation_of_point(point, in_range, use_xsi=xsi)
-        else:
-            return self.parent_beamline.get_deformation_of_point(point, in_range)

@@ -290,7 +290,6 @@
                                 "plot_free_nodes":{"type":"boolean"},
                                 "plot_free_node_vectors":{"type":"boolean"},
                                 "plot_undeformed":{"type":"boolean"},
-                                "plot_undeformed_perimeter":{"type":"boolean"},
                                 "plot_inertia_symbols":{"type":"boolean"},
                                 "plot_accel_vector":{"type":"boolean"},
                                 "plot_inertia_loads":{"type":"boolean"},
@@ -330,7 +329,6 @@
                     "additionalProperties":false,
                     "properties": {
                         "nodal_deformation": {"type":"boolean"},
-                        "perimeter_lines": {"type":"boolean"},
                         "mass_breakdown": {"type":"boolean"},
                         "work_breakdown": {"type":"boolean"}
                     }

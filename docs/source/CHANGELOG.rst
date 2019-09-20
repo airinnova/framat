@@ -4,6 +4,17 @@ Changelog
 Changelog for FramAT. Version numbers try to follow `Semantic
 Versioning <https://semver.org/spec/v2.0.0.html>`__.
 
+[0.3.0] -- 2019-09-20
+---------------------
+
+Removed
+~~~~~~~
+
+* Removed `PerimeterLine()` object and corresponding functions. "Perimeter lines" were used to interpolate deformations at some distance away from the beam axis. Reason for removal:
+    * In general only marginally useful
+    * Potential bug in function `get_deformation_of_point()` (`fem.beamlines`)
+    * More general methods for interpolation of deformation fields now in `AeroFrame` package
+
 [0.2.0] -- 2019-09-12
 ---------------------
 

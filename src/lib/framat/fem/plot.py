@@ -79,7 +79,6 @@ PLOT3D_DEFAULTS = [
     ['plot_named_nodes', False],
     ['plot_nodes', False],
     ['plot_undeformed', True],
-    ['plot_undeformed_perimeter', False],
 
     ['set_amplify_displacement', 1],
     ['set_amplify_rotation', 1],
@@ -215,9 +214,6 @@ def create_3D_plot(frame, plot_settings, filestructure):
 
     if ps['plot_undeformed']:
         ax = _undeformed(ax, ps)
-
-    if ps['plot_undeformed_perimeter']:
-        ax = _beamline_perimeter(ax, ps)
 
     if ps['plot_named_nodes']:
         ax = _node_uids(ax, ps)
@@ -448,54 +444,6 @@ def _deformed(plot, ps):
             plot.plot(x, y, z, ':', linewidth=0.5*ps['set_linewidth'], color=COLOR_BC)
 
     return plot
-
-
-def _beamline_perimeter(plot, ps):
-    """
-    Add a beamline perimeter to a plot
-
-    Args:
-        :plot: plot
-        :ps: plot settings
-
-    Returns:
-        :plot: modified plot object
-    """
-
-    frame = ps['frame']
-
-    for beamline in frame.beamlines:
-        for line in beamline.perimeter_line_list:
-            p1 = line.p1
-            p2 = line.p2
-
-            node_points = np.array([p1, p2])
-            x = node_points[:, 0]
-            y = node_points[:, 1]
-            z = node_points[:, 2]
-
-            plot.plot(x, y, z, linewidth=ps['set_linewidth'], color='navy')
-
-#####################################
-#####################################
-#####################################
-# Plot deformed state
-            deformed = []
-            for s in np.linspace(0, 1, 10):
-                deformed.append(line.get_point(s) + line.get_deformation(s)[0:3])
-
-            node_points = np.array(deformed)
-            x = node_points[:, 0]
-            y = node_points[:, 1]
-            z = node_points[:, 2]
-
-            plot.plot(x, y, z, linewidth=ps['set_linewidth'], color='orange')
-
-    return plot
-
-#####################################
-#####################################
-#####################################
 
 
 def _boundary_conditions(plot, ps):

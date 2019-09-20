@@ -2691,7 +2691,6 @@
                 "plot_named_nodes": false,
                 "plot_nodes": true,
                 "plot_undeformed": true,
-                "plot_undeformed_perimeter": false,
                 "set_amplify_displacement": 1,
                 "set_amplify_rotation": 1,
                 "set_dpi": 300,
@@ -2709,7 +2708,6 @@
         ],
         "save_results": {
             "nodal_deformation": false,
-            "perimeter_lines": false,
             "mass_breakdown": false,
             "work_breakdown": false
         }

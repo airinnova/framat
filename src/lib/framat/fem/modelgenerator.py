@@ -508,7 +508,6 @@ class PostProc:
         self.plots = []
         self.save_results = {
             "nodal_deformation": False,
-            "perimeter_lines": False,
             "mass_breakdown": False,
             "work_breakdown": False,
         }
