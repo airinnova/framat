@@ -495,7 +495,7 @@ class Deformation:
             :n_sup: Number of support points (linearly spaced along the beam)
 
         Returns:
-            :displacement_fields: Dictionary with arrays of displacement fields
+            :def_fields: Dictionary with arrays of displacement fields
 
         Example:
 
@@ -504,7 +504,7 @@ class Deformation:
 
         .. code:: python
 
-            displacement_fields = {
+            def_fields = {
                 'main_wing': array([
                     [x1, y1, z1, ux1, uy1, uz1, tx1, ty1, tz1],
                     [x2, y2, z2, ux2, uy2, uz2, tx2, ty2, tz2],
@@ -520,13 +520,13 @@ class Deformation:
             }
         """
 
-        displacement_fields = {}
+        def_fields = {}
         for beamline in frame.beamlines:
             def_interpolator = self.get_beamline_interpolator(beamline.uid, frame)
-            displacement_fields[beamline.uid] = np.zeros((n_sup, 9))
+            def_fields[beamline.uid] = np.zeros((n_sup, 9))
             for i, xsi in enumerate(np.linspace(0, 1, num=n_sup)):
                 point = beamline.interpolator(xsi)
                 def_vec = def_interpolator(xsi)
                 entry = np.concatenate([point, def_vec])
-                displacement_fields[beamline.uid][i, :] = entry
-        return displacement_fields
+                def_fields[beamline.uid][i, :] = entry
+        return def_fields
