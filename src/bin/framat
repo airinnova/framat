@@ -48,8 +48,8 @@ def cmd_interface():
     # ----- Mode 'run' -----
     sub = subparsers.add_parser('run', help='run a FEM analysis')
     sub.add_argument('filename', metavar='filename', help='Input file', type=str)
-    sub.add_argument('--no-schema-check', action='store_false')
-    sub.add_argument('--no-plots', action='store_false', help='do not show any plots')
+    sub.add_argument('--no-schema-check', action='store_true')
+    sub.add_argument('--no-plots', action='store_true', help='do not show any plots')
 
     group = sub.add_mutually_exclusive_group()
     group.add_argument('-c', '--clean', help='remove old project files', action='store_true')
