@@ -182,9 +182,12 @@ def create_3D_plot(frame, plot_settings, filestructure):
     ax.set_xlim(*x_lims)
     ax.set_ylim(*y_lims)
     ax.set_zlim(*z_lims)
-    ax.set_aspect('equal')
-    set_equal_aspect_3D(ax)
 
+    # Raises a NotImplementedError in newer 'matplotlib' version
+    # See: https://github.com/matplotlib/matplotlib/issues/1077/
+    # ax.set_aspect('equal')
+
+    set_equal_aspect_3D(ax)
     ax.set_xlabel('X')
     ax.set_ylabel('Y')
     ax.set_zlabel('Z')
