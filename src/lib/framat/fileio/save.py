@@ -26,7 +26,6 @@ Save files
 import json
 import logging
 
-import numpy as np
 from commonlibs.logger import truncate_filepath
 
 logger = logging.getLogger(__name__)

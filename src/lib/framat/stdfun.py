@@ -29,7 +29,7 @@ import os
 import commonlibs.logger as hlogger
 
 from framat.__version__ import __version__
-from framat.fem.analysis import static_load_analysis, free_vibration_analysis
+from framat.fem.analysis import static_load_analysis
 from framat.fem.frame import Frame
 from framat.fem.properties import Materials, Profiles
 import framat.fem.plot as plot
@@ -135,17 +135,6 @@ def standard_run(args=None, filestructure=None, model=None):
     if analyses.get('static', False):
         U, F_react = static_load_analysis(frame)
         frame.deformation.U = U
-
-############################################################################
-############################################################################
-############################################################################
-    # # --- Make possible to perform both analyses ----
-    # if analyses.get('free_vibrations', False):
-    #     U = free_vibration_analysis(frame)
-    #     frame.deformation.U = U
-############################################################################
-############################################################################
-############################################################################
 
     # ===== POSTPROCESSING =====
     # ----- Save results -----

@@ -31,14 +31,10 @@ import numpy as np
 from scipy.interpolate import CubicSpline
 
 from framat.fem.element import Element
-from framat.fem.element import GlobalSystem as GS
 from framat.fem.interpolate import PointInterpolator, PropertyInterpolator
 from framat.helpers.iterators import pairwise
-from commonlibs.math.vectors import rotate_vector_around_axis
 
 logger = logging.getLogger(__name__)
-
-INFINITY = 1e100
 
 
 class ComponentDefinitionError(Exception):
@@ -563,7 +559,7 @@ class BeamLine:
         """
 
         xsi_min, xsi_max = in_range
-        closest_dist = INFINITY
+        closest_dist = np.inf
         closest_node = None
 
         # Dictionary with different search patterns

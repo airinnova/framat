@@ -1,18 +1,12 @@
 # TODO
 
-* Better interface work batch analyses...
-* GUI... sometime... based on model generator
-
-## Deprecate
-* `PerimeterLines()` (only marginally useful)
-* `get_deformation_of_point()` (potential bug)
-
 ## Important issues
 * Mass matrix --> get definitions correct --> "torsional constant"/"polar moment of inertia"?
 * In `Element()` --> Cover case --> Some loads may be given in global system and some given in local system (currently: if some loads defined in global system and some in local system, this might not work)
 * Reduce number of "upwards dependencies": "parent beam", "parent frame", ... (better for testing and code complexity)
 * `Frame()`: Work break down --> make work for individual beams
 * Check: Is FE bookkeeping handled correctly? (Loads/masses/etc. always applied to "primary" nodes! How prevent adding to "secondary nodes?")
+* Simplify JSON input file
 
 #### ----------------------------------------------------------------------
 
@@ -22,7 +16,6 @@
 * Torsional constant: `J` good name?
 * Add skew bending ($E_{yz} \neq 0$)
 * Analysis of free vibrations
-* Make `PerimeterLines()` `SPECIAL_KEYWORDS` more general (combine with `BeamLines()` ...)
 * Define the element/beam orientation with direction cosines as alternative option (check: how done in COMSOL?)
 * Rename local nodes (1) and (2) to (a) and (b)? (less confusing?)
 
@@ -41,17 +34,18 @@
 * Option to choose either linear or cubic interpolation when computing new points? And/or use approach as in COMSOL? (build from "shapes": rectangles, circles, ...)
 * Mirrored loads --> sensible default?
 * Add check: have beam props been applied from first to last node?
-* Make free node objects?
 * More compact: `_get_property_interpolator` and `_get_dist_load_interpolator`
 
 #### ----------------------------------------------------------------------
 
 ## Feature ideas
 * Use a "ModelGenerator" to create a frame (create `Frame()` from dictionary or class?)
+* GUI
 * Use a "pathlib" for handling of paths
 * Compute stresses
 * Timoshenko beam theory
 * Non-linear beam theory
+* Thermal loads
 
 ### Reference axes
 * Shear: Model off-centre shear axis (skew bending) --> see also COMSOL documentation
