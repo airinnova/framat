@@ -23,9 +23,13 @@
 FEM properties
 """
 
+from collections import defaultdict
+
 from framat.fem.element import Element
+from framat.helpers.moresyntax import PropertyHandler
 
 
+# XXX: BACKCOMP =====
 class Materials:
 
     def __init__(self):
@@ -42,7 +46,6 @@ class Materials:
                                for key in Element.MATERIAL_PROPS})
         return instance
 
-
 class Profiles:
 
     def __init__(self):
@@ -58,3 +61,20 @@ class Profiles:
             instance.add_entry(material['uid'], {key: material[key]
                                for key in Element.PROFIL_PROPS})
         return instance
+# ================
+# ================
+# ================
+
+
+class Material(PropertyHandler):
+    def __init__(self):
+        super().__init__()
+        self.allowed_keys = Element.MATERIAL_PROPS
+        self.props = {key: 0 for key in self.allowed_keys}
+
+
+class CrossSection(PropertyHandler):
+    def __init__(self):
+        super().__init__()
+        self.allowed_keys = Element.CROSS_SECTION_PROPS
+        self.props = {key: 0 for key in self.allowed_keys}

@@ -76,8 +76,14 @@ class Element:
     DOF_PER_NODE = 6
 
     MATERIAL_PROPS = ('E', 'G', 'rho')
+    CROSS_SECTION_PROPS = ('A', 'Iy', 'Iz', 'J')
+    PROP_TYPES = MATERIAL_PROPS + CROSS_SECTION_PROPS
+
+    # XXX: BACKCOMP =====
     PROFIL_PROPS = ('A', 'Iy', 'Iz', 'J')
-    PROP_TYPES = MATERIAL_PROPS + PROFIL_PROPS
+    # ==========
+    # ==========
+    # ==========
 
     POINT_PROPS = ('m1', 'm2')
 

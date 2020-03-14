@@ -42,3 +42,19 @@ def enumerate_with_step(iterable, start=0, step=1):
     for x in iterable:
         yield (start, x)
         start += step
+
+
+class PropertyHandler:
+
+    def __init__(self):
+        self.props = {}
+        self.allowed_keys = None
+
+    def set(self, prop, value):
+        if self.allowed_keys and prop not in self.allowed_keys:
+            raise KeyError
+
+        self.props[prop] = value
+
+    def get(self, prop):
+        return self.props[prop]
