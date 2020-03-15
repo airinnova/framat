@@ -41,7 +41,7 @@ class PropertyHandler:
 
     # TODO:
     # - Schema check of values to be set/added
-    # - Define which properties can be set and which can be added
+    # - Define which properties can be set and which can be added (i.e. which are list-like!?)
 
     def __init__(self):
         self.props = {}
@@ -73,7 +73,6 @@ class PropertyHandler:
         self._raise_error_if_key_not_allowed(key)
         self._append_prop_to_list(key, value)
 
-    # ---------- Retrieve data ----------
     def get(self, key):
         return self.props[key]
 
@@ -91,6 +90,11 @@ class PropertyHandler:
 
     def _append_prop_to_list(self, key, value):
         """
+        Append a value to a property list
+
+        Args:
+            :key: (str) name of the property to set
+            :value: (any) value of the property
         """
 
         if key not in self.props:
@@ -98,6 +102,20 @@ class PropertyHandler:
         elif not isinstance(self.props[key], list):
             raise ValueError
         self.props[key].append(value)
+
+
+class Material(PropertyHandler):
+    def __init__(self):
+        super().__init__()
+        self.allowed_keys = Element.MATERIAL_PROPS
+        self.props = {key: 0 for key in self.allowed_keys}
+
+
+class CrossSection(PropertyHandler):
+    def __init__(self):
+        super().__init__()
+        self.allowed_keys = Element.CROSS_SECTION_PROPS
+        self.props = {key: 0 for key in self.allowed_keys}
 
 
 # ======================================================================
@@ -150,20 +168,6 @@ class Model:
 
     def remove_result(self, uid):
         del self.result[uid]
-
-
-class Material(PropertyHandler):
-    def __init__(self):
-        super().__init__()
-        self.allowed_keys = Element.MATERIAL_PROPS
-        self.props = {key: 0 for key in self.allowed_keys}
-
-
-class CrossSection(PropertyHandler):
-    def __init__(self):
-        super().__init__()
-        self.allowed_keys = Element.CROSS_SECTION_PROPS
-        self.props = {key: 0 for key in self.allowed_keys}
 
 
 class Beam:
