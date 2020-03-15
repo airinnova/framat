@@ -7,7 +7,7 @@ Test the Python API
 
 import pytest
 
-from framat.modelgenerator import Model
+from framat.model import Model
 
 
 def test_model_attrs():

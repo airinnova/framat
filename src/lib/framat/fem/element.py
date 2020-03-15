@@ -79,12 +79,6 @@ class Element:
     CROSS_SECTION_PROPS = ('A', 'Iy', 'Iz', 'J')
     PROP_TYPES = MATERIAL_PROPS + CROSS_SECTION_PROPS
 
-    # XXX: BACKCOMP =====
-    PROFIL_PROPS = ('A', 'Iy', 'Iz', 'J')
-    # ==========
-    # ==========
-    # ==========
-
     POINT_PROPS = ('m1', 'm2')
 
     DEFORM_TYPES = ('ux', 'uy', 'uz', 'tx', 'ty', 'tz')
