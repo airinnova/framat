@@ -118,21 +118,18 @@ class CrossSection(PropertyHandler):
         self.props = {key: 0 for key in self.allowed_keys}
 
 
-# ======================================================================
-# ======================================================================
-# ======================================================================
-
-
 class Model:
+    """
+    The model object is a full description of the beam model to be analysed
+
+    The system matrices will be derived from the model object
+    """
 
     def __init__(self):
         self.material = {}
         self.cross_section = {}
         self.beam = {}
         self.study = {}
-        self.result = {}
-
-        # self._frame = Frame()
 
     # ---------- Material ----------
     def add_material(self, uid):
@@ -146,7 +143,7 @@ class Model:
         self.cross_section[uid] = CrossSection()
 
     def remove_cross_section(self, uid):
-        del self.material[uid]
+        del self.cross_section[uid]
 
     # ---------- Beam ----------
     def add_beam(self, uid):
@@ -157,17 +154,16 @@ class Model:
 
     # ---------- Study ----------
     def add_study(self, uid):
-        pass
+        self.study[uid] = None
 
     def remove_study(self, uid):
         del self.study[uid]
 
-    # ---------- Result ----------
-    def add_result(self, uid):
-        pass
+    # /// RESULTS SHOULD BE A CHILD OBJECT OF STUDY
 
-    def remove_result(self, uid):
-        del self.result[uid]
+# ======================================================================
+# ======================================================================
+# ======================================================================
 
 
 class Beam:
