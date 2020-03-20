@@ -7,7 +7,7 @@ Test the PropertyHandler in the Python API
 
 import pytest
 
-from framat.model import Material, CrossSection
+from framat.model import Material
 
 
 def test_material():
@@ -24,20 +24,3 @@ def test_material():
 
     with pytest.raises(KeyError):
         material.set('PROPERTY_DOES_NOT_EXIST', 1)
-
-
-def test_cross_section():
-    """Test the CrossSection class"""
-
-    cross_section = CrossSection()
-    cross_section.set('A', 23)
-    cross_section.set('Iy', 55)
-    cross_section.set('Iz', 2)
-
-    assert cross_section.get('A') == 23
-    assert cross_section.get('Iy') == 55
-    assert cross_section.get('Iz') == 2
-
-    with pytest.raises(KeyError):
-        cross_section.set('PROPERTY_DOES_NOT_EXIST', 1)
-

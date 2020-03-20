@@ -18,14 +18,17 @@ def test_property_handler():
             super().__init__()
 
     model = TestModel()
-    model.allowed_keys = ('A', 'B', 'C', 'D')
+    model._add_prop_spec('A', int, allow_overwrite=False)
+    model._add_prop_spec('B', int)
+    model._add_prop_spec('C', int, is_listlike=True)
+    model._add_prop_spec('D', int)
 
     # ========== set() method ==========
     model.set('A', 5)
     model.set('B', 8)
 
-    # Check that key cannot be overwritten
-    model.allow_overwrite = False
+    # Check that key can/cannot be overwritten
+    model.set('B', 5)
     with pytest.raises(KeyError):
         model.set('A', 5)
 
@@ -35,7 +38,7 @@ def test_property_handler():
 
     # Check the added values
     assert model.get('A') == 5
-    assert model.get('B') == 8
+    assert model.get('B') == 5
 
     # ========== add() method ==========
     model.add('C', 11)
