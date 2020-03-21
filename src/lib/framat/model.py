@@ -107,7 +107,7 @@ class PropertyHandler:
         self._raise_err_key_not_allowed(key)
         self._raise_err_overwrite_not_allowed(key)
         if self._prop_schemas[key]['is_listlike']:
-            raise RuntimeError(f"Method 'set()' does not apply to '{key}'")
+            raise RuntimeError(f"Method 'set()' does not apply to '{key}', try 'add()'")
         self._raise_err_incorrect_type(key, value)
 
         self._props[key] = value
@@ -169,6 +169,13 @@ class Material(PropertyHandler):
             self._add_prop_spec(prop, Number, is_required=True)
 
 
+class CrossSection(PropertyHandler):
+    def __init__(self):
+        super().__init__()
+        for prop in Element.CROSS_SECTION_PROPS:
+            self._add_prop_spec(prop, Number, is_required=True)
+
+
 class Beam(PropertyHandler):
 
     _SCHEMA_NODE = {
@@ -221,6 +228,48 @@ class Beam(PropertyHandler):
         self._add_prop_spec('load', self._SCHEMA_LOAD_POINT, is_listlike=True)
 
 
+class BoundaryCondition(PropertyHandler):
+
+    _SCHEMA_FIX = {
+        '__REQUIRED_KEYS': ['node', 'fix'],
+        'node': {'type': str},
+        'fix': {'type': list, 'min_len': 1, 'max_len': 6, 'item_types': str},
+    }
+
+    _SCHEMA_CONNECT = {
+        '__REQUIRED_KEYS': ['node1', 'node2', 'fix'],
+        'node1': {'type': str},
+        'node2': {'type': str},
+        'fix': {'type': list, 'min_len': 1, 'max_len': 6, 'item_types': str},
+    }
+
+    def __init__(self):
+        super().__init__()
+        self._add_prop_spec('fix', self._SCHEMA_FIX, is_listlike=True)
+        self._add_prop_spec('connect', self._SCHEMA_CONNECT, is_listlike=True)
+
+
+class Study(PropertyHandler):
+
+    def __init__(self):
+        super().__init__()
+        self._add_prop_spec('type', str)
+
+
+class Result(PropertyHandler):
+
+    # TODO: extend schema!
+    _SCHEMA_PLOT = {
+        '__REQUIRED_KEYS': ['args'],
+        'args': {'type': list, 'min_len': 1, 'item_types': dict},
+    }
+
+    def __init__(self):
+        super().__init__()
+        self._add_prop_spec('study', str, is_required=True)
+        self._add_prop_spec('plot', self._SCHEMA_PLOT, is_listlike=True)
+
+
 class Model:
     """
     The model object is a full description of the beam model to be analysed
@@ -232,27 +281,62 @@ class Model:
         self.material = {}
         self.cross_section = {}
         self.beam = {}
+        self.boundary_condition = {}
         self.study = {}
+        self.result = {}
 
-    # ---------- Material ----------
-    def add_material(self, uid):
+    def add_material(self, uid=None):
+        uid = self._set_uid(uid)
         self.material[uid] = Material()
+        return uid
 
     def remove_material(self, uid):
         del self.material[uid]
 
-    # ---------- Beam ----------
-    def add_beam(self, uid):
+    def add_cross_section(self, uid=None):
+        uid = self._set_uid(uid)
+        self.cross_section[uid] = CrossSection()
+        return uid
+
+    def remove_cross_section(self, uid):
+        del self.cross_section[uid]
+
+    def add_beam(self, uid=None):
+        uid = self._set_uid(uid)
         self.beam[uid] = Beam()
+        return uid
 
     def remove_beam(self, uid):
         del self.beam[uid]
 
-    # ---------- Study ----------
-    def add_study(self, uid):
-        self.study[uid] = None
+    def add_boundary_condition(self, uid=None):
+        uid = self._set_uid(uid)
+        self.boundary_condition[uid] = BoundaryCondition()
+        return uid
+
+    def remove_boundary_condition(self, uid):
+        del self.boundary_condition[uid]
+
+    def add_study(self, uid=None):
+        uid = self._set_uid(uid)
+        self.study[uid] = Study()
+        return uid
 
     def remove_study(self, uid):
         del self.study[uid]
 
-    # /// RESULTS SHOULD BE A CHILD OBJECT OF STUDY
+    def add_result(self, uid=None):
+        uid = self._set_uid(uid)
+        self.result[uid] = Result()
+        return uid
+
+    def remove_result(self, uid):
+        del self.result[uid]
+
+    def _set_uid(self, uid):
+        if uid is None:
+            return get_uuid()
+        if not isinstance(uid, str):
+            raise ValueError(f"UID must be of type str, not {type(uid)}")
+        else:
+            return uid
