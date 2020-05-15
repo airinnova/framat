@@ -4,6 +4,20 @@ Changelog
 Changelog for FramAT. Version numbers try to follow `Semantic
 Versioning <https://semver.org/spec/v2.0.0.html>`__.
 
+[0.4.0] -- 2020-05-15
+---------------------
+
+Added
+~~~~~
+
+* New Python API (entry point is ``from framat import Model``)
+
+Removed
+~~~~~~~
+
+* Removed command-line interface in favour of pure Python API
+* Dropped support for JSON files
+
 [0.3.1] -- 2019-10-07
 ---------------------
 

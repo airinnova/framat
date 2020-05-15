@@ -10,13 +10,11 @@ Welcome to |name|'s documentation!
 
 * |eb| beam analyses in 3D
 * Assembly of complex beam structures
-* Model definition with JSON files or with a model generator library
+* Simple to use and documented Python API
 * Highly automatable model generation
-* Elaborate definition of beam geometry and properties
-* Elaborate definition of loads
-* Python library for model generation
+* Elaborate definition of beam geometry, properties and loads
 * Highly customisable plots
-* Hooks for post-processing
+* Elaborate result objects post-processing
 
 .. figure:: _static/images/main.png
    :width: 500 px
@@ -30,10 +28,7 @@ Welcome to |name|'s documentation!
    :caption: User guide
 
    user_guide/installation
-   user_guide/getting_started
-   user_guide/detailed_user_guide
-   user_guide/tutorials
-   user_guide/limitations
+   api/model_api
 
 .. toctree::
    :maxdepth: 2

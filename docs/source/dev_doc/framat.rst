@@ -5,27 +5,14 @@ Subpackages
 -----------
 
 .. toctree::
+   :maxdepth: 4
 
-    framat.fem
-    framat.fileio
-    framat.helpers
-
-Submodules
-----------
-
-framat.stdfun module
---------------------
-
-.. automodule:: framat.stdfun
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
+   framat.fem
 
 Module contents
 ---------------
 
 .. automodule:: framat
-    :members:
-    :undoc-members:
-    :show-inheritance:
+   :members:
+   :undoc-members:
+   :show-inheritance:

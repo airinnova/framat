@@ -140,8 +140,3 @@ class Model(mspec.user_class):
     def run(self):
         super().run()
         run_model(self)
-
-
-if __name__ == '__main__':
-    from mframework import doc2rst
-    print(doc2rst(mspec.get_docs()))
