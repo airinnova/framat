@@ -21,6 +21,7 @@ REQUIRED = [
     'matplotlib>=3.0.2',
     'numpy',
     'scipy',
+    'model-framework',
 ]
 README = 'README.rst'
 PACKAGE_DIR = 'src/lib/'
