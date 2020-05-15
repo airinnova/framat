@@ -18,6 +18,14 @@ Removed
 * Removed command-line interface in favour of pure Python API
 * Dropped support for JSON files
 
+[0.3.2] -- 2020-05-04
+---------------------
+
+Added
+~~~~~
+
+* Minor changes
+
 [0.3.1] -- 2019-10-07
 ---------------------
 

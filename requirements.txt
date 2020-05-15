@@ -2,6 +2,7 @@ Sphinx==1.8.5
 codecov==2.0.15
 commonlibs>=0.4.0
 matplotlib>=3.0.2
+model-framework
 numpy==1.16.4
 pytest-cov==2.7.1
 pytest==5.0.1
@@ -9,4 +10,3 @@ schemadict>=0.0.8
 scipy==1.4.1
 sphinx-rtd-theme==0.4.3
 tox==3.13.2
-model-framework
