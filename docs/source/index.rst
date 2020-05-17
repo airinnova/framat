@@ -30,6 +30,7 @@ Welcome to |name|'s documentation!
    user_guide/installation
    api/model_api_general
    api/model_api
+   api/result_api
 
 .. toctree::
    :maxdepth: 2

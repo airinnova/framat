@@ -90,6 +90,9 @@ class Schema:
         }
 
 
+# =================
+# ===== MODEL =====
+# =================
 mspec = ModelSpec()
 
 # ===== Material =====
@@ -121,7 +124,7 @@ mspec.add_feature_spec('beam', fspec, singleton=False, required=False, doc='Cros
 # ===== Boundary conditions =====
 fspec = FeatureSpec()
 fspec.add_item_spec('fix', Schema.bc.fix, doc="Fix a beam node")
-fspec.add_item_spec('bc', Schema.bc.connect, doc="Connect two beam nodes")
+fspec.add_item_spec('connect', Schema.bc.connect, doc="Connect two beam nodes")
 mspec.add_feature_spec('bc', fspec, singleton=True, required=True, doc='Cross-section properties')
 
 # ===== Study =====
@@ -134,6 +137,17 @@ fspec = FeatureSpec()
 fspec.add_item_spec('plot', Schema.pp.plot, doc="Add a plot")
 mspec.add_feature_spec('post_proc', fspec, singleton=True, required=True, doc='Cross-section properties')
 
+# ===================
+# ===== RESULTS =====
+# ===================
+rspec = ModelSpec()
+
+# ===== Deformation =====
+fspec = FeatureSpec()
+fspec.add_item_spec('max', Schema.positive_number, required=True, doc="Maximum deformation")
+rspec.add_feature_spec('deformation', fspec, doc='Deformation')
+
+mspec.results = rspec
 
 # ===== MODEL =====
 class Model(mspec.user_class):

@@ -6,7 +6,6 @@ available features and properties. The model object has the following features:
 
 
 
-
 .. mermaid::
 
     graph TD
@@ -208,7 +207,7 @@ Property: A
    :align: left
    :alt: required
 
-*Required*: True
+*Required*: False
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
    :align: left
@@ -248,7 +247,7 @@ Property: Iy
    :align: left
    :alt: required
 
-*Required*: True
+*Required*: False
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
    :align: left
@@ -288,7 +287,7 @@ Property: Iz
    :align: left
    :alt: required
 
-*Required*: True
+*Required*: False
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
    :align: left
@@ -328,7 +327,7 @@ Property: J
    :align: left
    :alt: required
 
-*Required*: True
+*Required*: False
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
    :align: left
@@ -383,7 +382,7 @@ Property: nelem
    :align: left
    :alt: singleton
 
-*Singleton*: True
+*Singleton*: False
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
@@ -423,7 +422,7 @@ Property: node
    :align: left
    :alt: singleton
 
-*Singleton*: True
+*Singleton*: False
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
@@ -464,7 +463,7 @@ Property: accel
    :align: left
    :alt: singleton
 
-*Singleton*: True
+*Singleton*: False
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
@@ -505,7 +504,7 @@ Property: orientation
    :align: left
    :alt: singleton
 
-*Singleton*: True
+*Singleton*: False
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
@@ -547,7 +546,7 @@ Property: material
    :align: left
    :alt: singleton
 
-*Singleton*: True
+*Singleton*: False
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
@@ -589,7 +588,7 @@ Property: cross_section
    :align: left
    :alt: singleton
 
-*Singleton*: True
+*Singleton*: False
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
@@ -631,7 +630,7 @@ Property: load
    :align: left
    :alt: singleton
 
-*Singleton*: True
+*Singleton*: False
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
@@ -699,7 +698,7 @@ Property: fix
    :align: left
    :alt: required
 
-*Required*: False
+*Required*: True
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
    :align: left
@@ -713,15 +712,15 @@ Property: fix
      **fix**       {'type': <class 'list'>, 'min_len': 1, 'max_len': 6, 'item_types': <class 'str'>}
 ================== =================================================================================
 
-Property: bc
-~~~~~~~~~~~~
+Property: connect
+~~~~~~~~~~~~~~~~~
 
 .. mermaid::
 
     graph LR
     A[Model]
     A --> F1[bc] 
-    F1 --> P1[bc] 
+    F1 --> P1[connect] 
 
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/notes.svg
@@ -740,7 +739,7 @@ Property: bc
    :align: left
    :alt: required
 
-*Required*: False
+*Required*: True
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
    :align: left
@@ -803,7 +802,7 @@ Property: type
    :align: left
    :alt: required
 
-*Required*: False
+*Required*: True
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
    :align: left
@@ -864,7 +863,7 @@ Property: plot
    :align: left
    :alt: required
 
-*Required*: False
+*Required*: True
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
    :align: left
