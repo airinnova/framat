@@ -119,7 +119,10 @@ evaluation of the model.
 Results
 -------
 
-TODO
+The ``run()`` method returns an object with which you can interact pretty much
+in the same way as the ``Model`` object. Results are group into "features"
+which have properties. You can retrieve data using the ``get()`` and ``iter()``
+methods mentioned above.
 
 
 

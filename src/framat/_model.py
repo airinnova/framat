@@ -97,6 +97,7 @@ mspec = ModelSpec()
 
 # ===== Material =====
 fspec = FeatureSpec()
+fspec.add_item_spec('uid', Schema.string, required=True, doc="Material UID")
 fspec.add_item_spec('E', Schema.positive_number, required=True, doc="Young's modulus")
 fspec.add_item_spec('G', Schema.positive_number, required=True, doc="Shear modulus")
 fspec.add_item_spec('rho', Schema.positive_number, required=True, doc="Density")
@@ -104,6 +105,7 @@ mspec.add_feature_spec('material', fspec, doc='Material properties')
 
 # ===== Cross-section =====
 fspec = FeatureSpec()
+fspec.add_item_spec('uid', Schema.string, required=True, doc="Cross section UID")
 fspec.add_item_spec('A', Schema.positive_number, required=True, doc="Area")
 fspec.add_item_spec('Iy', Schema.positive_number, required=True, doc="Second moment of area about the local y-axis")
 fspec.add_item_spec('Iz', Schema.positive_number, required=True, doc="Second moment of area about the local z-axis")
@@ -113,11 +115,11 @@ mspec.add_feature_spec('cross_section', fspec, required=False, doc='Cross-sectio
 # ===== Beam =====
 fspec = FeatureSpec()
 fspec.add_item_spec('nelem', Schema.positive_int, doc="Number of beam elements")
-fspec.add_item_spec('node', Schema.beam.node, doc="Add a beam node")
+fspec.add_item_spec('node', Schema.beam.node, singleton=False, doc="Add a beam node")
 fspec.add_item_spec('accel', Schema.beam.accel, doc="Define a translational acceleration")
 fspec.add_item_spec('orientation', Schema.beam.orientation, doc="Define the beam orientation")
-fspec.add_item_spec('material', Schema.beam.material, doc="Add a material")
-fspec.add_item_spec('cross_section', Schema.beam.cross_section, doc="Add a cross section")
+fspec.add_item_spec('material', Schema.beam.material, singleton=False, doc="Add a material")
+fspec.add_item_spec('cross_section', Schema.beam.cross_section, singleton=False, doc="Add a cross section")
 fspec.add_item_spec('load', Schema.beam.load_point, doc="Add a point load")
 mspec.add_feature_spec('beam', fspec, singleton=False, required=False, doc='Cross-section properties')
 

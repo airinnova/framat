@@ -7,7 +7,7 @@ Generate the model API docuementation
 
 import os
 
-from mframework._documentation import doc2rst
+from mframework import doc2rst
 
 from framat._model import mspec
 
