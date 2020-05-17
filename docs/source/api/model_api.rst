@@ -1,407 +1,879 @@
 Model
 =====
 
-
-This page describes the usage of the ``Model`` object. This object provides a
-pure Python API, so some basic knowledge about Python is assumed.
-
-**The model paradigm:** A ``Model`` consists one or more *features*. For
-instance, an *aircraft* model might have the feature *propulsion* and the
-feature *wing*. Such a feature consists of one or more *properties*. Concrete
-values can be assigned to properties. So, in our example propulsion might have
-the properties *thrust* and *type*, and the *wing* feature might have
-properties *span* and *mount_point* (e.g. for an engine, landing gear, or some
-other technical system). We may assign some values to each of these properties.
-For instance, we may set thrust to :math:`50 \textrm{kN}` or the span to
-:math:`20 \textrm{m}`. How do we set these values in a Python script?
-
-.. code:: python
-
-    model = Model()
-
-    prop = model.set_feature('propulsion')
-    prop.set('thrust', 50e3)
-    prop.set('type', 'turbofan engine')
-
-    wing = model.add_feature('wing')
-    wing.set('span', 20)
-    wing.add('mount_point', (4, 2, 4))
-    wing.add('mount_point', (4, 6, 4))
-    wing.add('mount_point', (4, 20, 4))
-
-Notice the method ``add_feature()``. When calling this method, we create a
-*instance* of the feature we want to add (here ``'propulsion'`` and ``'wing'``).
-The feature instance has ``set()`` and ``add()`` methods to assign a value to
-some property. The model object will check the value. That means that you must
-provide a number for the property *trust*. If you try to assign, say a string
-(``'50e3'``), an error will be thrown, and the model will not continue to be
-built.
+Below you will find a comprehensive list of all
+available features and properties. The model object has the following features:
 
 
-.. figure:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/model_api_hierarchy.svg
-   :alt: Model hierarchy
-   :align: center
 
-   A model object can have multiple features, and each feature can have
-   multiple sub features
 
-**Model and feature methods:** The ``Model`` object and its features provide only few
-methods. The only thing to remember is that there are ``set*`` and ``add*``
-methods. The ``set*`` method will always apply if there can only be one
-instance, and the ``add*`` method will apply if there can be multiple
-instances. For example, an aircraft can have more than one wing, hence the
-``add_feature()`` method applies. To create another wing, we simply call the
-method again. However, some feature may only exists once. In our dummy aircraft
-model, we impose the restriction of only adding *one* propulsion feature
-(\*arguably, an aircraft model could have multiple propulsion instances, but
-here we assume otherwise). To highlight that the model is *singleton*, we use
-the ``set_feature()`` method. Trying to use ``add_feature('propulsion')`` will
-result in an error and the model will not continue to build. Property value in
-a feature can be assigned with the ``add()`` and ``set()`` methods, depending
-on whether the properties are singleton or not. In the example above, the wing
-may have multiple mount points, but there can only be a single wing span.
+.. mermaid::
 
-+---------------+----------------------------------+---------------------------------+
-|               | **Model**                        | **Feature**                     |
-+---------------+----------------------------------+---------------------------------+
-| Singleton     | ``set_feature('feature_name')``  | ``set('property_name', value)`` |
-+---------------+----------------------------------+---------------------------------+
-| Non-singleton | ``add_feature('feature_name')``  | ``add('property_name', value)`` |
-+---------------+----------------------------------+---------------------------------+
-
-===== TODO ===== Retrieve objects/values ...
-
-+---------------+--------------------------+---------------------------+
-|               | **Model**                | **Feature**               |
-+---------------+--------------------------+---------------------------+
-| Singleton     | ``get('feature_name')``  | ``get('property_name')``  |
-+---------------+--------------------------+---------------------------+
-| Non-singleton | ``iter('feature_name')`` | ``iter('property_name')`` |
-+---------------+--------------------------+---------------------------+
-
-**Running the model** The last thing you need to know is how to run the model.
-Once you set up the entire, you can call the ``run()`` method. This method will
-start the actual evaluation of the model.
-
-.. code:: python
-
-    model = Model()
-    ...  # Add features and assign values here
-    results = model.run()
-
-**Results** ===== TODO =====
-
+    graph TD
+    A[Model]
+    A --> F0[material]
+    A --> F1[cross_section]
+    A --> F2[beam]
+    A --> F3[bc]
+    A --> F4[study]
+    A --> F5[post_proc]
 
 
 Feature: material
 -----------------
 
-**Description**: Material properties
-**Singleton**: True
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/notes.svg
+   :align: left
+   :alt: description
 
-**Required**: True
+*Description*: Material properties
 
-Property: E [Parent feature: material]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
+   :align: left
+   :alt: singleton
 
-**Description**: Young's modulus
+*Singleton*: True
 
-**Singleton**: True
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
+   :align: left
+   :alt: required
 
-**Required**: True
+*Required*: True
 
-**Schema**:
+Property: E
+~~~~~~~~~~~
 
-* *type*: <class 'numbers.Number'>
-* *>*: 0
+.. mermaid::
 
-Property: G [Parent feature: material]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    graph LR
+    A[Model]
+    A --> F1[material] 
+    F1 --> P1[E] 
 
-**Description**: Shear modulus
 
-**Singleton**: True
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/notes.svg
+   :align: left
+   :alt: description
 
-**Required**: True
+*Description*: Young's modulus
 
-**Schema**:
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
+   :align: left
+   :alt: singleton
 
-* *type*: <class 'numbers.Number'>
-* *>*: 0
+*Singleton*: True
 
-Property: rho [Parent feature: material]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
+   :align: left
+   :alt: required
 
-**Description**: Density
+*Required*: True
 
-**Singleton**: True
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
+   :align: left
+   :alt: schema
 
-**Required**: True
+*Schema*:
 
-**Schema**:
+======== ========================
+**type** <class 'numbers.Number'>
+ **>**              0            
+======== ========================
 
-* *type*: <class 'numbers.Number'>
-* *>*: 0
+Property: G
+~~~~~~~~~~~
+
+.. mermaid::
+
+    graph LR
+    A[Model]
+    A --> F1[material] 
+    F1 --> P1[G] 
+
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/notes.svg
+   :align: left
+   :alt: description
+
+*Description*: Shear modulus
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
+   :align: left
+   :alt: singleton
+
+*Singleton*: True
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
+   :align: left
+   :alt: required
+
+*Required*: True
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
+   :align: left
+   :alt: schema
+
+*Schema*:
+
+======== ========================
+**type** <class 'numbers.Number'>
+ **>**              0            
+======== ========================
+
+Property: rho
+~~~~~~~~~~~~~
+
+.. mermaid::
+
+    graph LR
+    A[Model]
+    A --> F1[material] 
+    F1 --> P1[rho] 
+
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/notes.svg
+   :align: left
+   :alt: description
+
+*Description*: Density
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
+   :align: left
+   :alt: singleton
+
+*Singleton*: True
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
+   :align: left
+   :alt: required
+
+*Required*: True
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
+   :align: left
+   :alt: schema
+
+*Schema*:
+
+======== ========================
+**type** <class 'numbers.Number'>
+ **>**              0            
+======== ========================
 
 Feature: cross_section
 ----------------------
 
-**Description**: Cross-section properties
-**Singleton**: True
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/notes.svg
+   :align: left
+   :alt: description
 
-**Required**: False
+*Description*: Cross-section properties
 
-Property: A [Parent feature: cross_section]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
+   :align: left
+   :alt: singleton
 
-**Description**: Area
+*Singleton*: True
 
-**Singleton**: True
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
+   :align: left
+   :alt: required
 
-**Required**: True
+*Required*: False
 
-**Schema**:
+Property: A
+~~~~~~~~~~~
 
-* *type*: <class 'numbers.Number'>
-* *>*: 0
+.. mermaid::
 
-Property: Iy [Parent feature: cross_section]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    graph LR
+    A[Model]
+    A --> F1[cross_section] 
+    F1 --> P1[A] 
 
-**Description**: Second moment of area about the local y-axis
 
-**Singleton**: True
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/notes.svg
+   :align: left
+   :alt: description
 
-**Required**: True
+*Description*: Area
 
-**Schema**:
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
+   :align: left
+   :alt: singleton
 
-* *type*: <class 'numbers.Number'>
-* *>*: 0
+*Singleton*: True
 
-Property: Iz [Parent feature: cross_section]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
+   :align: left
+   :alt: required
 
-**Description**: Second moment of area about the local z-axis
+*Required*: True
 
-**Singleton**: True
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
+   :align: left
+   :alt: schema
 
-**Required**: True
+*Schema*:
 
-**Schema**:
+======== ========================
+**type** <class 'numbers.Number'>
+ **>**              0            
+======== ========================
 
-* *type*: <class 'numbers.Number'>
-* *>*: 0
+Property: Iy
+~~~~~~~~~~~~
 
-Property: J [Parent feature: cross_section]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. mermaid::
 
-**Description**: Torsional constant
+    graph LR
+    A[Model]
+    A --> F1[cross_section] 
+    F1 --> P1[Iy] 
 
-**Singleton**: True
 
-**Required**: True
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/notes.svg
+   :align: left
+   :alt: description
 
-**Schema**:
+*Description*: Second moment of area about the local y-axis
 
-* *type*: <class 'numbers.Number'>
-* *>*: 0
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
+   :align: left
+   :alt: singleton
+
+*Singleton*: True
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
+   :align: left
+   :alt: required
+
+*Required*: True
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
+   :align: left
+   :alt: schema
+
+*Schema*:
+
+======== ========================
+**type** <class 'numbers.Number'>
+ **>**              0            
+======== ========================
+
+Property: Iz
+~~~~~~~~~~~~
+
+.. mermaid::
+
+    graph LR
+    A[Model]
+    A --> F1[cross_section] 
+    F1 --> P1[Iz] 
+
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/notes.svg
+   :align: left
+   :alt: description
+
+*Description*: Second moment of area about the local z-axis
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
+   :align: left
+   :alt: singleton
+
+*Singleton*: True
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
+   :align: left
+   :alt: required
+
+*Required*: True
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
+   :align: left
+   :alt: schema
+
+*Schema*:
+
+======== ========================
+**type** <class 'numbers.Number'>
+ **>**              0            
+======== ========================
+
+Property: J
+~~~~~~~~~~~
+
+.. mermaid::
+
+    graph LR
+    A[Model]
+    A --> F1[cross_section] 
+    F1 --> P1[J] 
+
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/notes.svg
+   :align: left
+   :alt: description
+
+*Description*: Torsional constant
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
+   :align: left
+   :alt: singleton
+
+*Singleton*: True
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
+   :align: left
+   :alt: required
+
+*Required*: True
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
+   :align: left
+   :alt: schema
+
+*Schema*:
+
+======== ========================
+**type** <class 'numbers.Number'>
+ **>**              0            
+======== ========================
 
 Feature: beam
 -------------
 
-**Description**: Cross-section properties
-**Singleton**: False
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/notes.svg
+   :align: left
+   :alt: description
 
-**Required**: False
+*Description*: Cross-section properties
 
-Property: nelem [Parent feature: beam]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
+   :align: left
+   :alt: singleton
 
-**Description**: Number of beam elements
+*Singleton*: False
 
-**Singleton**: True
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
+   :align: left
+   :alt: required
 
-**Required**: False
+*Required*: False
 
-**Schema**:
+Property: nelem
+~~~~~~~~~~~~~~~
 
-* *type*: <class 'int'>
-* *>*: 0
+.. mermaid::
 
-Property: node [Parent feature: beam]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    graph LR
+    A[Model]
+    A --> F1[beam] 
+    F1 --> P1[nelem] 
 
-**Description**: Add a beam node
 
-**Singleton**: True
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/notes.svg
+   :align: left
+   :alt: description
 
-**Required**: False
+*Description*: Number of beam elements
 
-**Schema**:
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
+   :align: left
+   :alt: singleton
 
-* *$required_keys*: ['uid', 'coord']
-* *uid*: {'type': <class 'str'>}
-* *coord*: {'type': <class 'list'>, 'min_len': 3, 'max_len': 3, 'item_types': <class 'numbers.Number'>}
+*Singleton*: True
 
-Property: accel [Parent feature: beam]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
+   :align: left
+   :alt: required
 
-**Description**: Define a translational acceleration
+*Required*: False
 
-**Singleton**: True
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
+   :align: left
+   :alt: schema
 
-**Required**: False
+*Schema*:
 
-**Schema**:
+======== =============
+**type** <class 'int'>
+ **>**         0      
+======== =============
 
-* *$required_keys*: ['direction']
-* *direction*: {'type': <class 'list'>, 'min_len': 3, 'max_len': 3, 'item_types': <class 'numbers.Number'>}
-* *accel_factor*: {'type': <class 'int'>}
+Property: node
+~~~~~~~~~~~~~~
 
-Property: orientation [Parent feature: beam]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. mermaid::
 
-**Description**: Define the beam orientation
+    graph LR
+    A[Model]
+    A --> F1[beam] 
+    F1 --> P1[node] 
 
-**Singleton**: True
 
-**Required**: False
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/notes.svg
+   :align: left
+   :alt: description
 
-**Schema**:
+*Description*: Add a beam node
 
-* *$required_keys*: ['from', 'to', 'up']
-* *from*: {'type': <class 'str'>}
-* *to*: {'type': <class 'str'>}
-* *up*: {'type': <class 'list'>, 'min_len': 3, 'max_len': 3, 'item_types': <class 'numbers.Number'>}
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
+   :align: left
+   :alt: singleton
 
-Property: material [Parent feature: beam]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*Singleton*: True
 
-**Description**: Add a material
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
+   :align: left
+   :alt: required
 
-**Singleton**: True
+*Required*: False
 
-**Required**: False
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
+   :align: left
+   :alt: schema
 
-**Schema**:
+*Schema*:
 
-* *$required_keys*: ['from', 'to', 'uid']
-* *from*: {'type': <class 'str'>}
-* *to*: {'type': <class 'str'>}
-* *uid*: {'type': <class 'str'>}
+================== ============================================================================================
+**$required_keys**                                       ['uid', 'coord']                                      
+     **uid**                                         {'type': <class 'str'>}                                   
+    **coord**      {'type': <class 'list'>, 'min_len': 3, 'max_len': 3, 'item_types': <class 'numbers.Number'>}
+================== ============================================================================================
 
-Property: cross_section [Parent feature: beam]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Property: accel
+~~~~~~~~~~~~~~~
 
-**Description**: Add a cross section
+.. mermaid::
 
-**Singleton**: True
+    graph LR
+    A[Model]
+    A --> F1[beam] 
+    F1 --> P1[accel] 
 
-**Required**: False
 
-**Schema**:
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/notes.svg
+   :align: left
+   :alt: description
 
-* *$required_keys*: ['from', 'to', 'uid']
-* *from*: {'type': <class 'str'>}
-* *to*: {'type': <class 'str'>}
-* *uid*: {'type': <class 'str'>}
+*Description*: Define a translational acceleration
 
-Property: load [Parent feature: beam]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
+   :align: left
+   :alt: singleton
 
-**Description**: Add a point load
+*Singleton*: True
 
-**Singleton**: True
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
+   :align: left
+   :alt: required
 
-**Required**: False
+*Required*: False
 
-**Schema**:
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
+   :align: left
+   :alt: schema
 
-* *$required_keys*: ['at', 'load']
-* *at*: {'type': <class 'str'>}
-* *load*: {'type': <class 'list'>, 'min_len': 6, 'max_len': 6, 'item_types': <class 'numbers.Number'>}
+*Schema*:
+
+================== ============================================================================================
+**$required_keys**                                        ['direction']                                        
+  **direction**    {'type': <class 'list'>, 'min_len': 3, 'max_len': 3, 'item_types': <class 'numbers.Number'>}
+ **accel_factor**                                    {'type': <class 'int'>}                                   
+================== ============================================================================================
+
+Property: orientation
+~~~~~~~~~~~~~~~~~~~~~
+
+.. mermaid::
+
+    graph LR
+    A[Model]
+    A --> F1[beam] 
+    F1 --> P1[orientation] 
+
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/notes.svg
+   :align: left
+   :alt: description
+
+*Description*: Define the beam orientation
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
+   :align: left
+   :alt: singleton
+
+*Singleton*: True
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
+   :align: left
+   :alt: required
+
+*Required*: False
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
+   :align: left
+   :alt: schema
+
+*Schema*:
+
+================== ============================================================================================
+**$required_keys**                                     ['from', 'to', 'up']                                    
+     **from**                                        {'type': <class 'str'>}                                   
+      **to**                                         {'type': <class 'str'>}                                   
+      **up**       {'type': <class 'list'>, 'min_len': 3, 'max_len': 3, 'item_types': <class 'numbers.Number'>}
+================== ============================================================================================
+
+Property: material
+~~~~~~~~~~~~~~~~~~
+
+.. mermaid::
+
+    graph LR
+    A[Model]
+    A --> F1[beam] 
+    F1 --> P1[material] 
+
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/notes.svg
+   :align: left
+   :alt: description
+
+*Description*: Add a material
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
+   :align: left
+   :alt: singleton
+
+*Singleton*: True
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
+   :align: left
+   :alt: required
+
+*Required*: False
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
+   :align: left
+   :alt: schema
+
+*Schema*:
+
+================== =======================
+**$required_keys**  ['from', 'to', 'uid'] 
+     **from**      {'type': <class 'str'>}
+      **to**       {'type': <class 'str'>}
+     **uid**       {'type': <class 'str'>}
+================== =======================
+
+Property: cross_section
+~~~~~~~~~~~~~~~~~~~~~~~
+
+.. mermaid::
+
+    graph LR
+    A[Model]
+    A --> F1[beam] 
+    F1 --> P1[cross_section] 
+
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/notes.svg
+   :align: left
+   :alt: description
+
+*Description*: Add a cross section
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
+   :align: left
+   :alt: singleton
+
+*Singleton*: True
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
+   :align: left
+   :alt: required
+
+*Required*: False
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
+   :align: left
+   :alt: schema
+
+*Schema*:
+
+================== =======================
+**$required_keys**  ['from', 'to', 'uid'] 
+     **from**      {'type': <class 'str'>}
+      **to**       {'type': <class 'str'>}
+     **uid**       {'type': <class 'str'>}
+================== =======================
+
+Property: load
+~~~~~~~~~~~~~~
+
+.. mermaid::
+
+    graph LR
+    A[Model]
+    A --> F1[beam] 
+    F1 --> P1[load] 
+
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/notes.svg
+   :align: left
+   :alt: description
+
+*Description*: Add a point load
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
+   :align: left
+   :alt: singleton
+
+*Singleton*: True
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
+   :align: left
+   :alt: required
+
+*Required*: False
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
+   :align: left
+   :alt: schema
+
+*Schema*:
+
+================== ============================================================================================
+**$required_keys**                                        ['at', 'load']                                       
+      **at**                                         {'type': <class 'str'>}                                   
+     **load**      {'type': <class 'list'>, 'min_len': 6, 'max_len': 6, 'item_types': <class 'numbers.Number'>}
+================== ============================================================================================
 
 Feature: bc
 -----------
 
-**Description**: Cross-section properties
-**Singleton**: True
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/notes.svg
+   :align: left
+   :alt: description
 
-**Required**: True
+*Description*: Cross-section properties
 
-Property: fix [Parent feature: bc]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
+   :align: left
+   :alt: singleton
 
-**Description**: Fix a beam node
+*Singleton*: True
 
-**Singleton**: True
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
+   :align: left
+   :alt: required
 
-**Required**: False
+*Required*: True
 
-**Schema**:
+Property: fix
+~~~~~~~~~~~~~
 
-* *$required_keys*: ['node', 'fix']
-* *node*: {'type': <class 'str'>}
-* *fix*: {'type': <class 'list'>, 'min_len': 1, 'max_len': 6, 'item_types': <class 'str'>}
+.. mermaid::
 
-Property: bc [Parent feature: bc]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    graph LR
+    A[Model]
+    A --> F1[bc] 
+    F1 --> P1[fix] 
 
-**Description**: Connect two beam nodes
 
-**Singleton**: True
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/notes.svg
+   :align: left
+   :alt: description
 
-**Required**: False
+*Description*: Fix a beam node
 
-**Schema**:
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
+   :align: left
+   :alt: singleton
 
-* *$required_keys*: ['node1', 'node2', 'fix']
-* *node1*: {'type': <class 'str'>}
-* *node2*: {'type': <class 'str'>}
-* *fix*: {'type': <class 'list'>, 'min_len': 1, 'max_len': 6, 'item_types': <class 'str'>}
+*Singleton*: True
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
+   :align: left
+   :alt: required
+
+*Required*: False
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
+   :align: left
+   :alt: schema
+
+*Schema*:
+
+================== =================================================================================
+**$required_keys**                                  ['node', 'fix']                                 
+     **node**                                   {'type': <class 'str'>}                             
+     **fix**       {'type': <class 'list'>, 'min_len': 1, 'max_len': 6, 'item_types': <class 'str'>}
+================== =================================================================================
+
+Property: bc
+~~~~~~~~~~~~
+
+.. mermaid::
+
+    graph LR
+    A[Model]
+    A --> F1[bc] 
+    F1 --> P1[bc] 
+
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/notes.svg
+   :align: left
+   :alt: description
+
+*Description*: Connect two beam nodes
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
+   :align: left
+   :alt: singleton
+
+*Singleton*: True
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
+   :align: left
+   :alt: required
+
+*Required*: False
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
+   :align: left
+   :alt: schema
+
+*Schema*:
+
+================== =================================================================================
+**$required_keys**                             ['node1', 'node2', 'fix']                            
+    **node1**                                   {'type': <class 'str'>}                             
+    **node2**                                   {'type': <class 'str'>}                             
+     **fix**       {'type': <class 'list'>, 'min_len': 1, 'max_len': 6, 'item_types': <class 'str'>}
+================== =================================================================================
 
 Feature: study
 --------------
 
-**Description**: Cross-section properties
-**Singleton**: True
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/notes.svg
+   :align: left
+   :alt: description
 
-**Required**: True
+*Description*: Cross-section properties
 
-Property: type [Parent feature: study]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
+   :align: left
+   :alt: singleton
 
-**Description**: Define a study type
+*Singleton*: True
 
-**Singleton**: True
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
+   :align: left
+   :alt: required
 
-**Required**: False
+*Required*: True
 
-**Schema**:
+Property: type
+~~~~~~~~~~~~~~
 
-* *type*: <class 'str'>
-* *>*: 0
+.. mermaid::
+
+    graph LR
+    A[Model]
+    A --> F1[study] 
+    F1 --> P1[type] 
+
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/notes.svg
+   :align: left
+   :alt: description
+
+*Description*: Define a study type
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
+   :align: left
+   :alt: singleton
+
+*Singleton*: True
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
+   :align: left
+   :alt: required
+
+*Required*: False
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
+   :align: left
+   :alt: schema
+
+*Schema*:
+
+======== =============
+**type** <class 'str'>
+ **>**         0      
+======== =============
 
 Feature: post_proc
 ------------------
 
-**Description**: Cross-section properties
-**Singleton**: True
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/notes.svg
+   :align: left
+   :alt: description
 
-**Required**: True
+*Description*: Cross-section properties
 
-Property: plot [Parent feature: post_proc]
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
+   :align: left
+   :alt: singleton
 
-**Description**: Add a plot
+*Singleton*: True
 
-**Singleton**: True
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
+   :align: left
+   :alt: required
 
-**Required**: False
+*Required*: True
 
-**Schema**:
+Property: plot
+~~~~~~~~~~~~~~
 
-* *$required_keys*: ['args']
-* *args*: {'type': <class 'list'>, 'min_len': 1, 'item_types': <class 'dict'>}
+.. mermaid::
+
+    graph LR
+    A[Model]
+    A --> F1[post_proc] 
+    F1 --> P1[plot] 
+
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/notes.svg
+   :align: left
+   :alt: description
+
+*Description*: Add a plot
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
+   :align: left
+   :alt: singleton
+
+*Singleton*: True
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
+   :align: left
+   :alt: required
+
+*Required*: False
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
+   :align: left
+   :alt: schema
+
+*Schema*:
+
+================== ====================================================================
+**$required_keys**                               ['args']                              
+     **args**      {'type': <class 'list'>, 'min_len': 1, 'item_types': <class 'dict'>}
+================== ====================================================================
 

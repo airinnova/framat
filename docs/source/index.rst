@@ -28,6 +28,7 @@ Welcome to |name|'s documentation!
    :caption: User guide
 
    user_guide/installation
+   api/model_api_general
    api/model_api
 
 .. toctree::
