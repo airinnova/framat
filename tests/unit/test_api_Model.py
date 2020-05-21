@@ -32,5 +32,7 @@ def test_x():
     beam.add('node', {'uid': 'tip', 'coord': [1, 0, 0]})
     beam.add('material', {'from': 'root', 'to': 'tip', 'uid': 'dummy'})
     beam.add('cross_section', {'from': 'root', 'to': 'tip', 'uid': 'dummy'})
+    beam.add('orientation', {'from': 'root', 'to': 'tip', 'up': [0, 0, 1]})
+    beam.add('load', {'at': 'tip', 'load': [0, 0, -1, 0, 0, 0]})
 
     model.run()

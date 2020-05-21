@@ -97,46 +97,46 @@ mspec = ModelSpec()
 
 # ===== Material =====
 fspec = FeatureSpec()
-fspec.add_item_spec('uid', Schema.string, required=True, doc="Material UID")
-fspec.add_item_spec('E', Schema.positive_number, required=True, doc="Young's modulus")
-fspec.add_item_spec('G', Schema.positive_number, required=True, doc="Shear modulus")
-fspec.add_item_spec('rho', Schema.positive_number, required=True, doc="Density")
+fspec.add_prop_spec('uid', Schema.string, required=True, doc="Material UID")
+fspec.add_prop_spec('E', Schema.positive_number, required=True, doc="Young's modulus")
+fspec.add_prop_spec('G', Schema.positive_number, required=True, doc="Shear modulus")
+fspec.add_prop_spec('rho', Schema.positive_number, required=True, doc="Density")
 mspec.add_feature_spec('material', fspec, doc='Material properties')
 
 # ===== Cross-section =====
 fspec = FeatureSpec()
-fspec.add_item_spec('uid', Schema.string, required=True, doc="Cross section UID")
-fspec.add_item_spec('A', Schema.positive_number, required=True, doc="Area")
-fspec.add_item_spec('Iy', Schema.positive_number, required=True, doc="Second moment of area about the local y-axis")
-fspec.add_item_spec('Iz', Schema.positive_number, required=True, doc="Second moment of area about the local z-axis")
-fspec.add_item_spec('J', Schema.positive_number, required=True, doc="Torsional constant")
+fspec.add_prop_spec('uid', Schema.string, required=True, doc="Cross section UID")
+fspec.add_prop_spec('A', Schema.positive_number, required=True, doc="Area")
+fspec.add_prop_spec('Iy', Schema.positive_number, required=True, doc="Second moment of area about the local y-axis")
+fspec.add_prop_spec('Iz', Schema.positive_number, required=True, doc="Second moment of area about the local z-axis")
+fspec.add_prop_spec('J', Schema.positive_number, required=True, doc="Torsional constant")
 mspec.add_feature_spec('cross_section', fspec, required=False, doc='Cross-section properties')
 
 # ===== Beam =====
 fspec = FeatureSpec()
-fspec.add_item_spec('nelem', Schema.positive_int, doc="Number of beam elements")
-fspec.add_item_spec('node', Schema.beam.node, singleton=False, doc="Add a beam node")
-fspec.add_item_spec('accel', Schema.beam.accel, doc="Define a translational acceleration")
-fspec.add_item_spec('orientation', Schema.beam.orientation, doc="Define the beam orientation")
-fspec.add_item_spec('material', Schema.beam.material, singleton=False, doc="Add a material")
-fspec.add_item_spec('cross_section', Schema.beam.cross_section, singleton=False, doc="Add a cross section")
-fspec.add_item_spec('load', Schema.beam.load_point, doc="Add a point load")
+fspec.add_prop_spec('nelem', Schema.positive_int, doc="Number of beam elements")
+fspec.add_prop_spec('node', Schema.beam.node, singleton=False, doc="Add a beam node")
+fspec.add_prop_spec('accel', Schema.beam.accel, doc="Define a translational acceleration")
+fspec.add_prop_spec('orientation', Schema.beam.orientation, singleton=False, doc="Define the beam orientation")
+fspec.add_prop_spec('material', Schema.beam.material, singleton=False, doc="Add a material")
+fspec.add_prop_spec('cross_section', Schema.beam.cross_section, singleton=False, doc="Add a cross section")
+fspec.add_prop_spec('load', Schema.beam.load_point, singleton=False, doc="Add a point load")
 mspec.add_feature_spec('beam', fspec, singleton=False, required=False, doc='Cross-section properties')
 
 # ===== Boundary conditions =====
 fspec = FeatureSpec()
-fspec.add_item_spec('fix', Schema.bc.fix, doc="Fix a beam node")
-fspec.add_item_spec('connect', Schema.bc.connect, doc="Connect two beam nodes")
+fspec.add_prop_spec('fix', Schema.bc.fix, doc="Fix a beam node")
+fspec.add_prop_spec('connect', Schema.bc.connect, doc="Connect two beam nodes")
 mspec.add_feature_spec('bc', fspec, singleton=True, required=True, doc='Cross-section properties')
 
 # ===== Study =====
 fspec = FeatureSpec()
-fspec.add_item_spec('type', Schema.string, doc="Define a study type")
+fspec.add_prop_spec('type', Schema.string, doc="Define a study type")
 mspec.add_feature_spec('study', fspec, singleton=True, required=True, doc='Cross-section properties')
 
 # ===== Post-proc =====
 fspec = FeatureSpec()
-fspec.add_item_spec('plot', Schema.pp.plot, doc="Add a plot")
+fspec.add_prop_spec('plot', Schema.pp.plot, doc="Add a plot")
 mspec.add_feature_spec('post_proc', fspec, singleton=True, required=True, doc='Cross-section properties')
 
 # ===================
@@ -146,7 +146,7 @@ rspec = ModelSpec()
 
 # ===== Deformation =====
 fspec = FeatureSpec()
-fspec.add_item_spec('max', Schema.positive_number, required=True, doc="Maximum deformation")
+fspec.add_prop_spec('max', Schema.positive_number, required=True, doc="Maximum deformation")
 rspec.add_feature_spec('deformation', fspec, doc='Deformation')
 
 mspec.results = rspec

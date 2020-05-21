@@ -20,7 +20,7 @@
 # Author: Aaron Dettmann
 
 """
-Interpolate
+Meshing
 """
 
 from collections import namedtuple

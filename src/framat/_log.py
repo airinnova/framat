@@ -20,33 +20,21 @@
 # Author: Aaron Dettmann
 
 """
-Run the model
+Logging
 """
 
+import logging
+
 from . import MODULE_NAME
-from .__version__ import __version__
-from ._log import logger
+
+FORMAT = f"%(levelname)s | {MODULE_NAME} | %(message)s"
+logging.basicConfig(level=logging.DEBUG, format=FORMAT)
+logger = logging.getLogger(MODULE_NAME)
 
 
-def run_model(m):
-    """
-    Run the complete model analysis
-
-    Args:
-        :model: instance of model
-    """
-
-    log_startup(m)
-
-    # ----- MESHING -----
-
-    # ----- ASSEMBLING SYSTEM MATRICES -----
-
-    # ----- SOLVING -----
-
-    # ----- POST-PROCESSING -----
+def disable_logger():
+    logger.setLevel(logging.ERROR)
 
 
-def log_startup(m):
-    logger.info(f"===== {MODULE_NAME} {__version__} =====")
-    logger.info(f"Number of beams: {m.len('beam')}")
+def enable_logger():
+    logger.setLevel(logging.DEBUG)
