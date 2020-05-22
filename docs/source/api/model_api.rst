@@ -39,6 +39,46 @@ Feature: material
 
 *Required*: True
 
+Property: uid
+~~~~~~~~~~~~~
+
+.. mermaid::
+
+    graph LR
+    A[Model]
+    A --> F1[material] 
+    F1 --> P1[uid] 
+
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/notes.svg
+   :align: left
+   :alt: description
+
+*Description*: Material UID
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
+   :align: left
+   :alt: singleton
+
+*Singleton*: True
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
+   :align: left
+   :alt: required
+
+*Required*: True
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
+   :align: left
+   :alt: schema
+
+*Schema*:
+
+======== =============
+**type** <class 'str'>
+ **>**         0      
+======== =============
+
 Property: E
 ~~~~~~~~~~~
 
@@ -179,6 +219,46 @@ Feature: cross_section
    :alt: required
 
 *Required*: False
+
+Property: uid
+~~~~~~~~~~~~~
+
+.. mermaid::
+
+    graph LR
+    A[Model]
+    A --> F1[cross_section] 
+    F1 --> P1[uid] 
+
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/notes.svg
+   :align: left
+   :alt: description
+
+*Description*: Cross section UID
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
+   :align: left
+   :alt: singleton
+
+*Singleton*: True
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
+   :align: left
+   :alt: required
+
+*Required*: False
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
+   :align: left
+   :alt: schema
+
+*Schema*:
+
+======== =============
+**type** <class 'str'>
+ **>**         0      
+======== =============
 
 Property: A
 ~~~~~~~~~~~
@@ -361,46 +441,6 @@ Feature: beam
 
 *Required*: False
 
-Property: nelem
-~~~~~~~~~~~~~~~
-
-.. mermaid::
-
-    graph LR
-    A[Model]
-    A --> F1[beam] 
-    F1 --> P1[nelem] 
-
-
-.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/notes.svg
-   :align: left
-   :alt: description
-
-*Description*: Number of beam elements
-
-.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
-   :align: left
-   :alt: singleton
-
-*Singleton*: False
-
-.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
-   :align: left
-   :alt: required
-
-*Required*: False
-
-.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
-   :align: left
-   :alt: schema
-
-*Schema*:
-
-======== =============
-**type** <class 'int'>
- **>**         0      
-======== =============
-
 Property: node
 ~~~~~~~~~~~~~~
 
@@ -438,7 +478,7 @@ Property: node
 
 ================== ============================================================================================
 **$required_keys**                                       ['uid', 'coord']                                      
-     **uid**                                         {'type': <class 'str'>}                                   
+     **uid**                                     {'type': <class 'str'>, '>': 0}                               
     **coord**      {'type': <class 'list'>, 'min_len': 3, 'max_len': 3, 'item_types': <class 'numbers.Number'>}
 ================== ============================================================================================
 
@@ -520,8 +560,8 @@ Property: orientation
 
 ================== ============================================================================================
 **$required_keys**                                     ['from', 'to', 'up']                                    
-     **from**                                        {'type': <class 'str'>}                                   
-      **to**                                         {'type': <class 'str'>}                                   
+     **from**                                    {'type': <class 'str'>, '>': 0}                               
+      **to**                                     {'type': <class 'str'>, '>': 0}                               
       **up**       {'type': <class 'list'>, 'min_len': 3, 'max_len': 3, 'item_types': <class 'numbers.Number'>}
 ================== ============================================================================================
 
@@ -560,12 +600,12 @@ Property: material
 
 *Schema*:
 
-================== =======================
-**$required_keys**  ['from', 'to', 'uid'] 
-     **from**      {'type': <class 'str'>}
-      **to**       {'type': <class 'str'>}
-     **uid**       {'type': <class 'str'>}
-================== =======================
+================== ===============================
+**$required_keys**      ['from', 'to', 'uid']     
+     **from**      {'type': <class 'str'>, '>': 0}
+      **to**       {'type': <class 'str'>, '>': 0}
+     **uid**       {'type': <class 'str'>, '>': 0}
+================== ===============================
 
 Property: cross_section
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -602,12 +642,12 @@ Property: cross_section
 
 *Schema*:
 
-================== =======================
-**$required_keys**  ['from', 'to', 'uid'] 
-     **from**      {'type': <class 'str'>}
-      **to**       {'type': <class 'str'>}
-     **uid**       {'type': <class 'str'>}
-================== =======================
+================== ===============================
+**$required_keys**      ['from', 'to', 'uid']     
+     **from**      {'type': <class 'str'>, '>': 0}
+      **to**       {'type': <class 'str'>, '>': 0}
+     **uid**       {'type': <class 'str'>, '>': 0}
+================== ===============================
 
 Property: load
 ~~~~~~~~~~~~~~
@@ -646,9 +686,51 @@ Property: load
 
 ================== ============================================================================================
 **$required_keys**                                        ['at', 'load']                                       
-      **at**                                         {'type': <class 'str'>}                                   
+      **at**                                     {'type': <class 'str'>, '>': 0}                               
      **load**      {'type': <class 'list'>, 'min_len': 6, 'max_len': 6, 'item_types': <class 'numbers.Number'>}
 ================== ============================================================================================
+
+Property: mesh
+~~~~~~~~~~~~~~
+
+.. mermaid::
+
+    graph LR
+    A[Model]
+    A --> F1[beam] 
+    F1 --> P1[mesh] 
+
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/notes.svg
+   :align: left
+   :alt: description
+
+*Description*: Specify the number nodes between to named nodes
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
+   :align: left
+   :alt: singleton
+
+*Singleton*: False
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
+   :align: left
+   :alt: required
+
+*Required*: False
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
+   :align: left
+   :alt: schema
+
+*Schema*:
+
+================== ===============================
+**$required_keys**     ['from', 'to', 'nelem']    
+     **from**      {'type': <class 'str'>, '>': 0}
+      **to**       {'type': <class 'str'>, '>': 0}
+    **nelem**      {'type': <class 'int'>, '>': 0}
+================== ===============================
 
 Feature: bc
 -----------
@@ -708,7 +790,7 @@ Property: fix
 
 ================== =================================================================================
 **$required_keys**                                  ['node', 'fix']                                 
-     **node**                                   {'type': <class 'str'>}                             
+     **node**                               {'type': <class 'str'>, '>': 0}                         
      **fix**       {'type': <class 'list'>, 'min_len': 1, 'max_len': 6, 'item_types': <class 'str'>}
 ================== =================================================================================
 
@@ -749,8 +831,8 @@ Property: connect
 
 ================== =================================================================================
 **$required_keys**                             ['node1', 'node2', 'fix']                            
-    **node1**                                   {'type': <class 'str'>}                             
-    **node2**                                   {'type': <class 'str'>}                             
+    **node1**                               {'type': <class 'str'>, '>': 0}                         
+    **node2**                               {'type': <class 'str'>, '>': 0}                         
      **fix**       {'type': <class 'list'>, 'min_len': 1, 'max_len': 6, 'item_types': <class 'str'>}
 ================== =================================================================================
 

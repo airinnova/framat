@@ -23,192 +23,127 @@
 Meshing
 """
 
-from collections import namedtuple
-from operator import attrgetter
+import itertools
 import logging
 
 import numpy as np
 
-from framat.helpers.iterators import pairwise
-
 logger = logging.getLogger(__name__)
 
 
-class PointInterpolator:
+def pairwise(iterable):
+    """
+    Return a new iterator which yields pairwise items
 
-    def __init__(self, points, point_uids=None):
+    s --> (s0,s1), (s1,s2), (s2, s3), ...
+
+    See: https://docs.python.org/3/library/itertools.html#itertools-recipes
+    """
+
+    a, b = itertools.tee(iterable)
+    next(b, None)
+
+    return zip(a, b)
+
+
+class LineMesh:
+
+    def __init__(self, sp):
         """
         Interpolate intermediate points for a list of points in space
 
         Args:
-            :points: support points
+            :sp: (dict) support points (key: point UID, value: point)
         """
 
-        # - at least two points should be given
-        # - same points as input should not be allowed
+        # TODO: same points as input should not be allowed
 
-        self.sup_points = [np.asarray(point) for point in points]
-        self.point_uids = point_uids
-        self.length = 0
+        if len(sp) < 2:
+            raise RuntimeError("need at least to points to create line mesh")
 
-        if self.point_uids is None:
-            self.point_uids = [None for _ in range(len(self.sup_points))]
+        # Support point coordinates and UIDs
+        self.sp_coords = [np.array(p) for p in sp.values()]
+        self.sp_uids = list(sp.keys())
 
-        self.interpol_table = []
-        self._make_table = self._make_table()
+        # Total line length
+        self.len = 0
 
-    def __call__(self, xsi):
-        """Shorthand for interpolate() method"""
+        # Intermediate table for interpolating points
+        self.itab = []
+        self._make_table()
 
-        return self.interpolate(xsi)
+    def __call__(self, eta):
+        """Shorthand for 'interpolate()' method"""
+
+        return self.interpolate(eta)
 
     def _make_table(self):
         """
-        Create a for interpolation
+        Create a table for point interpolation
 
         Table contents:
-            {support point} {relative position xsi}
+            | rel. coord. eta | abs. coord. | uid |
         """
 
-        self.interpol_table.append([self.sup_points[0], 0, self.point_uids[0]])
+        self.itab = []
+        self.itab.append([0, self.sp_coords[0], self.sp_uids[0]])
 
-        idx = 1
-        for p1, p2 in pairwise(self.sup_points):
-            self.length += np.linalg.norm(p2 - p1)
-            self.interpol_table.append([p2, self.length, self.point_uids[idx]])
-            idx += 1
+        for i, (p1, p2) in enumerate(pairwise(self.sp_coords), start=1):
+            dist = np.linalg.norm(p2 - p1)
+            self.len += dist
+            self.itab.append([self.len, p2, self.sp_uids[i]])
 
-        for i in range(len(self.interpol_table)):
-            self.interpol_table[i][1] /= self.length
+        for row in self.itab:
+            row[0] /= self.len
 
-    def get_xsi_support_points(self):
+    def interpolate(self, eta):
         """
-        TODO
-        """
-
-        xsi = [row[:][1] for row in self.interpol_table]
-        return xsi
-
-    def interpolate(self, xsi):
-        """
-        Return a interpolated point at given xsi position
+        Return a interpolated point at given eta position
 
         Args:
-            :xsi: relative position
+            :eta: relative position
 
         Returns:
             :point: interpolated point
         """
 
-        if not 0 <= xsi <= 1:
+        if not 0 <= eta <= 1:
             raise ValueError("xsi must be in range [0, 1]")
 
-        for entry1, entry2 in pairwise(self.interpol_table):
-            p1, xsi1, _ = entry1
-            p2, xsi2, _ = entry2
+        for entry1, entry2 in pairwise(self.itab):
+            p1, eta1, _ = entry1
+            p2, eta2, _ = entry2
 
-            if xsi1 <= xsi <= xsi2:
-                xsi -= xsi1
-                xsi /= (xsi2 - xsi1)
+            if eta1 <= eta <= eta2:
+                eta -= eta1
+                eta /= (eta2 - eta1)
 
-                return p1 + xsi*(p2 - p1)
+                return p1 + eta*(p2 - p1)
 
-    def get_n_points(self, n, min_factor=0.1):
+    def get_mesh(self, start_node=0):
         """
-        Return a list of :n: points
+        TODO
 
-        Args:
-            :n: number of points to return
-        """
+        mesh:
+            [
+                {'eta': ..., 'coord': ...},
+                {'eta': ..., 'coord': ...},
+                ...
+            ]
 
-        if not 0 < min_factor <= 1:
-            raise ValueError("min_factor must be in range (0, 1]")
-
-        min_xsi_apart = min_factor*(1/n)
-
-        InterPoint = namedtuple('InterPoint', ('coord', 'xsi', 'uid'))
-        point_list = []
-
-        xsi_with_uids = []
-        for entry in self.interpol_table:
-            p, xsi, uid = entry
-
-            xsi_with_uids.append(xsi)
-
-            new_point = InterPoint(coord=p, xsi=xsi, uid=uid)
-            point_list.append(new_point)
-
-        for xsi in np.linspace(0, 1, n):
-            if xsi in {0, 1}:
-                continue
-
-            # Do not make a point if it is too close or equal to existing node position
-            xsi_closest = min(xsi_with_uids, key=lambda x: abs(x - xsi))
-            if abs(xsi_closest - xsi) < min_xsi_apart:
-                logger.debug(f"Will not add xsi too close to existing: xsi = {xsi:.2e}, xsi_exists={xsi_closest:.2e}")
-                continue
-
-            new_point = InterPoint(coord=self.interpolate(xsi), xsi=xsi, uid=None)
-            point_list.append(new_point)
-
-        point_list = sorted(point_list, key=attrgetter('xsi'))
-        return point_list
-
-
-class PropertyInterpolator:
-
-    def __init__(self, x, props):
-        """
-        Simple "next/previous" interpolator
-
-        Args:
-            :x: list of support points (strictly increasing)
-            :props: list of properties (to interpolate between)
+        named_nodes:
+            {
+                'uid1': 0,
+                'uid2': 4,
+                ...
+            }
         """
 
-        self.x = x
-        self.props = props
+        mesh = []
+        named_nodes = {}
+        for i, entry in enumerate(self.itab, start_node):
+            eta, point, uid = entry
+            mesh.append({'eta': eta, 'coord': point.tolist()})
+            named_nodes[i] = uid
 
-        if len(self.x) != len(self.props):
-            raise ValueError("x and props must be of same length")
-
-        strictly_increasing = np.all(np.diff(self.x) > 0)
-        if not strictly_increasing:
-            raise ValueError("x must be strictly increasing")
-
-    def interpolate(self, x, kind):
-        """
-        Interpolate property at given position x
-
-        Notes:
-            * The 'kind' parameter determines whether the next or previous
-              property object shall be returned
-
-        Args:
-            :x: position at which to interpolate
-            :kind: type of interpolation ('prev', 'next')
-
-        Returns:
-            :inperpol_property: interpolated property
-        """
-
-        if not (self.x[0] <= x <= self.x[-1]):
-            raise ValueError("x is out of range")
-
-        if kind not in ('prev', 'next'):
-            raise ValueError("Invalid return type")
-
-        for x_val, p_val in zip(pairwise(self.x), pairwise(self.props)):
-            x1, x2 = x_val
-            p1, p2 = p_val
-
-            if x1 <= x <= x2:
-                if kind == 'prev':
-                    return p1
-                else:
-                    return p2
-
-    def __call__(self, x, interpol_type):
-        """Shorthand for interpolate() method"""
-
-        return self.interpolate(x, interpol_type)
+        return mesh, named_nodes
