@@ -46,6 +46,9 @@ def run_model(m):
 
     # ----- ASSEMBLING SYSTEM MATRICES -----
     logger.info("Assembling matrices...")
+    # TODO: for each beam create Elements...
+    # TODO: assemble into global system... (global numbering...)
+    # TODO: Boundary conditions...
 
     # ----- SOLVING -----
     logger.info("Solving...")
@@ -58,10 +61,7 @@ def mesh(m):
     """Meshing"""
 
     r = m.results
-    rmesh = r.set_feature('mesh')
 
-    # Last global node number
-    last_node_num = 0
     for i, mbeam in enumerate(m.iter('beam')):
         logger.info(f"Meshing beam with index {i}")
         rbeam = r.add_feature('beam')
@@ -69,10 +69,8 @@ def mesh(m):
         sup_points = {}
         for node in mbeam.iter('node'):
             rbeam.add('named_node', node['uid'])
-            sup_points.update({node['uid']: node['coord']})
+            sup_points[node['uid']] = node['coord']
 
-        mesh = LineMesh(sup_points)
-        glob_nodes, named_node_map = mesh.get_mesh(start_node=last_node_num)
-        rmesh.add('global_nodes', *glob_nodes)
-        rmesh.set('named_nodes', named_node_map)
-        last_node_num = rmesh.len('global_nodes') + 1
+        all_points = LineMesh(sup_points, n=mbeam.get('nelem')).all_points
+        logger.info(f"Beam {i} has {len(all_points)} nodes")
+        rbeam.set('mesh', {'mesh': all_points})

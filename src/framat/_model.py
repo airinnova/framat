@@ -154,9 +154,9 @@ fspec.add_prop_spec(
     doc="Add a point load"
 )
 fspec.add_prop_spec(
-    'mesh',
-    {'$required_keys': ['from', 'to', 'nelem'], 'from': S.string, 'to': S.string, 'nelem': S.pos_int},
-    singleton=False,
+    'nelem',
+    S.pos_int,
+    singleton=True,
     doc="Specify the number nodes between to named nodes"
 )
 mspec.add_feature_spec(
@@ -224,12 +224,12 @@ rspec = ModelSpec()
 
 # ===== Mesh =====
 fspec = FeatureSpec()
-fspec.add_prop_spec(
-    'global_nodes',
-    {'eta': S.any_num, 'coord': S.vector3x1},
-    singleton=False,
-    doc="Nodes (global system)"
-)
+# fspec.add_prop_spec(
+#     'global_nodes',
+#     {'eta': S.any_num, 'coord': S.vector3x1},
+#     singleton=False,
+#     doc="Nodes (global system)"
+# )
 fspec.add_prop_spec(
     'named_nodes',
     {'type': dict},
@@ -250,6 +250,12 @@ fspec.add_prop_spec(
     'named_node',
     S.string,
     singleton=False,
+    doc="List of named nodes belonging to beam"
+)
+fspec.add_prop_spec(
+    'mesh',
+    {'type': dict},
+    singleton=True,
     doc="List of named nodes belonging to beam"
 )
 rspec.add_feature_spec(

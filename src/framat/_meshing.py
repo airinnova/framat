@@ -23,8 +23,10 @@
 Meshing
 """
 
+from collections import namedtuple
 import itertools
 import logging
+from math import ceil
 
 import numpy as np
 
@@ -46,104 +48,122 @@ def pairwise(iterable):
     return zip(a, b)
 
 
-class LineMesh:
+class Point:
 
-    def __init__(self, sp):
+    def __init__(self, coord, *, rel_coord=None, uid=None):
+        assert uid is None or isinstance(uid, str)
+        assert isinstance(coord, (list, np.ndarray)) and len(coord) == 3
+
+        self.coord = np.array(coord)
+        self.rel_coord = rel_coord
+        self.uid = uid
+
+    def __repr__(self):
+        return f"{self.__class__.__qualname__}({self.coord!r}, {self.rel_coord!r}, {self.uid!r})"
+
+
+class LineSegment:
+
+    def __init__(self, p1, p2):
+        assert isinstance(p1, Point) and isinstance(p2, Point)
+        self.p1 = p1
+        self.p2 = p2
+
+        self.p1.rel_coord = 0
+        self.p2.rel_coord = 1
+
+        self.dir = self.p2.coord - self.p1.coord
+        self.len = np.linalg.norm(self.dir)
+        self.all_points = [p1, p2]
+
+    @property
+    def from_uid(self):
+        return self.p1.uid
+
+    @property
+    def to_uid(self):
+        return self.p2.uid
+
+    def split_into(self, n):
         """
-        Interpolate intermediate points for a list of points in space
+        Split segment into smaller segments
 
-        Args:
-            :sp: (dict) support points (key: point UID, value: point)
+        all_points will have n + 1 nodes
         """
 
-        # TODO: same points as input should not be allowed
+        assert isinstance(n, int) and n > 1
 
-        if len(sp) < 2:
-            raise RuntimeError("need at least to points to create line mesh")
+        self.all_points = [self.p1, ]
 
-        # Support point coordinates and UIDs
-        self.sp_coords = [np.array(p) for p in sp.values()]
-        self.sp_uids = list(sp.keys())
+        for i in range(1, n):
+            rel_coord = i/n
+            self.all_points.append(
+                Point(self.p1.coord + rel_coord*self.dir, rel_coord=rel_coord, uid=None)
+            )
 
-        # Total line length
+        self.all_points.append(self.p2)
+        return self.all_points
+
+    def iter_points(self, *, exclude_last=False):
+        all_points = self.all_points[:-1] if exclude_last else self.all_points
+        for p in all_points:
+            yield p
+
+
+class Polygon:
+
+    def __init__(self):
+        self.segments = []
         self.len = 0
 
-        # Intermediate table for interpolating points
-        self.itab = []
-        self._make_table()
+    def add_segment(self, seg):
+        assert isinstance(seg, LineSegment)
+        self.segments.append(seg)
+        self.len += seg.len
 
-    def __call__(self, eta):
-        """Shorthand for 'interpolate()' method"""
+    def set_node_num(self, n):
+        for seg in self.segments:
+            n_seg = ceil(n*(seg.len/self.len))
+            seg.split_into(n_seg)
 
-        return self.interpolate(eta)
+    def iter_points(self):
+        curr_len = 0
+        for seg in self.segments[:-1]:
+            for p in seg.iter_points(exclude_last=True):
+                eta_poly = curr_len/self.len + p.rel_coord*(seg.len/self.len)
+                yield Point(p.coord, rel_coord=eta_poly, uid=p.uid)
+            curr_len += seg.len
 
-    def _make_table(self):
-        """
-        Create a table for point interpolation
+        seg = self.segments[-1]
+        for p in seg.iter_points(exclude_last=False):
+            eta_poly = curr_len/self.len + p.rel_coord*(seg.len/self.len)
+            yield Point(p.coord, rel_coord=eta_poly, uid=p.uid)
 
-        Table contents:
-            | rel. coord. eta | abs. coord. | uid |
-        """
 
-        self.itab = []
-        self.itab.append([0, self.sp_coords[0], self.sp_uids[0]])
+class LineMesh():
 
-        for i, (p1, p2) in enumerate(pairwise(self.sp_coords), start=1):
-            dist = np.linalg.norm(p2 - p1)
-            self.len += dist
-            self.itab.append([self.len, p2, self.sp_uids[i]])
-
-        for row in self.itab:
-            row[0] /= self.len
-
-    def interpolate(self, eta):
-        """
-        Return a interpolated point at given eta position
-
-        Args:
-            :eta: relative position
-
-        Returns:
-            :point: interpolated point
-        """
-
-        if not 0 <= eta <= 1:
-            raise ValueError("xsi must be in range [0, 1]")
-
-        for entry1, entry2 in pairwise(self.itab):
-            p1, eta1, _ = entry1
-            p2, eta2, _ = entry2
-
-            if eta1 <= eta <= eta2:
-                eta -= eta1
-                eta /= (eta2 - eta1)
-
-                return p1 + eta*(p2 - p1)
-
-    def get_mesh(self, start_node=0):
+    def __init__(self, sup_points, n=6):
         """
         TODO
-
-        mesh:
-            [
-                {'eta': ..., 'coord': ...},
-                {'eta': ..., 'coord': ...},
-                ...
-            ]
-
-        named_nodes:
-            {
-                'uid1': 0,
-                'uid2': 4,
-                ...
-            }
         """
 
-        mesh = []
-        named_nodes = {}
-        for i, entry in enumerate(self.itab, start_node):
-            eta, point, uid = entry
-            mesh.append({'eta': eta, 'coord': point.tolist()})
-            named_nodes[i] = uid
+        # TODO: make sure dict is ordered...
 
-        return mesh, named_nodes
+        # Create Polygon
+        self._polygon = Polygon()
+
+        points = []
+        for uid, coord in sup_points.items():
+            points.append(Point(coord, rel_coord=None, uid=uid))
+
+        segments = []
+        for p1, p2 in pairwise(points):
+            segments.append(LineSegment(p1, p2))
+
+        self._polygon = Polygon()
+        for seg in segments:
+            self._polygon.add_segment(seg)
+
+        # Create mesh points
+        self._polygon.set_node_num(n)
+        self.all_points = [p for p in self._polygon.iter_points()]
