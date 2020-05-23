@@ -41,7 +41,6 @@ from scipy.interpolate import CubicSpline
 
 from framat.fem.beamline import BeamLine
 from framat.fem.element import Element
-from framat.helpers.moresyntax import enumerate_with_step
 import framat.fem.boundary_conditions as bc
 
 logger = logging.getLogger(__name__)
@@ -70,20 +69,10 @@ class Frame:
             :beamlines: list of beamline objects
         """
 
-        logger.info("Assembling frame structure...")
-
-        self.is_assembled = False
-
         self.counter = ObjectCounter()
         self.finder = ObjectFinder()
         self.deformation = Deformation()
         self.boundary_conditions = BoundaryConditions()
-
-        for bc_type, nodes in bc_definitions.items():
-            self.boundary_conditions.add_boundary_condition(bc_type, nodes)
-
-        self.material_db = material_db
-        self.profile_db = profile_db
 
         # Generate beamline objects
         all_beamlines = []
@@ -106,24 +95,11 @@ class Frame:
         self.M = np.zeros((self.ndof, self.ndof))
         self.F = np.zeros((self.ndof, 1))
         self.B = None
-        self.b = None
 
         # Acceleration vector (used to model gravity, for instance)
         self.accel_direction = np.array(accel_definition['direction'])
         self.accel_factor = accel_definition.get('accel_factor', 1)
         self.is_accelerated = accel_definition['turn_on']
-
-        self.mass_breakdown = None
-        self.work_breakdown = None
-
-        self._apply_boundary_conditions()
-        self._assemble_global_tensors()
-
-    def __str__(self):
-        return self.__class__.__name__ + f' object with {self.counter.nodes} nodes'
-
-    def __repr__(self):
-        return self.__str__()
 
     @property
     def accel_direction(self):
@@ -157,12 +133,6 @@ class Frame:
         self.ndof = self.nnodes*Element.DOF_PER_NODE
         num_beams = self.counter.beams
 
-        logger.info(f"Discretisation:")
-        logger.info(f"--> n_beams: {num_beams:4d}")
-        logger.info(f"--> n_elem:  {self.nelem:4d}")
-        logger.info(f"--> n_nodes: {self.nnodes:4d}")
-        logger.info(f"--> n_dof:   {self.ndof:4d}")
-
     def _apply_boundary_conditions(self):
         """Assemble the global boundary condition matrix"""
 
@@ -188,50 +158,6 @@ class Frame:
 
                     B = bc.connect(node1_number, node2_number, node1_uid, node2_uid, self.ndof, None, self)
                     self.B = np.vstack((self.B, B)) if self.B.size else B
-
-        self.b = np.zeros((self.B.shape[0], 1))
-
-    def _assemble_global_tensors(self):
-        """
-        Assemble global tensors:
-
-            * Global stiffness matrix K
-            * Global load vector F
-        """
-
-        logger.info("Assembling global stiffness matrix...")
-        logger.info("Assembling global load matrix...")
-
-        # Create a stiffness matrix for each beam
-        K_per_beam = []
-        M_per_beam = []
-        F_per_beam = []
-        for beamline in self.beamlines:
-            K_beam = np.zeros((beamline.ndof, beamline.ndof))
-            M_beam = np.zeros((beamline.ndof, beamline.ndof))
-            F_beam = np.zeros((beamline.ndof, 1))
-
-            for k, element in enumerate_with_step(beamline.elements, step=6):
-                K_beam[k:k+12, k:k+12] += element.stiffness_matrix_glob
-                M_beam[k:k+12, k:k+12] += element.mass_matrix_glob
-                F_beam[k:k+12] += element.load_vector_glob
-
-            K_per_beam.append(K_beam)
-            M_per_beam.append(M_beam)
-            F_per_beam.append(F_beam)
-
-        # Paste each beam K matrix into global K
-        paste_range = [0, 0]
-        for K_beam, M_beam, F_beam in zip(K_per_beam, M_per_beam, F_per_beam):
-            r = K_beam.shape[0]
-            from_r = paste_range[1]
-            to_r = from_r + r
-            paste_range = [from_r, to_r]
-            self.K[from_r:to_r, from_r:to_r] = K_beam
-            self.M[from_r:to_r, from_r:to_r] = M_beam
-            self.F[from_r:to_r] += F_beam
-
-        self.is_assembled = True
 
     def get_mass_breakdown(self, enforce_recompute=False):
         """

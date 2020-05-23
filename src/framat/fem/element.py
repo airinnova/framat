@@ -34,12 +34,10 @@ logger = logging.getLogger(__name__)
 
 class GlobalSystem:
 
-    class UnitVectors:
-
-        Origin = np.array([0, 0, 0])
-        X = np.array([1, 0, 0])
-        Y = np.array([0, 1, 0])
-        Z = np.array([0, 0, 1])
+    Origin = np.array([0, 0, 0])
+    X = np.array([1, 0, 0])
+    Y = np.array([0, 1, 0])
+    Z = np.array([0, 0, 1])
 
 
 class Element:
@@ -87,89 +85,70 @@ class Element:
     CONC_LOAD_TYPES = ('Fx1', 'Fy1', 'Fz1', 'Mx1', 'My1', 'Mz1',
                        'Fx2', 'Fy2', 'Fz2', 'Mx2', 'My2', 'Mz2')
 
-    def __init__(self, parent_beamline, xsi1, xsi2, uid1, uid2, up=None):
+    def __init__(self, p1, p2, up=None):
         """
         Beam finite element with 6 dof per node
 
-        Args:
-            :parent_beamline: parent beamline object
-            :xsi1: relative position of first node
-            :xsi2: relative position of second node
-            :uid1: UID of node 1
-            :uid2: UID of node 2
+        TODO
         """
 
-        # Book keeping
-        self.element_num = parent_beamline.parent_frame.counter.elements
-        parent_beamline.parent_frame.finder.elements.update(self.element_num, self)
-        parent_beamline.parent_frame.counter.increment_element_count()
-
-        logger.debug(f"Adding new element no. '{self.element_num}'...")
-
-        # Reference to parent beamline
-        self.parent_beamline = parent_beamline
-
         # Element geometry
-        node1_num = parent_beamline.parent_frame.counter.get_last_node_num() - 1
-        node2_num = parent_beamline.parent_frame.counter.get_last_node_num()
-        self.node1 = Node(self, uid1, xsi1, node1_num, elem_loc=1)
-        self.node2 = Node(self, uid2, xsi2, node2_num, elem_loc=2)
+        self.p1 = p1
+        self.p2 = p2
 
         # Vectors of the local coordinate system
-        self.x_elem = unit_vector(self.node2.coord - self.node1.coord)
+        self.x_elem = unit_vector(self.p2.coord - self.p1.coord)
         self.y_elem = None
         self.z_elem = None
-        self.up = up
 
         # Element properties and loads
-        self.properties = defaultdict(lambda: None)
+        # self.properties = defaultdict(lambda: None)
+        # ------------------
+        self.properties = defaultdict(lambda: 1)
+        # ------------------
         self.distributed_loads = defaultdict(int)
         self.concentrated_loads = defaultdict(int)
         self.point_properties = defaultdict(int)
 
-        self.distributed_loads_in_loc_system = False
-        self.concentrated_loads_in_loc_system = False
+        # ----- Additional properties -----
+        # Centre position of the element
+        self.mid_point = (self.p1.coord + self.p2.coord)/2
+        # Centre position of the element in relative xsi coordinate
+        self.mid_xsi = (self.p1.rel_coord + self.p2.rel_coord)/2
+        # Length of the element
+        self.length = np.linalg.norm(self.p2.coord - self.p1.coord)
 
-    def __repr__(self):
-        return self.__class__.__name__ \
-            + f" no. {self.element_num} with nodes" \
-            + f" ({self.node1.num}) and ({self.node2.num})" \
-            + f" [beam: {self.parent_beamline.uid}]"
-
-    def __str__(self):
-        return self.__class__.__name__ \
-            + f" no. {self.element_num} with nodes" \
-            + f" ({self.node1.num}) and ({self.node2.num})" \
-            + f" [beam: {self.parent_beamline.uid}]"
-
-    @property
-    def up(self):
-        return self._up
-
-    @up.setter
-    def up(self, up):
-        self._up = up
-
-        # Update the y and z axis
+    def set_orientation(self, up):
         self.y_elem, self.z_elem = get_local_system_from_up(self.x_elem, up)
 
-    @property
-    def mid_point(self):
-        """Centre position of the element"""
+    def set_props(self, props):
+        """
+        Update the element properties
 
-        return (self.node1.coord + self.node2.coord)/2
+        Args:
+            :prop: dict with element properties
 
-    @property
-    def mid_xsi(self):
-        """Centre position of the element in relative xsi coordinate"""
+        * Acceptable dictionary keys see __class__.PROP_TYPES
+        """
 
-        return (self.node1.xsi + self.node2.xsi)/2
+        # TODO: improve
+        # TODO: improve
+        # TODO: improve
+        # TODO: improve
 
-    @property
-    def length(self):
-        """Length of the element"""
+        for prop_type in self.PROP_TYPES:
+            prop = props.get(prop_type, None)
+            if prop is None:
+                continue
+            self.properties[prop_type] = prop
 
-        return np.linalg.norm(self.node2.coord - self.node1.coord)
+    # ========================================
+    # ========================================
+    # ========================================
+    # ========================================
+
+
+
 
     def shape_function_matrix(self, xi):
         """
@@ -243,9 +222,9 @@ class Element:
     def transformation_matrix(self):
         """Transformation matrix"""
 
-        x_glob = GlobalSystem.UnitVectors.X
-        y_glob = GlobalSystem.UnitVectors.Y
-        z_glob = GlobalSystem.UnitVectors.Z
+        x_glob = GlobalSystem.X
+        y_glob = GlobalSystem.Y
+        z_glob = GlobalSystem.Z
 
         x_elem = self.x_elem
         y_elem = self.y_elem
@@ -264,10 +243,10 @@ class Element:
         nz = direction_cosine(z_elem, z_glob)
 
         T3 = np.array([
-                      [lx, mx, nx],
-                      [ly, my, ny],
-                      [lz, mz, nz],
-                      ])
+              [lx, mx, nx],
+              [ly, my, ny],
+              [lz, mz, nz],
+        ])
 
         T = np.zeros((12, 12))
         T[0:3, 0:3] = T[3:6, 3:6] = T[6:9, 6:9] = T[9:12, 9:12] = T3
@@ -468,8 +447,8 @@ class Element:
         T = self.transformation_matrix
         f_d_elem = self.distributed_load_vector
 
-        if self.distributed_loads_in_loc_system:
-            f_d_elem = T.T @ f_d_elem
+        # if self.distributed_loads_in_loc_system:
+        #     f_d_elem = T.T @ f_d_elem
 
         return f_d_elem
 
@@ -490,8 +469,8 @@ class Element:
         T = self.transformation_matrix
         f_c_elem = self.concentrated_load_vector
 
-        if self.concentrated_loads_in_loc_system:
-            f_c_elem = T.T @ f_c_elem
+        # if self.concentrated_loads_in_loc_system:
+        #     f_c_elem = T.T @ f_c_elem
 
         return f_c_elem
 
@@ -503,19 +482,6 @@ class Element:
         f_c_elem = self.concentrated_load_vector_glob
         f_elem_glob = f_d_elem + f_c_elem
         return f_elem_glob
-
-    def update_properties(self, prop):
-        """
-        Update the element properties
-
-        Args:
-            :prop: dict with element properties
-
-        * Acceptable dictionary keys see __class__.PROP_TYPES
-        """
-
-        for prop_type in self.PROP_TYPES:
-            self.properties[prop_type] = prop.get(prop_type, None)
 
     def update_distributed_loads(self, loads, is_loc_system):
         """
@@ -595,47 +561,6 @@ class Element:
         m2 = self.point_properties[f'm2']
 
         return rho*A*L + m1 + m2
-
-
-class Node:
-
-    def __init__(self, parent_element, uid, xsi, num, elem_loc):
-        """
-        A single node in 3D space
-
-        Args:
-            :parent_element: parent element object
-            :uid: UID of node (None if not defined)
-            :xsi: relative position of node (based on parent beamline geometry)
-            :num: global node number (depends on number of beams and elements)
-            :elem_loc: location of the node in the parent element (first or second node)
-        """
-
-        self.parent_element = parent_element
-        self.parent_beamline = self.parent_element.parent_beamline
-        self.parent_frame = self.parent_beamline.parent_frame
-
-        self.num = num  # Positive integer
-        self.uid = uid  # String
-        self.xsi = xsi  # Value in range [0, 1]
-        self.elem_loc = elem_loc  # Value of 1 or 2
-
-        # Book keeping
-        # First node in bookkeeping with number 'num' is primary node
-        self.is_primary = False
-        self.parent_frame.finder.nodes.update(self)
-
-    @property
-    def coord(self):
-        return np.asarray(self.parent_beamline.get_point(self.xsi))
-
-    def __str__(self):
-        return self.__class__.__name__ \
-            + f" {self.num} from beam {self.parent_beamline.uid} (primary: {self.is_primary})"
-
-    def __repr__(self):
-        return self.__class__.__name__ \
-            + f" {self.num} from beam {self.parent_beamline.uid}"
 
 
 def get_local_system_from_up(x_elem, up):

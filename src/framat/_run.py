@@ -24,9 +24,14 @@ Run the model
 """
 
 from . import MODULE_NAME
+from . import _solve as sol
+from . import _assembly as ass
+from . import _log as log
+from . import _meshing as mesh
+from . import _plot as plot
 from .__version__ import __version__
-from ._log import logger
-from ._meshing import LineMesh
+
+logger = log.logger
 
 
 def run_model(m):
@@ -34,43 +39,29 @@ def run_model(m):
     Run the complete model analysis
 
     Args:
-        :model: instance of model
+        :m: instance of model
     """
 
     logger.info(f"===== {MODULE_NAME} {__version__} =====")
-    logger.info(f"Number of beams: {m.len('beam')}")
+
+    # Instantiate result storage for each beam
+    for mbeam in m.iter('beam'):
+        m.results.add_feature('beam')
 
     # ----- MESHING -----
-    logger.info("Meshing...")
-    mesh(m)
+    mesh.create_mesh(m)
 
     # ----- ASSEMBLING SYSTEM MATRICES -----
     logger.info("Assembling matrices...")
-    # TODO: for each beam create Elements...
-    # TODO: assemble into global system... (global numbering...)
-    # TODO: Boundary conditions...
+    ass.make_elements(m)
+    ass.mesh_stats(m)
+    ass.create_system_matrices(m)
+    ass.create_bc_matrices(m)
 
     # ----- SOLVING -----
     logger.info("Solving...")
+    sol.solve(m)
 
     # ----- POST-PROCESSING -----
     logger.info("Post-processing...")
-
-
-def mesh(m):
-    """Meshing"""
-
-    r = m.results
-
-    for i, mbeam in enumerate(m.iter('beam')):
-        logger.info(f"Meshing beam with index {i}")
-        rbeam = r.add_feature('beam')
-
-        sup_points = {}
-        for node in mbeam.iter('node'):
-            rbeam.add('named_node', node['uid'])
-            sup_points[node['uid']] = node['coord']
-
-        all_points = LineMesh(sup_points, n=mbeam.get('nelem')).all_points
-        logger.info(f"Beam {i} has {len(all_points)} nodes")
-        rbeam.set('mesh', {'mesh': all_points})
+    plot.plot(m)

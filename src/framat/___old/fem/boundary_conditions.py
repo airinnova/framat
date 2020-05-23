@@ -27,38 +27,6 @@ Boundary conditions
 import numpy as np
 
 
-def fix_dof(node_number, total_ndof, dof_constraints):
-    """
-    Return part of constraint matrix B for fixed degrees of freedom
-
-    Note:
-        * Only non-zero rows are returned. If, say, three dof are fixed, then
-          B will have size 3xndof
-
-    Args:
-        :node_number: node_number
-        :total_ndof: total number of degrees of freedom
-        :dof_constraints: list with dofs to be fixed
-    """
-
-    B = np.array([])
-    pos_dict = {'ux': 0, 'uy': 1, 'uz': 2, 'tx': 3, 'ty': 4, 'tz': 5}
-
-    for constraint in dof_constraints:
-        if constraint == 'all':
-            B = np.zeros((6, total_ndof))
-            B[0:6, 6*node_number:6*node_number+6] = np.eye(6)
-            break
-        else:
-            pos = pos_dict[constraint]
-
-            B_row = np.zeros((1, total_ndof))
-            B_row[0, 6*node_number+pos] = 1
-            B = np.vstack((B, B_row)) if B.size else B_row
-
-    return B
-
-
 def connect(node1_number, node2_number, uid1, uid2, total_ndof, dof_constraints, frame):
     """
     Make a connection between two nodes

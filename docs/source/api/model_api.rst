@@ -690,15 +690,15 @@ Property: load
      **load**      {'type': <class 'list'>, 'min_len': 6, 'max_len': 6, 'item_types': <class 'numbers.Number'>}
 ================== ============================================================================================
 
-Property: mesh
-~~~~~~~~~~~~~~
+Property: nelem
+~~~~~~~~~~~~~~~
 
 .. mermaid::
 
     graph LR
     A[Model]
     A --> F1[beam] 
-    F1 --> P1[mesh] 
+    F1 --> P1[nelem] 
 
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/notes.svg
@@ -725,12 +725,10 @@ Property: mesh
 
 *Schema*:
 
-================== ===============================
-**$required_keys**     ['from', 'to', 'nelem']    
-     **from**      {'type': <class 'str'>, '>': 0}
-      **to**       {'type': <class 'str'>, '>': 0}
-    **nelem**      {'type': <class 'int'>, '>': 0}
-================== ===============================
+======== =============
+**type** <class 'int'>
+ **>**         0      
+======== =============
 
 Feature: bc
 -----------

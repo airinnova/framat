@@ -46,6 +46,10 @@ class S:
 mspec = ModelSpec()
 
 # ===== Material =====
+
+# TODO: material and cross section should be non-singleton
+# --> features like this must be identifiable by UID -----> model-framework
+
 fspec = FeatureSpec()
 fspec.add_prop_spec(
     'uid',
@@ -224,17 +228,35 @@ rspec = ModelSpec()
 
 # ===== Mesh =====
 fspec = FeatureSpec()
-# fspec.add_prop_spec(
-#     'global_nodes',
-#     {'eta': S.any_num, 'coord': S.vector3x1},
-#     singleton=False,
-#     doc="Nodes (global system)"
-# )
 fspec.add_prop_spec(
     'named_nodes',
     {'type': dict},
     singleton=True,
     doc="Mapping of named nodes to global node numbers"
+)
+fspec.add_prop_spec(
+    'nbeam',
+    S.pos_int,
+    singleton=True,
+    doc=""
+)
+fspec.add_prop_spec(
+    'nelem',
+    S.pos_int,
+    singleton=True,
+    doc=""
+)
+fspec.add_prop_spec(
+    'nnode',
+    S.pos_int,
+    singleton=True,
+    doc=""
+)
+fspec.add_prop_spec(
+    'ndof',
+    S.pos_int,
+    singleton=True,
+    doc=""
 )
 rspec.add_feature_spec(
     'mesh',
@@ -258,12 +280,32 @@ fspec.add_prop_spec(
     singleton=True,
     doc="List of named nodes belonging to beam"
 )
+fspec.add_prop_spec(
+    'elements',
+    {'type': list},
+    singleton=True,
+    doc="List of elements"
+)
 rspec.add_feature_spec(
     'beam',
     fspec,
     singleton=False,
     required=False,
     doc='Beam'
+)
+
+# ===== Deformation =====
+fspec = FeatureSpec()
+fspec.add_prop_spec(
+    'matrices',
+    {'type': dict},
+    doc="TODO"
+)
+rspec.add_feature_spec(
+    'system',
+    fspec,
+    singleton=True,
+    doc='System matrices'
 )
 
 # ===== Deformation =====
@@ -289,3 +331,34 @@ class Model(mspec.user_class):
         super().run()
         run_model(self)
         return self.results
+
+    @classmethod
+    def example(cls, example='cantilever'):
+        model = get_example_cantilever()
+        return model
+
+
+def get_example_cantilever():
+        model = Model()
+        mat = model.set_feature('material')
+        mat.set('uid', 'dummy')
+        mat.set('E', 1)
+        mat.set('G', 1)
+        mat.set('rho', 1)
+
+        cs = model.set_feature('cross_section')
+        cs.set('uid', 'dummy')
+        cs.set('A', 1)
+        cs.set('Iy', 1)
+        cs.set('Iz', 1)
+        cs.set('J', 1)
+
+        beam = model.add_feature('beam')
+        beam.add('node', {'uid': 'root', 'coord': [0, 0, 0]})
+        beam.add('node', {'uid': 'tip', 'coord': [1, 0, 0]})
+        beam.set('nelem', 1)
+        beam.add('material', {'from': 'root', 'to': 'tip', 'uid': 'dummy'})
+        beam.add('cross_section', {'from': 'root', 'to': 'tip', 'uid': 'dummy'})
+        beam.add('orientation', {'from': 'root', 'to': 'tip', 'up': [0, 0, 1]})
+        beam.add('load', {'at': 'tip', 'load': [0, 0, -1, 0, 0, 0]})
+        return model

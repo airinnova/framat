@@ -31,14 +31,3 @@ class classproperty:
 
     def __get__(self, instance, owner):
         return self.getter(owner)
-
-
-def enumerate_with_step(iterable, start=0, step=1):
-    """
-    TODO
-    https://stackoverflow.com/questions/24290025/python-enumerate-downwards-or-with-a-custom-step
-    """
-
-    for x in iterable:
-        yield (start, x)
-        start += step

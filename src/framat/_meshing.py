@@ -23,29 +23,42 @@
 Meshing
 """
 
-from collections import namedtuple
-import itertools
 import logging
 from math import ceil
+from collections import OrderedDict
 
 import numpy as np
 
+from ._util import pairwise
+
 logger = logging.getLogger(__name__)
 
+# TODO: Element --> Warning when overwriting data (first, from 'b' to 'c', then, from 'a' to 'c')
 
-def pairwise(iterable):
-    """
-    Return a new iterator which yields pairwise items
 
-    s --> (s0,s1), (s1,s2), (s2, s3), ...
+def create_mesh(m):
+    """Meshing"""
 
-    See: https://docs.python.org/3/library/itertools.html#itertools-recipes
-    """
+    logger.info("Meshing...")
 
-    a, b = itertools.tee(iterable)
-    next(b, None)
+    r = m.results
+    r.set_feature('mesh')
 
-    return zip(a, b)
+    for i, (mbeam, rbeam) in enumerate(zip(m.iter('beam'), r.iter('beam'))):
+        logger.info(f"Meshing beam with index {i}...")
+
+        sup_points = OrderedDict()
+        for node in mbeam.iter('node'):
+            # Collect the named nodes for each beam
+            rbeam.add('named_node', node['uid'])
+            sup_points[node['uid']] = node['coord']
+
+        # Create a polygon line mesh for each beam
+        mesh = LineMesh(sup_points, n=mbeam.get('nelem'))
+        logger.info(f"Beam {i} has {len(mesh)} nodes")
+
+        # TODO: save differently!!!
+        rbeam.set('mesh', {'mesh': mesh})
 
 
 class Point:
@@ -91,7 +104,7 @@ class LineSegment:
         all_points will have n + 1 nodes
         """
 
-        assert isinstance(n, int) and n > 1
+        assert isinstance(n, int) and n > 0
 
         self.all_points = [self.p1, ]
 
@@ -140,17 +153,16 @@ class Polygon:
             yield Point(p.coord, rel_coord=eta_poly, uid=p.uid)
 
 
-class LineMesh():
+class LineMesh:
 
     def __init__(self, sup_points, n=6):
         """
-        TODO
+        Geometric mesh
         """
 
-        # TODO: make sure dict is ordered...
-
-        # Create Polygon
-        self._polygon = Polygon()
+        # Ensure that dictionary items are ordered correctly
+        assert isinstance(sup_points, OrderedDict)
+        assert isinstance(n, int)
 
         points = []
         for uid, coord in sup_points.items():
@@ -166,4 +178,23 @@ class LineMesh():
 
         # Create mesh points
         self._polygon.set_node_num(n)
-        self.all_points = [p for p in self._polygon.iter_points()]
+
+        ##############
+        self.all_points = list(self._polygon.iter_points())
+        ##############
+        # _elem_lookup = ElementLookup()
+        # _elem_lookup.all_points = list(self._polygon.iter_points())
+        # for p1, p2 in pairwise(self._polygon.iter_points()):
+        #     _elem_lookup.elements.append(LineElement(p1, p2))
+
+    def __len__(self):
+        return len(list(self._polygon.iter_points()))
+
+    def iter_point_pairs(self):
+        """
+        Iterator for element point pairs
+
+        (p1, p2).....
+        """
+
+        yield from pairwise(self._polygon.iter_points())

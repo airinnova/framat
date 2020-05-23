@@ -26,41 +26,6 @@ Analysis
 import numpy as np
 
 
-def static_load_analysis(frame):
-    """
-    Perform a static load analysis
-
-    Args:
-        :frame: frame object
-
-    Returns:
-        :U: global vector of nodal displacements
-        :F_react: reaction loads
-    """
-
-    K = frame.K
-    B = frame.B
-    F = frame.F
-    F_accel = frame.F_accel
-    b = frame.b
-    ndof = frame.ndof
-
-    # ===== Assemble the system of equations =====
-    # Number of linear constraints
-    n_lr = B.shape[0]
-    Z = np.zeros((n_lr, n_lr))
-
-    A_system = np.block([[K, B.T],
-                         [B, Z]])
-    x_system = np.block([[F + F_accel],
-                         [b]])
-    solution = np.linalg.solve(A_system, x_system)
-
-    U = solution[0:ndof]
-    F_react = solution[ndof:]
-    return U, F_react
-
-
 def free_vibration_analysis(frame):
     """
     Perform a free vibration analysis
