@@ -25,9 +25,13 @@ Frame model generator
 
 from numbers import Number
 
-from mframework import FeatureSpec, ModelSpec
+from mframework import FeatureSpec, ModelSpec, SchemadictValidators
 
 from ._run import run_model
+from ._meshing import LineMesh
+
+# Register custom 'schemadict' types
+SchemadictValidators.register_type(LineMesh)
 
 
 class S:
@@ -276,7 +280,7 @@ fspec.add_prop_spec(
 )
 fspec.add_prop_spec(
     'mesh',
-    {'type': dict},
+    {'type': LineMesh},
     singleton=True,
     doc="List of named nodes belonging to beam"
 )

@@ -20,7 +20,7 @@
 # Author: Aaron Dettmann
 
 """
-Meshing
+Module for creating the geometric mesh
 """
 
 import logging
@@ -33,20 +33,18 @@ from ._util import pairwise
 
 logger = logging.getLogger(__name__)
 
-# TODO: Element --> Warning when overwriting data (first, from 'b' to 'c', then, from 'a' to 'c')
-
 
 def create_mesh(m):
-    """Meshing"""
+    """Top-level function for mesh creation"""
 
     logger.info("Meshing...")
 
     r = m.results
-    r.set_feature('mesh')
 
     for i, (mbeam, rbeam) in enumerate(zip(m.iter('beam'), r.iter('beam'))):
         logger.info(f"Meshing beam with index {i}...")
 
+        # Support points (= named nodes)
         sup_points = OrderedDict()
         for node in mbeam.iter('node'):
             # Collect the named nodes for each beam
@@ -56,9 +54,7 @@ def create_mesh(m):
         # Create a polygon line mesh for each beam
         mesh = LineMesh(sup_points, n=mbeam.get('nelem'))
         logger.info(f"Beam {i} has {len(mesh)} nodes")
-
-        # TODO: save differently!!!
-        rbeam.set('mesh', {'mesh': mesh})
+        rbeam.set('mesh', mesh)
 
 
 class Point:
@@ -79,12 +75,15 @@ class LineSegment:
 
     def __init__(self, p1, p2):
         assert isinstance(p1, Point) and isinstance(p2, Point)
+
         self.p1 = p1
         self.p2 = p2
 
+        # Set the relative coordinates of the start and end point
         self.p1.rel_coord = 0
         self.p2.rel_coord = 1
 
+        # Line direction
         self.dir = self.p2.coord - self.p1.coord
         self.len = np.linalg.norm(self.dir)
         self.all_points = [p1, p2]
@@ -101,7 +100,7 @@ class LineSegment:
         """
         Split segment into smaller segments
 
-        all_points will have n + 1 nodes
+        The new line segment will have n + 1 nodes.
         """
 
         assert isinstance(n, int) and n > 0
@@ -141,15 +140,17 @@ class Polygon:
 
     def iter_points(self):
         curr_len = 0
+        # All but last segments...
         for seg in self.segments[:-1]:
             for p in seg.iter_points(exclude_last=True):
                 eta_poly = curr_len/self.len + p.rel_coord*(seg.len/self.len)
                 yield Point(p.coord, rel_coord=eta_poly, uid=p.uid)
             curr_len += seg.len
 
+        # Last segment...
         seg = self.segments[-1]
         for p in seg.iter_points(exclude_last=False):
-            eta_poly = curr_len/self.len + p.rel_coord*(seg.len/self.len)
+            eta_poly = curr_len/self.len + p.rel_coord*(seg.len/self.len)  # TODO: duplicate
             yield Point(p.coord, rel_coord=eta_poly, uid=p.uid)
 
 
@@ -179,14 +180,6 @@ class LineMesh:
         # Create mesh points
         self._polygon.set_node_num(n)
 
-        ##############
-        self.all_points = list(self._polygon.iter_points())
-        ##############
-        # _elem_lookup = ElementLookup()
-        # _elem_lookup.all_points = list(self._polygon.iter_points())
-        # for p1, p2 in pairwise(self._polygon.iter_points()):
-        #     _elem_lookup.elements.append(LineElement(p1, p2))
-
     def __len__(self):
         return len(list(self._polygon.iter_points()))
 
@@ -194,7 +187,7 @@ class LineMesh:
         """
         Iterator for element point pairs
 
-        (p1, p2).....
+        Yields: (p1, p2)_1, (p1, p2)_2, ...
         """
 
         yield from pairwise(self._polygon.iter_points())

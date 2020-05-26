@@ -6,6 +6,7 @@ from ._log import logger
 from ._util import pairwise
 
 
+# TODO: Element --> Warning when overwriting data (first, from 'b' to 'c', then, from 'a' to 'c')
 # TODO: need check that all material, cross section data is set from start to end....
 
 
@@ -14,6 +15,7 @@ def mesh_stats(m):
     """
 
     r = m.results
+    r.set_feature('mesh')  ## TODO: Rename to 'assembly'...?
 
     nbeam = m.len('beam')
     nelem = 0
@@ -80,9 +82,8 @@ def make_elements(m):
         logger.info(f"Creating nodes for beam {i}")
 
         elem_lookup = ElementLookup()
-        for p1, p2 in rbeam.get('mesh')['mesh'].iter_point_pairs():
-            logger.info(f"{p1}, {p2}")
-            elem = Element(p1, p2, up=[0, 0, 1])
+        for p1, p2 in rbeam.get('mesh').iter_point_pairs():
+            elem = Element(p1, p2)
             elem_lookup.elements.append(elem)
 
         rbeam.set('elements', elem_lookup.elements)

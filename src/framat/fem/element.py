@@ -85,7 +85,7 @@ class Element:
     CONC_LOAD_TYPES = ('Fx1', 'Fy1', 'Fz1', 'Mx1', 'My1', 'Mz1',
                        'Fx2', 'Fy2', 'Fz2', 'Mx2', 'My2', 'Mz2')
 
-    def __init__(self, p1, p2, up=None):
+    def __init__(self, p1, p2):
         """
         Beam finite element with 6 dof per node
 
