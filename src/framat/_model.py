@@ -28,10 +28,10 @@ from numbers import Number
 from mframework import FeatureSpec, ModelSpec, SchemadictValidators
 
 from ._run import run_model
-from ._meshing import LineMesh
+from ._meshing import AbstractBeamMesh
 
 # Register custom 'schemadict' types
-SchemadictValidators.register_type(LineMesh)
+SchemadictValidators.register_type(AbstractBeamMesh)
 
 
 class S:
@@ -156,7 +156,7 @@ fspec.add_prop_spec(
     doc="Add a cross section"
 )
 fspec.add_prop_spec(
-    'load',
+    'point_load',
     {'$required_keys': ['at', 'load'], 'at': S.string, 'load': S.vector6x1},
     singleton=False,
     doc="Add a point load"
@@ -183,6 +183,7 @@ fspec.add_prop_spec(
         '$required_keys': ['node', 'fix'], 'node': S.string,
         'fix': {'type': list, 'min_len': 1, 'max_len': 6, 'item_types': str}
     },
+    singleton=False,
     doc="Fix a beam node"
 )
 fspec.add_prop_spec(
@@ -191,6 +192,7 @@ fspec.add_prop_spec(
         '$required_keys': ['node1', 'node2', 'fix'], 'node1': S.string, 'node2': S.string,
         'fix': {'type': list, 'min_len': 1, 'max_len': 6, 'item_types': str}
     },
+    singleton=False,
     doc="Connect two beam nodes"
 )
 mspec.add_feature_spec(
@@ -198,7 +200,7 @@ mspec.add_feature_spec(
     fspec,
     singleton=True,
     required=True,
-    doc='Cross-section properties'
+    doc="Boundary conditions"
 )
 
 # ===== Study =====
@@ -213,9 +215,20 @@ mspec.add_feature_spec('study', fspec, singleton=True, required=True, doc='Cross
 # ===== Post-proc =====
 fspec = FeatureSpec()
 fspec.add_prop_spec(
-    'plot',
-    {'$required_keys': ['args'], 'args': {'type': list, 'min_len': 1, 'item_types': dict}},
-    doc="Add a plot"
+    'plot_geom',
+    {
+        'file': {'type': str},  # TODO add custom check
+        'show': {'type', bool},
+        'settings': {
+            'plot': {
+                'type': list,
+                'allowed_items': ('nodes', 'node_uids'),
+            },
+            'ls': S.pos_int,
+            'ms': S.pos_int,
+        }
+    },
+    doc="Add a geometry plot"
 )
 mspec.add_feature_spec(
     'post_proc',
@@ -262,6 +275,12 @@ fspec.add_prop_spec(
     singleton=True,
     doc=""
 )
+fspec.add_prop_spec(
+    'abm',
+    {'type': AbstractBeamMesh},
+    singleton=True,
+    doc=""
+)
 rspec.add_feature_spec(
     'mesh',
     fspec,
@@ -280,7 +299,7 @@ fspec.add_prop_spec(
 )
 fspec.add_prop_spec(
     'mesh',
-    {'type': LineMesh},
+    {'type': AbstractBeamMesh},
     singleton=True,
     doc="List of named nodes belonging to beam"
 )
@@ -360,9 +379,12 @@ def get_example_cantilever():
         beam = model.add_feature('beam')
         beam.add('node', {'uid': 'root', 'coord': [0, 0, 0]})
         beam.add('node', {'uid': 'tip', 'coord': [1, 0, 0]})
-        beam.set('nelem', 1)
+        beam.set('nelem', 10)
         beam.add('material', {'from': 'root', 'to': 'tip', 'uid': 'dummy'})
         beam.add('cross_section', {'from': 'root', 'to': 'tip', 'uid': 'dummy'})
         beam.add('orientation', {'from': 'root', 'to': 'tip', 'up': [0, 0, 1]})
-        beam.add('load', {'at': 'tip', 'load': [0, 0, -1, 0, 0, 0]})
+        beam.add('point_load', {'at': 'tip', 'load': [0, 0, -1, 0, 0, 0]})
+
+        bc = model.set_feature('bc')
+        bc.add('fix', {'node': 'root', 'fix': ['all']})
         return model

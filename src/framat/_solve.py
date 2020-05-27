@@ -17,7 +17,7 @@ def static_load_analysis(m):
 
     r = m.results
     mat = m.results.get('system').get('matrices')
-    ndof = r.get('mesh').get('ndof')
+    ndof = mat['K'].shape[0]
 
     K = mat['K']
     B = mat['B']

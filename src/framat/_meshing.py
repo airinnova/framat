@@ -23,38 +23,65 @@
 Module for creating the geometric mesh
 """
 
-import logging
+from collections import OrderedDict, defaultdict
+from collections.abc import MutableMapping
 from math import ceil
-from collections import OrderedDict
 
 import numpy as np
 
+from ._log import logger
 from ._util import pairwise
-
-logger = logging.getLogger(__name__)
 
 
 def create_mesh(m):
     """Top-level function for mesh creation"""
 
-    logger.info("Meshing...")
-
     r = m.results
+    abm = AbstractBeamMesh()
 
-    for i, (mbeam, rbeam) in enumerate(zip(m.iter('beam'), r.iter('beam'))):
+    for i, mbeam in enumerate(m.iter('beam')):
         logger.info(f"Meshing beam with index {i}...")
 
         # Support points (= named nodes)
         sup_points = OrderedDict()
         for node in mbeam.iter('node'):
-            # Collect the named nodes for each beam
-            rbeam.add('named_node', node['uid'])
             sup_points[node['uid']] = node['coord']
 
-        # Create a polygon line mesh for each beam
-        mesh = LineMesh(sup_points, n=mbeam.get('nelem'))
-        logger.info(f"Beam {i} has {len(mesh)} nodes")
-        rbeam.set('mesh', mesh)
+        # Element lookup object for the new beam
+        elemlu = abm.add_beam_line(sup_points, n=mbeam.get('nelem'))
+        logger.info(f"Beam {i} has {elemlu.nelem} elements")
+
+        # ----- Beam element properties -----
+        for pdef in mbeam.get('orientation'):
+            for elem in elemlu[(pdef['from'], pdef['to'])]:
+                elem.set_attr('up', pdef['up'])
+
+        for pdef in mbeam.get('material'):
+            for elem in elemlu[(pdef['from'], pdef['to'])]:
+                for p in ('E', 'G', 'rho'):
+                    val = m.get('material').get(p)  # TODO: non-singleton
+                    elem.set_attr(p, val)
+
+        for pdef in mbeam.get('cross_section'):
+            for elem in elemlu[(pdef['from'], pdef['to'])]:
+                for p in ('A', 'Iy', 'Iz', 'J'):
+                    val = m.get('cross_section').get(p)  # TODO: non-singleton
+                    elem.set_attr(p, val)
+
+        for pdef in mbeam.get('point_load'):
+            elem = elemlu[pdef['at']]
+            elem.set_attr('point_load', pdef['load'], applies_to=elem.node_id(pdef['at']))
+
+    # # ----- Boundary conditions -----
+    # bc = m.get('bc')
+
+    # for pdef in bc.iter('fix'):
+    #     abc.set_attr('fix')
+    #     elem = elemlu[pdef['at']]
+    #     elem.set_attr('point_load', pdef['load'], applies_to=elem.node_id(pdef['at']))
+
+    rmesh = r.set_feature('mesh')
+    rmesh.set('abm', abm)
 
 
 class Point:
@@ -87,6 +114,9 @@ class LineSegment:
         self.dir = self.p2.coord - self.p1.coord
         self.len = np.linalg.norm(self.dir)
         self.all_points = [p1, p2]
+
+    def __repr__(self):
+        return f"{self.__class__.__qualname__}({self.p1!r}, {self.p2!r})"
 
     @property
     def from_uid(self):
@@ -122,11 +152,45 @@ class LineSegment:
             yield p
 
 
-class Polygon:
+class PolygonalChain:
 
-    def __init__(self):
+    def __init__(self, sup_points, n=10):
+        """
+        Polygonal chain
+
+        Args:
+            :sup_points: (dict) key: support point uid, value: nodes coordinates
+            :n: (int) number of elements for the entire chain
+
+        Attr:
+            :segments: (list) line segment
+            :len: (float) length of the polygon
+        """
+
+        # Ensure that dictionary items are ordered correctly
+        assert isinstance(sup_points, OrderedDict)
+        assert isinstance(n, int)
+
+        self.node_uids = sup_points.keys()
         self.segments = []
         self.len = 0
+
+        # Add line segments
+        points = []
+        for uid, coord in sup_points.items():
+            points.append(Point(coord, rel_coord=None, uid=uid))
+
+        edges = []
+        for p1, p2 in pairwise(points):
+            edges.append(LineSegment(p1, p2))
+
+        for seg in edges:
+            self.add_segment(seg)
+
+        self.set_node_num(n)
+
+    def __repr__(self):
+        return f"< {self.__class__.__qualname__} for {self.node_uids!r} >"
 
     def add_segment(self, seg):
         assert isinstance(seg, LineSegment)
@@ -154,40 +218,207 @@ class Polygon:
             yield Point(p.coord, rel_coord=eta_poly, uid=p.uid)
 
 
-class LineMesh:
+class AttrBase:
 
-    def __init__(self, sup_points, n=6):
+    def __init__(self, allowed):
         """
-        Geometric mesh
+        Assign attributes and values to some object
+
+        Args:
+            :allowed_keys: (list, tuple) allowed 'applies_to' keys (str)
         """
 
-        # Ensure that dictionary items are ordered correctly
-        assert isinstance(sup_points, OrderedDict)
-        assert isinstance(n, int)
+        assert isinstance(allowed, (list, tuple))
+        self._allowed = set(allowed)
+        self._attrs = defaultdict(dict)
 
-        points = []
-        for uid, coord in sup_points.items():
-            points.append(Point(coord, rel_coord=None, uid=uid))
+    def set_attr(self, key, value, applies_to):
+        assert isinstance(key, str)
+        assert applies_to in self._allowed
 
-        segments = []
-        for p1, p2 in pairwise(points):
-            segments.append(LineSegment(p1, p2))
+        self._attrs[applies_to][key] = value
 
-        self._polygon = Polygon()
-        for seg in segments:
-            self._polygon.add_segment(seg)
+    def get_attr(self, key, applies_to):
+        assert isinstance(key, str)
+        assert applies_to in self._allowed
 
-        # Create mesh points
-        self._polygon.set_node_num(n)
+        try:
+            return self._attrs[applies_to][key]
+        except KeyError:
+            return None
+
+
+class AbstractEdgeElement(AttrBase):
+
+    def __init__(self, p1, p2):
+        """
+        Edge element defined by spatial coordinates and abstract attributes
+
+        Args:
+            :p1: (obj) Point object of start point
+            :p2: (obj) Point object of end point
+        """
+
+        super().__init__(('elem', 'p1', 'p2'))
+
+        assert isinstance(p1, Point) and isinstance(p2, Point)
+        self.p1 = p1
+        self.p2 = p2
+
+    def __repr__(self):
+        return f"< {self.__class__.__qualname__}({self.p1!r}, {self.p2!r}) with {self._attrs!r} >"
+
+    def node_id(self, uid):
+        return 'p1' if self.p1.uid == uid else 'p2'
+
+    def set_attr(self, key, value, applies_to='elem'):
+        super().set_attr(key, value, applies_to=applies_to)
+
+    def get_attr(self, key, applies_to='elem'):
+        return super().get_attr(key, applies_to=applies_to)
+
+
+class AbstractBeamMesh(AttrBase):
+
+    def __init__(self):
+        """
+        Mesh consisting of multiple, disconnected polygonal chains. The mesh
+        may have globally defined abstract attributes.
+
+        Attr:
+            :beams: (list) list of beam look-up objects
+        """
+
+        super().__init__(('global', ))
+
+        # Each beam has a lookup dict object
+        self.beams = []
+
+    def __repr__(self):
+        return f"< {self.__class__.__qualname__} for {self.beams!r} >"
+
+    def add_beam_line(self, sup_points, n=10):
+        polygon = PolygonalChain(sup_points, n=n)
+        elemlu = ElementLookup()
+        for p1, p2 in pairwise(polygon.iter_points()):
+            elemlu.elements.append(AbstractEdgeElement(p1, p2))
+        self.beams.append(elemlu)
+        return self.beams[-1]
+
+    @property
+    def nbeams(self):
+        return len(self.beams)
+
+    @property
+    def nnodes(self):
+        return sum([beam.nnodes for beam in self.beams])
+
+    def ndofs(self, ndof_per_node=6):
+        return self.nnodes*ndof_per_node
+
+    def get_lims(self):
+        x_max = 0
+        y_max = 0
+        z_max = 0
+        x_min = 0
+        y_min = 0
+        z_min = 0
+        for beam in self.beams:
+            x_maxb, y_maxb, z_maxb, x_minb, y_minb, z_minb = beam.get_lims()
+            if x_maxb > x_max:
+                x_max = x_maxb
+            if y_maxb > y_max:
+                y_max = y_maxb
+            if z_maxb > z_max:
+                z_max = z_maxb
+            if x_minb < x_min:
+                x_min = x_minb
+            if y_minb < y_min:
+                y_min = y_minb
+            if z_minb < z_min:
+                z_min = z_minb
+        return x_max, y_max, z_max, x_min, y_min, z_min
+
+
+class ElementLookup(MutableMapping):
+
+    def __init__(self):
+        """
+        Group of elements (e.g. comprising a polygonal chain). Individual
+        elements or ranges of elements can be looked up with node UIDs.
+
+        Args:
+            :elements: (list) list of all elements in this lookup object
+        """
+
+        # Dummy
+        self._mapping = {}
+        self.elements = []
+
+    def __setitem__(self, key, value):
+        raise RuntimeError
+
+    def __getitem__(self, key):
+        return self.__missing__(key)
+
+    def __delitem__(self, key):
+        raise RuntimeError
+
+    def __iter__(self):
+        raise RuntimeError
 
     def __len__(self):
-        return len(list(self._polygon.iter_points()))
+        raise RuntimeError
 
-    def iter_point_pairs(self):
+    def __repr__(self):
+        return f"< {self.__class__.__qualname__} for {self.elements!r} >"
+
+    def __missing__(self, key):
+        if isinstance(key, str):
+            for elem in self.elements:
+                if (elem.p1.uid == key) or (elem.p2.uid == key):
+                    return elem
+            else:
+                raise KeyError(f"{key!r}")
+        elif isinstance(key, tuple):
+            uid1, uid2 = key
+            beginning_found = False
+            elements = []
+            for elem in self.elements:
+                if (elem.p1.uid == uid1) or beginning_found:
+                    elements.append(elem)
+                    beginning_found = True
+                if elem.p2.uid == uid2:
+                    return elements
+            else:
+                raise KeyError(f"{key!r}")
+        else:
+            raise KeyError(f"{key!r}")
+
+    @property
+    def nelem(self):
+        return len(self.elements)
+
+    @property
+    def nnodes(self):
+        return self.nelem + 1
+
+    def get_node_points(self):
         """
-        Iterator for element point pairs
-
-        Yields: (p1, p2)_1, (p1, p2)_2, ...
         """
 
-        yield from pairwise(self._polygon.iter_points())
+        xyz = self.elements[0].p1.coord.reshape((1, 3))
+        xyz = self.elements[0].p2.coord.reshape((1, 3))
+        for elem in self.elements[1:]:
+            xyz = np.append(xyz, elem.p2.coord.reshape((1, 3)), axis=0)
+        return xyz
+
+    def get_lims(self):
+        xyz = self.get_node_points()
+        x_max = np.max(xyz[:, 0])
+        y_max = np.max(xyz[:, 1])
+        z_max = np.max(xyz[:, 2])
+        x_min = np.min(xyz[:, 0])
+        y_min = np.min(xyz[:, 1])
+        z_min = np.min(xyz[:, 2])
+        return x_max, y_max, z_max, x_min, y_min, z_min

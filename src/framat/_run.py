@@ -49,12 +49,12 @@ def run_model(m):
         m.results.add_feature('beam')
 
     # ----- MESHING -----
+    logger.info("Meshing...")
     mesh.create_mesh(m)
 
     # ----- ASSEMBLING SYSTEM MATRICES -----
     logger.info("Assembling matrices...")
-    ass.make_elements(m)
-    ass.mesh_stats(m)
+    # ass.get_mesh_stats(m)
     ass.create_system_matrices(m)
     ass.create_bc_matrices(m)
 
@@ -64,4 +64,4 @@ def run_model(m):
 
     # ----- POST-PROCESSING -----
     logger.info("Post-processing...")
-    plot.plot(m)
+    plot.plot_all(m)

@@ -5,9 +5,9 @@
 Test the Python API
 """
 
-from mframework._log import disable_logger
-disable_logger()
-
+from mframework._log import disable_logger, enable_logger
+# disable_logger()
+enable_logger()
 import pytest
 
 from framat import Model
@@ -38,7 +38,7 @@ def test_x():
     beam.add('material', {'from': 'root1', 'to': 'tip1', 'uid': 'dummy1'})
     beam.add('cross_section', {'from': 'root1', 'to': 'tip1', 'uid': 'dummy'})
     beam.add('orientation', {'from': 'root1', 'to': 'tip1', 'up': [0, 0, 1]})
-    beam.add('load', {'at': 'tip1', 'load': [0, 0, -1, 0, 0, 0]})
+    beam.add('point_load', {'at': 'tip1', 'load': [0, 0, -1, 0, 0, 0]})
 
     beam = model.add_feature('beam')
     beam.add('node', {'uid': 'root2', 'coord': [0, 0, 1]})
@@ -48,12 +48,16 @@ def test_x():
     beam.add('material', {'from': 'root2', 'to': 'tip2', 'uid': 'dummy'})
     beam.add('cross_section', {'from': 'root2', 'to': 'tip2', 'uid': 'dummy'})
     beam.add('orientation', {'from': 'root2', 'to': 'tip2', 'up': [0, 0, 1]})
-    beam.add('load', {'at': 'tip2', 'load': [0, 0, -1, 0, 0, 0]})
+    beam.add('point_load', {'at': 'tip2', 'load': [0, 0, -1, 0, 0, 0]})
+
+    bc = model.set_feature('bc')
+    bc.add('fix', {'node': 'root1', 'fix': ['all']})
+    bc.add('fix', {'node': 'root2', 'fix': ['all']})
 
     r = model.run()
 
-    assert r.get('beam')[0].get('named_node') == ['root1', 'mid1', 'tip1']
-    assert r.get('beam')[1].get('named_node') == ['root2', 'mid2', 'tip2']
+    # assert r.get('mesh').beams[0].get('named_node') == ['root1', 'mid1', 'tip1']
+    # assert r.get('beam')[1].get('named_node') == ['root2', 'mid2', 'tip2']
 
     # assert r.get('mesh').get('global_nodes')[0]['eta'] == 0
     # assert r.get('mesh').get('global_nodes')[0]['coord'] == [0, 0, 0]

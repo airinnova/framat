@@ -118,37 +118,19 @@ class Element:
         # Length of the element
         self.length = np.linalg.norm(self.p2.coord - self.p1.coord)
 
-    def set_orientation(self, up):
-        self.y_elem, self.z_elem = get_local_system_from_up(self.x_elem, up)
+    @classmethod
+    def from_abstract_element(cls, a):
+        new = cls(a.p1, a.p2)
+        new.y_elem, new.z_elem = get_local_system_from_up(new.x_elem, a.get_attr('up'))
 
-    def set_props(self, props):
-        """
-        Update the element properties
+        for prop_type in new.PROP_TYPES:
+            new.properties[prop_type] = a.get_attr(prop_type)
 
-        Args:
-            :prop: dict with element properties
+        return new
 
-        * Acceptable dictionary keys see __class__.PROP_TYPES
-        """
-
-        # TODO: improve
-        # TODO: improve
-        # TODO: improve
-        # TODO: improve
-
-        for prop_type in self.PROP_TYPES:
-            prop = props.get(prop_type, None)
-            if prop is None:
-                continue
-            self.properties[prop_type] = prop
-
-    # ========================================
-    # ========================================
-    # ========================================
-    # ========================================
-
-
-
+    #################################################################
+    #################################################################
+    #################################################################
 
     def shape_function_matrix(self, xi):
         """

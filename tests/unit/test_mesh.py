@@ -5,8 +5,9 @@
 Mesh test
 """
 
-from mframework._log import disable_logger
-disable_logger()
+from mframework._log import disable_logger, enable_logger
+# disable_logger()
+enable_logger()
 
 import pytest
 
