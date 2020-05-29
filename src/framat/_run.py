@@ -24,14 +24,12 @@ Run the model
 """
 
 from . import MODULE_NAME
-from . import _solve as sol
 from . import _assembly as ass
-from . import _log as log
 from . import _meshing as mesh
 from . import _plot as plot
+from . import _solve as sol
 from .__version__ import __version__
-
-logger = log.logger
+from ._log import logger
 
 
 def run_model(m):

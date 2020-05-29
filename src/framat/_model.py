@@ -214,6 +214,7 @@ mspec.add_feature_spec('study', fspec, singleton=True, required=True, doc='Cross
 
 # ===== Post-proc =====
 fspec = FeatureSpec()
+# TODO: plot --> general settings.....
 fspec.add_prop_spec(
     'plot_geom',
     {

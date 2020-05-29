@@ -23,18 +23,11 @@
 Logging
 """
 
-import logging
+from commonlibs.log import PackageLogger
 
 from . import MODULE_NAME
 
-FORMAT = f"%(levelname)s | {MODULE_NAME} | %(message)s"
-logging.basicConfig(level=logging.DEBUG, format=FORMAT)
-logger = logging.getLogger(MODULE_NAME)
-
-
-def disable_logger():
-    logger.setLevel(logging.ERROR)
-
-
-def enable_logger():
-    logger.setLevel(logging.DEBUG)
+_plogger = PackageLogger(MODULE_NAME)
+logger = _plogger.logger
+enable_logger = _plogger.enable
+disable_logger = _plogger.disable
