@@ -214,25 +214,26 @@ mspec.add_feature_spec('study', fspec, singleton=True, required=True, doc='Cross
 
 # ===== Post-proc =====
 fspec = FeatureSpec()
-# TODO: plot --> general settings.....
 fspec.add_prop_spec(
-    'plot_geom',
+    'settings',
     {
-        'file': {'type': str},  # TODO add custom check
         'show': {'type', bool},
-        'settings': {
-            'plot': {
-                'type': list,
-                'allowed_items': ('nodes', 'node_uids'),
-            },
-            'ls': S.pos_int,
-            'ms': S.pos_int,
-        }
+        'linewidth': S.pos_number,
+        'markersize': S.pos_number,
+        'fontsize': S.pos_int,
+    },
+    doc="General plot settings"
+)
+fspec.add_prop_spec(
+    'geom',
+    {
+        'type': tuple,
+        'allowed_items': ('nodes', 'node_uids'),
     },
     doc="Add a geometry plot"
 )
 mspec.add_feature_spec(
-    'post_proc',
+    'plot',
     fspec,
     singleton=True,
     required=True,

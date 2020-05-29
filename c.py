@@ -13,5 +13,9 @@ beam.add('cross_section', {'from': 'a', 'to': 'd', 'uid': 'dummy'})
 beam.add('orientation', {'from': 'a', 'to': 'd', 'up': [0, 0, 1]})
 beam.add('point_load', {'at': 'b', 'load': [0, 0, -1, 0, 0, 0]})
 
+plot = m.set_feature('plot')
+# plot.set('settings', {'linewidth': 4, 'markersize': 10})
+plot.set('geom', ('nodes', 'node_uids'))
+
 r = m.run()
 print(r.get('mesh').get('abm').nnodes)

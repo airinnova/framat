@@ -649,15 +649,15 @@ Property: cross_section
      **uid**       {'type': <class 'str'>, '>': 0}
 ================== ===============================
 
-Property: load
-~~~~~~~~~~~~~~
+Property: point_load
+~~~~~~~~~~~~~~~~~~~~
 
 .. mermaid::
 
     graph LR
     A[Model]
     A --> F1[beam] 
-    F1 --> P1[load] 
+    F1 --> P1[point_load] 
 
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/notes.svg
@@ -737,7 +737,7 @@ Feature: bc
    :align: left
    :alt: description
 
-*Description*: Cross-section properties
+*Description*: Boundary conditions
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
@@ -916,22 +916,22 @@ Feature: post_proc
 
 *Required*: True
 
-Property: plot
-~~~~~~~~~~~~~~
+Property: plot_geom
+~~~~~~~~~~~~~~~~~~~
 
 .. mermaid::
 
     graph LR
     A[Model]
     A --> F1[post_proc] 
-    F1 --> P1[plot] 
+    F1 --> P1[plot_geom] 
 
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/notes.svg
    :align: left
    :alt: description
 
-*Description*: Add a plot
+*Description*: Add a geometry plot
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
@@ -951,8 +951,9 @@ Property: plot
 
 *Schema*:
 
-================== ====================================================================
-**$required_keys**                               ['args']                              
-     **args**      {'type': <class 'list'>, 'min_len': 1, 'item_types': <class 'dict'>}
-================== ====================================================================
+============ =========================================================================================================================================================
+  **file**                                                                    {'type': <class 'str'>}                                                                 
+  **show**                                                                    {'type', <class 'bool'>}                                                                
+**settings** {'plot': {'type': <class 'list'>, 'allowed_items': ('nodes', 'node_uids')}, 'ls': {'type': <class 'int'>, '>': 0}, 'ms': {'type': <class 'int'>, '>': 0}}
+============ =========================================================================================================================================================
 

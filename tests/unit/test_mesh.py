@@ -5,10 +5,6 @@
 Mesh test
 """
 
-from mframework._log import disable_logger, enable_logger
-# disable_logger()
-enable_logger()
-
 import pytest
 
 import framat._meshing as m

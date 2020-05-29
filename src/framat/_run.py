@@ -52,7 +52,6 @@ def run_model(m):
 
     # ----- ASSEMBLING SYSTEM MATRICES -----
     logger.info("Assembling matrices...")
-    # ass.get_mesh_stats(m)
     ass.create_system_matrices(m)
     ass.create_bc_matrices(m)
 

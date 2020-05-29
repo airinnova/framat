@@ -33,85 +33,154 @@ import numpy as np
 from .fem.element import GlobalSystem
 # import .fileio.utils as fu
 
+
 class C:
-    DEFAULT = 'grey'
-    UNDEFORMED = 'blue'
-    DEFORMED = 'red'
     BC = 'black'
     BC_TEXT = 'white'
-    LOCAL_SYS = 'green'
-    GLOBAL_SYS = 'blue'
     CONC_FORCE = 'steelblue'
     CONC_MOMENT = 'purple'
+    DEFAULT = 'grey'
+    DEFORMED = 'red'
     DIST_FORCE = 'steelblue'
     DIST_MOMENT = 'purple'
     FREENODE_FORCE = 'black'
     FREENODE_MOMENT = 'grey'
     FREENODE_POINT = 'navy'
+    GLOBAL_SYS = 'blue'
+    LOCAL_SYS = 'green'
     MASS = 'maroon'
     MASS_LOAD = 'maroon'
+    UNDEFORMED = 'blue'
+
+
 
 
 def plot_all(m):
-    """
-    TODO
-    """
+    """Create all plots defined in the model object"""
 
-    create_3D_plot(m)
+    mplot = m.get('plot')
+    if mplot is None:
+        return
+
+    abm = m.results.get('mesh').get('abm')
+
+    ax = init_3D_plot(*abm.get_lims())
+
+    plot_geom(m, ax)
+
+    plt.show()
+    plt.close('all')
 
 
-def create_3D_plot(m):
+def init_3D_plot(x_lims, y_lims, z_lims):
     """
-    Main plotting function
+    Inititalize the 3D plot
 
     Args:
-        :frame: frame object
-        :plot_settings: settings dictionary
+        :x_lims: (tuple) min and max x-value
+        :y_lims: (tuple) min and max y-value
+        :z_lims: (tuple) min and max z-value
     """
-
-    r = m.results
-    abm = r.get('mesh').get('abm')
-    x_max, y_max, z_max, x_min, y_min, z_min = abm.get_lims()
 
     fig = plt.figure(figsize=(10, 10))
     ax = fig.gca(projection='3d')
 
-    ax.set_xlim(x_min, x_max)
-    ax.set_ylim(y_min, y_max)
-    ax.set_zlim(z_min, z_max)
-
-    # Raises a NotImplementedError in newer 'matplotlib' version
-    # See: https://github.com/matplotlib/matplotlib/issues/1077/
-    # ax.set_aspect('equal')
+    ax.set_xlim(x_lims)
+    ax.set_ylim(y_lims)
+    ax.set_zlim(z_lims)
 
     set_equal_aspect_3D(ax)
     ax.set_xlabel('X')
     ax.set_ylabel('Y')
     ax.set_zlabel('Z')
 
-    # ========================================================
-    # ========================================================
+    return ax
+
+
+def set_equal_aspect_3D(ax):
+    """
+    Set aspect ratio of plot correctly
+
+    Args:
+        :ax: (obj) axis object
+    """
+
+    # See https://stackoverflow.com/a/19248731
+    # ax.set_aspect('equal') --> raises a NotImplementedError
+    # See https://github.com/matplotlib/matplotlib/issues/1077/
+
+    extents = np.array([getattr(ax, 'get_{}lim'.format(dim))() for dim in 'xyz'])
+    sz = extents[:, 1] - extents[:, 0]
+    centers = np.mean(extents, axis=1)
+    maxsize = max(abs(sz))
+    r = maxsize/2
+    for ctr, dim in zip(centers, 'xyz'):
+        getattr(ax, 'set_{}lim'.format(dim))(ctr - r, ctr + r)
+
+
+def plot_geom(m, ax):
+    mpltgeom = m.get('plot').get('geom')
+    if mpltgeom is None:
+        return
+
+    abm = m.results.get('mesh').get('abm')
+    marker = 'o' if 'nodes' in mpltgeom else None
+
     for beam in abm.beams:
         xyz = beam.get_node_points()
+        x, y, z = xyz[:, 0], xyz[:, 1], xyz[:, 2]
+        ax.plot(x, y, z, **args_plot(m, C.UNDEFORMED, marker=marker))
 
-        # Plot elements
-        x = xyz[:, 0]
-        y = xyz[:, 1]
-        z = xyz[:, 2]
+    if 'node_uids' in mpltgeom:
+        for uid, coord in abm.named_nodes.items():
+            ax.text(*coord, uid, **args_text(m, color=C.BC))
 
-        plt.plot(x, y, z, marker='o', markersize=3, linewidth=2, color=C.UNDEFORMED)
-    # ========================================================
-    # ========================================================
 
-    # if ps['set_savefig']:
-    #     file_format = ps['set_format']
-    #     fname = fu.join2abs(filestructure.dirs['plots'],
-    #                         f"plot{ps['plot_number']}_" + fu.get_date_str() + f".{file_format}")
-    #     logger.info(f"Saving plot as file: '{truncate_filepath(fname)}'")
-    #     plt.savefig(fname, dpi=ps['set_dpi'], format=file_format)
+def args_plot(m, color, marker=None):
+    args = {
+        'linewidth': m.get('plot').get('settings', {}).get('linewidth', 2),
+        'markersize': m.get('plot').get('settings', {}).get('markersize', 5),
+        'color': color,
+    }
+    if marker is not None:
+        args['marker'] = marker
+    return args
 
-    plt.show()
-    plt.close('all')
+
+def args_scatter(m, color, marker=None):
+    args = {
+        'linewidth': m.get('plot').get('settings', {}).get('linewidth', 2),
+        'color': color,
+    }
+    return args
+
+
+def args_text(m, color):
+    args = {
+        'fontsize': m.get('plot').get('settings', {}).get('fontsize', 10),
+        'color': color,
+        'bbox': dict(facecolor='orange', alpha=0.5),
+        'horizontalalignment': 'center',
+        'verticalalignment': 'bottom',
+    }
+    return args
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 # def plot_all(frame, plots, filestructure):
@@ -217,24 +286,6 @@ def create_3D_plot(m):
     #     ax = _centre_of_mass(ax, ps)
 
     # plt.tight_layout()
-
-
-def set_equal_aspect_3D(plot):
-    """
-    Set aspect ratio of plot correctly
-
-    Args:
-        :plot: plot
-    """
-    # See https://stackoverflow.com/a/19248731
-
-    extents = np.array([getattr(plot, 'get_{}lim'.format(dim))() for dim in 'xyz'])
-    sz = extents[:, 1] - extents[:, 0]
-    centers = np.mean(extents, axis=1)
-    maxsize = max(abs(sz))
-    r = maxsize/2
-    for ctr, dim in zip(centers, 'xyz'):
-        getattr(plot, 'set_{}lim'.format(dim))(ctr - r, ctr + r)
 
 
 def _coordinate_system(plot, ps, origin, axes, axes_names, color, scale=1):

@@ -5,9 +5,6 @@
 Test the Python API
 """
 
-from mframework._log import disable_logger, enable_logger
-# disable_logger()
-enable_logger()
 import pytest
 
 from framat import Model

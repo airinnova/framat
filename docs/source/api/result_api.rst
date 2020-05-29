@@ -213,6 +213,39 @@ Property: ndof
  **>**         0      
 ======== =============
 
+Property: abm
+~~~~~~~~~~~~~
+
+.. mermaid::
+
+    graph LR
+    A[Model]
+    A --> F1[mesh] 
+    F1 --> P1[abm] 
+
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
+   :align: left
+   :alt: singleton
+
+*Singleton*: True
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
+   :align: left
+   :alt: required
+
+*Required*: False
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
+   :align: left
+   :alt: schema
+
+*Schema*:
+
+======== ==========================================
+**type** <class 'framat._meshing.AbstractBeamMesh'>
+======== ==========================================
+
 Feature: beam
 -------------
 
@@ -309,9 +342,9 @@ Property: mesh
 
 *Schema*:
 
-======== ==================================
-**type** <class 'framat._meshing.LineMesh'>
-======== ==================================
+======== ==========================================
+**type** <class 'framat._meshing.AbstractBeamMesh'>
+======== ==========================================
 
 Property: elements
 ~~~~~~~~~~~~~~~~~~

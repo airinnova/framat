@@ -294,10 +294,15 @@ class AbstractBeamMesh(AttrBase):
         # Each beam has a lookup dict object
         self.beams = []
 
+        self.named_nodes = {}
+
     def __repr__(self):
         return f"< {self.__class__.__qualname__} for {self.beams!r} >"
 
     def add_beam_line(self, sup_points, n=10):
+        for uid, coord in sup_points.items():
+            self.named_nodes[uid] = np.array(coord)
+
         polygon = PolygonalChain(sup_points, n=n)
         elemlu = ElementLookup()
         for p1, p2 in pairwise(polygon.iter_points()):
@@ -324,7 +329,7 @@ class AbstractBeamMesh(AttrBase):
         y_min = 0
         z_min = 0
         for beam in self.beams:
-            x_maxb, y_maxb, z_maxb, x_minb, y_minb, z_minb = beam.get_lims()
+            (x_minb, x_maxb), (y_minb, y_maxb), (z_minb, z_maxb) = beam.get_lims()
             if x_maxb > x_max:
                 x_max = x_maxb
             if y_maxb > y_max:
@@ -337,7 +342,7 @@ class AbstractBeamMesh(AttrBase):
                 y_min = y_minb
             if z_minb < z_min:
                 z_min = z_minb
-        return x_max, y_max, z_max, x_min, y_min, z_min
+        return (x_min, x_max), (y_min, y_max), (z_min, z_max)
 
 
 class ElementLookup(MutableMapping):
@@ -408,7 +413,7 @@ class ElementLookup(MutableMapping):
         """
 
         xyz = self.elements[0].p1.coord.reshape((1, 3))
-        xyz = self.elements[0].p2.coord.reshape((1, 3))
+        xyz = np.append(xyz, self.elements[0].p2.coord.reshape((1, 3)), axis=0)
         for elem in self.elements[1:]:
             xyz = np.append(xyz, elem.p2.coord.reshape((1, 3)), axis=0)
         return xyz
@@ -421,4 +426,4 @@ class ElementLookup(MutableMapping):
         x_min = np.min(xyz[:, 0])
         y_min = np.min(xyz[:, 1])
         z_min = np.min(xyz[:, 2])
-        return x_max, y_max, z_max, x_min, y_min, z_min
+        return (x_min, x_max), (y_min, y_max), (z_min, z_max)
