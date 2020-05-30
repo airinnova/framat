@@ -1,9 +1,33 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+# ----------------------------------------------------------------------
+# Copyright 2019-2020 Airinnova AB and the FramAT authors
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# ----------------------------------------------------------------------
+
+# Author: Aaron Dettmann
+
+"""
+Assembly
+"""
+
 import numpy as np
 
 from ._util import enumerate_with_step
-from .fem.element import Element
+from ._element import Element
 from ._log import logger
-from ._util import pairwise
 
 
 # TODO: Element --> Warning when overwriting data (first, from 'b' to 'c', then, from 'a' to 'c')
@@ -92,8 +116,10 @@ def create_system_matrices(m):
         M[from_r:to_r, from_r:to_r] = M_beam
         F[from_r:to_r] += F_beam
 
-    s = r.set_feature('system')
-    s.set('matrices', {'K': K, 'M': M, 'F': F})
+    mat = r.set_feature('matrices')
+    mat.set('K', K)
+    mat.set('M', M)
+    mat.set('F', F)
 
 
 def create_bc_matrices(m):
@@ -103,18 +129,17 @@ def create_bc_matrices(m):
     # ====================================
     # ====================================
     r = m.results
-    ndof = r.get('system').get('matrices')['K'].shape[0]
+    ndof = r.get('matrices').get('K').shape[0]
 
     # mbc = m.get('bc')
     # for fix in mbc.get('fix'):
     #     ...
 
     B = fix_dof(0, ndof, ['all'])
-    m.results.get('system').get('matrices')['B'] = B
+    m.results.get('matrices').set('B', B)
     # ====================================
     # ====================================
     # ====================================
-
 
 
 def fix_dof(node_number, total_ndof, dof_constraints):

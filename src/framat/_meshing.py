@@ -23,14 +23,18 @@
 Module for creating the geometric mesh
 """
 
-from collections import OrderedDict, defaultdict
+from collections import OrderedDict
 from collections.abc import MutableMapping
 from math import ceil
 
+from mframework import FeatureSpec
 import numpy as np
 
+from ._element import Element
 from ._log import logger
+from ._util import Schemas as S
 from ._util import pairwise
+
 
 
 def create_mesh(m):
@@ -54,23 +58,23 @@ def create_mesh(m):
         # ----- Beam element properties -----
         for pdef in mbeam.get('orientation'):
             for elem in elemlu[(pdef['from'], pdef['to'])]:
-                elem.set_attr('up', pdef['up'])
+                elem.set('up', pdef['up'])
 
         for pdef in mbeam.get('material'):
             for elem in elemlu[(pdef['from'], pdef['to'])]:
                 for p in ('E', 'G', 'rho'):
                     val = m.get('material').get(p)  # TODO: non-singleton
-                    elem.set_attr(p, val)
+                    elem.set(p, val)
 
         for pdef in mbeam.get('cross_section'):
             for elem in elemlu[(pdef['from'], pdef['to'])]:
                 for p in ('A', 'Iy', 'Iz', 'J'):
                     val = m.get('cross_section').get(p)  # TODO: non-singleton
-                    elem.set_attr(p, val)
+                    elem.set(p, val)
 
         for pdef in mbeam.get('point_load'):
-            elem = elemlu[pdef['at']]
-            elem.set_attr('point_load', pdef['load'], applies_to=elem.node_id(pdef['at']))
+            (node_id, elem) = elemlu[pdef['at']]
+            elem.add('point_load', {'load': pdef['load'], 'node': node_id, 'local_sys': True})
 
     # # ----- Boundary conditions -----
     # bc = m.get('bc')
@@ -217,38 +221,27 @@ class PolygonalChain:
             eta_poly = curr_len/self.len + p.rel_coord*(seg.len/self.len)  # TODO: duplicate
             yield Point(p.coord, rel_coord=eta_poly, uid=p.uid)
 
+# ===== Abstract beam element =====
 
-class AttrBase:
+schema_load = {'load': S.vector6x1, 'node': S.pos_int, 'local_sys': {'type': bool}}
+schema_mass = {'mass': {'type': S.pos_number}, 'node': S.pos_int}
 
-    def __init__(self, allowed):
-        """
-        Assign attributes and values to some object
+fspec = FeatureSpec()
 
-        Args:
-            :allowed_keys: (list, tuple) allowed 'applies_to' keys (str)
-        """
+for p in Element.PROP_TYPES:
+    fspec.add_prop_spec(p, S.pos_number)
 
-        assert isinstance(allowed, (list, tuple))
-        self._allowed = set(allowed)
-        self._attrs = defaultdict(dict)
+fspec.add_prop_spec('up', S.vector3x1)
+fspec.add_prop_spec('point_load', schema_load, singleton=False)
+fspec.add_prop_spec('dist_load', schema_load, singleton=False)
+fspec.add_prop_spec('point_mass', schema_mass, singleton=False)
 
-    def set_attr(self, key, value, applies_to):
-        assert isinstance(key, str)
-        assert applies_to in self._allowed
-
-        self._attrs[applies_to][key] = value
-
-    def get_attr(self, key, applies_to):
-        assert isinstance(key, str)
-        assert applies_to in self._allowed
-
-        try:
-            return self._attrs[applies_to][key]
-        except KeyError:
-            return None
+# =================================
 
 
-class AbstractEdgeElement(AttrBase):
+class AbstractEdgeElement(fspec.user_class):
+
+    NUM = 0
 
     def __init__(self, p1, p2):
         """
@@ -259,26 +252,19 @@ class AbstractEdgeElement(AttrBase):
             :p2: (obj) Point object of end point
         """
 
-        super().__init__(('elem', 'p1', 'p2'))
+        super().__init__()
+
+        self.NUM += 1
 
         assert isinstance(p1, Point) and isinstance(p2, Point)
         self.p1 = p1
         self.p2 = p2
 
     def __repr__(self):
-        return f"< {self.__class__.__qualname__}({self.p1!r}, {self.p2!r}) with {self._attrs!r} >"
-
-    def node_id(self, uid):
-        return 'p1' if self.p1.uid == uid else 'p2'
-
-    def set_attr(self, key, value, applies_to='elem'):
-        super().set_attr(key, value, applies_to=applies_to)
-
-    def get_attr(self, key, applies_to='elem'):
-        return super().get_attr(key, applies_to=applies_to)
+        return f"< {self.__class__.__qualname__}({self.p1!r}, {self.p2!r}) >"
 
 
-class AbstractBeamMesh(AttrBase):
+class AbstractBeamMesh:
 
     def __init__(self):
         """
@@ -288,8 +274,6 @@ class AbstractBeamMesh(AttrBase):
         Attr:
             :beams: (list) list of beam look-up objects
         """
-
-        super().__init__(('global', ))
 
         # Each beam has a lookup dict object
         self.beams = []
@@ -381,8 +365,10 @@ class ElementLookup(MutableMapping):
     def __missing__(self, key):
         if isinstance(key, str):
             for elem in self.elements:
-                if (elem.p1.uid == key) or (elem.p2.uid == key):
-                    return elem
+                if elem.p1.uid == key:
+                    return (1, elem)
+                elif elem.p2.uid == key:
+                    return (2, elem)
             else:
                 raise KeyError(f"{key!r}")
         elif isinstance(key, tuple):

@@ -23,25 +23,16 @@
 Frame model generator
 """
 
-from numbers import Number
-
 from mframework import FeatureSpec, ModelSpec, SchemadictValidators
+import numpy as np
 
 from ._run import run_model
 from ._meshing import AbstractBeamMesh
+from ._util import Schemas as S
 
 # Register custom 'schemadict' types
 SchemadictValidators.register_type(AbstractBeamMesh)
-
-
-class S:
-    any_int = {'type': int}
-    any_num = {'type': Number}
-    pos_int = {'type': int, '>': 0}
-    pos_number = {'type': Number, '>': 0}
-    string = {'type': str, '>': 0}
-    vector3x1 = {'type': list, 'min_len': 3, 'max_len': 3, 'item_types': Number}
-    vector6x1 = {'type': list, 'min_len': 6, 'max_len': 6, 'item_types': Number}
+SchemadictValidators.register_type(np.ndarray)
 
 
 # =================
@@ -215,7 +206,7 @@ mspec.add_feature_spec('study', fspec, singleton=True, required=True, doc='Cross
 # ===== Post-proc =====
 fspec = FeatureSpec()
 fspec.add_prop_spec(
-    'settings',
+    'plot_settings',
     {
         'show': {'type', bool},
         'linewidth': S.pos_number,
@@ -225,15 +216,21 @@ fspec.add_prop_spec(
     doc="General plot settings"
 )
 fspec.add_prop_spec(
-    'geom',
+    'plot',
     {
         'type': tuple,
-        'allowed_items': ('nodes', 'node_uids'),
+        'allowed_items': (
+            'deformed',
+            'node_uids',
+            'nodes',
+            'undeformed',
+        ),
     },
+    singleton=False,
     doc="Add a geometry plot"
 )
 mspec.add_feature_spec(
-    'plot',
+    'post_proc',
     fspec,
     singleton=True,
     required=True,
@@ -311,6 +308,19 @@ fspec.add_prop_spec(
     singleton=True,
     doc="List of elements"
 )
+fspec.add_prop_spec(
+    'deformation',
+    {
+        'ux': {'type': np.ndarray},
+        'uy': {'type': np.ndarray},
+        'uz': {'type': np.ndarray},
+        'thx': {'type': np.ndarray},
+        'thy': {'type': np.ndarray},
+        'thz': {'type': np.ndarray},
+    },
+    singleton=True,
+    doc="List of elements"
+)
 rspec.add_feature_spec(
     'beam',
     fspec,
@@ -321,13 +331,14 @@ rspec.add_feature_spec(
 
 # ===== Deformation =====
 fspec = FeatureSpec()
-fspec.add_prop_spec(
-    'matrices',
-    {'type': dict},
-    doc="TODO"
-)
+fspec.add_prop_spec('K', {'type': np.ndarray}, doc="TODO")
+fspec.add_prop_spec('M', {'type': np.ndarray}, doc="TODO")
+fspec.add_prop_spec('F', {'type': np.ndarray}, doc="TODO")
+fspec.add_prop_spec('U', {'type': np.ndarray}, doc="TODO")
+fspec.add_prop_spec('B', {'type': np.ndarray}, doc="TODO")
+fspec.add_prop_spec('F_react', {'type': np.ndarray}, doc="TODO")
 rspec.add_feature_spec(
-    'system',
+    'matrices',
     fspec,
     singleton=True,
     doc='System matrices'
@@ -364,29 +375,29 @@ class Model(mspec.user_class):
 
 
 def get_example_cantilever():
-        model = Model()
-        mat = model.set_feature('material')
-        mat.set('uid', 'dummy')
-        mat.set('E', 1)
-        mat.set('G', 1)
-        mat.set('rho', 1)
+    model = Model()
+    mat = model.set_feature('material')
+    mat.set('uid', 'dummy')
+    mat.set('E', 1)
+    mat.set('G', 1)
+    mat.set('rho', 1)
 
-        cs = model.set_feature('cross_section')
-        cs.set('uid', 'dummy')
-        cs.set('A', 1)
-        cs.set('Iy', 1)
-        cs.set('Iz', 1)
-        cs.set('J', 1)
+    cs = model.set_feature('cross_section')
+    cs.set('uid', 'dummy')
+    cs.set('A', 1)
+    cs.set('Iy', 1)
+    cs.set('Iz', 1)
+    cs.set('J', 1)
 
-        beam = model.add_feature('beam')
-        beam.add('node', {'uid': 'root', 'coord': [0, 0, 0]})
-        beam.add('node', {'uid': 'tip', 'coord': [1, 0, 0]})
-        beam.set('nelem', 10)
-        beam.add('material', {'from': 'root', 'to': 'tip', 'uid': 'dummy'})
-        beam.add('cross_section', {'from': 'root', 'to': 'tip', 'uid': 'dummy'})
-        beam.add('orientation', {'from': 'root', 'to': 'tip', 'up': [0, 0, 1]})
-        beam.add('point_load', {'at': 'tip', 'load': [0, 0, -1, 0, 0, 0]})
+    beam = model.add_feature('beam')
+    beam.add('node', {'uid': 'root', 'coord': [0, 0, 0]})
+    beam.add('node', {'uid': 'tip', 'coord': [1, 0, 0]})
+    beam.set('nelem', 10)
+    beam.add('material', {'from': 'root', 'to': 'tip', 'uid': 'dummy'})
+    beam.add('cross_section', {'from': 'root', 'to': 'tip', 'uid': 'dummy'})
+    beam.add('orientation', {'from': 'root', 'to': 'tip', 'up': [0, 0, 1]})
+    beam.add('point_load', {'at': 'tip', 'load': [0, 0, -1, 0, 0, 0]})
 
-        bc = model.set_feature('bc')
-        bc.add('fix', {'node': 'root', 'fix': ['all']})
-        return model
+    bc = model.set_feature('bc')
+    bc.add('fix', {'node': 'root', 'fix': ['all']})
+    return model

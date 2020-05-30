@@ -33,11 +33,13 @@ logger = logging.getLogger(__name__)
 
 
 class GlobalSystem:
-
     Origin = np.array([0, 0, 0])
     X = np.array([1, 0, 0])
     Y = np.array([0, 1, 0])
     Z = np.array([0, 0, 1])
+
+
+G = GlobalSystem
 
 
 class Element:
@@ -85,48 +87,86 @@ class Element:
     CONC_LOAD_TYPES = ('Fx1', 'Fy1', 'Fz1', 'Mx1', 'My1', 'Mz1',
                        'Fx2', 'Fy2', 'Fz2', 'Mx2', 'My2', 'Mz2')
 
-    def __init__(self, p1, p2):
+    def __init__(self, p1, p2, up):
         """
         Beam finite element with 6 dof per node
 
         TODO
         """
 
-        # Element geometry
+        # ===== Geometry =====
+        # Node points
         self.p1 = p1
         self.p2 = p2
 
         # Vectors of the local coordinate system
         self.x_elem = unit_vector(self.p2.coord - self.p1.coord)
-        self.y_elem = None
-        self.z_elem = None
+        self.y_elem, self.z_elem = get_local_system_from_up(self.x_elem, up)
 
-        # Element properties and loads
-        # self.properties = defaultdict(lambda: None)
-        # ------------------
-        self.properties = defaultdict(lambda: 1)
-        # ------------------
-        self.distributed_loads = defaultdict(int)
-        self.concentrated_loads = defaultdict(int)
-        self.point_properties = defaultdict(int)
-
-        # ----- Additional properties -----
-        # Centre position of the element
+        # Additional geometric properties
         self.mid_point = (self.p1.coord + self.p2.coord)/2
-        # Centre position of the element in relative xsi coordinate
         self.mid_xsi = (self.p1.rel_coord + self.p2.rel_coord)/2
-        # Length of the element
         self.length = np.linalg.norm(self.p2.coord - self.p1.coord)
+
+        # ===== Material and cross section properties =====
+        self.properties = defaultdict(lambda: None)
+
+        # ===== Load vector in the global system =====
+        self.load_vector_glob = np.zeros((12, 1))
+        self.mass_matrix_glob = np.zeros((12, 12))
+        # self.stiffness_matrix_glob = np.zeros((12, 1))
+
+        # ===== Transformation matrix =====
+        lx = direction_cosine(self.x_elem, G.X)
+        ly = direction_cosine(self.y_elem, G.X)
+        lz = direction_cosine(self.z_elem, G.X)
+        mx = direction_cosine(self.x_elem, G.Y)
+        my = direction_cosine(self.y_elem, G.Y)
+        mz = direction_cosine(self.z_elem, G.Y)
+        nx = direction_cosine(self.x_elem, G.Z)
+        ny = direction_cosine(self.y_elem, G.Z)
+        nz = direction_cosine(self.z_elem, G.Z)
+
+        T3 = np.array([[lx, mx, nx], [ly, my, ny], [lz, mz, nz]])
+        self.T = np.zeros((12, 12))
+        self.T[0:3, 0:3] = self.T[3:6, 3:6] = self.T[6:9, 6:9] = self.T[9:12, 9:12] = T3
 
     @classmethod
     def from_abstract_element(cls, a):
-        new = cls(a.p1, a.p2)
-        new.y_elem, new.z_elem = get_local_system_from_up(new.x_elem, a.get_attr('up'))
+        """Create an new element from an abstract beam element"""
+
+        new = cls(a.p1, a.p2, a.get('up'))
 
         for prop_type in new.PROP_TYPES:
-            new.properties[prop_type] = a.get_attr(prop_type)
+            new.properties[prop_type] = a.get(prop_type)
+
+        for pl in a.iter('point_load'):
+            new.add_point_load(pl['load'], pl['node'], pl.get('loc_system', False))
 
         return new
+
+    def add_point_load(self, load, node_num, loc_system):
+        """
+        Add a point load to the element node 1 or 2
+
+        Args:
+            :loads: dict with concentrated loads
+            :loc_node_num: node to which loads are to be applied (1, 2)
+            :loc_system: flag, which, if True, makes loads be treated according to local coordinate system
+        """
+
+        load = np.array(load).reshape((6, 1))
+        load_contrib = np.zeros((12, 1))
+
+        if node_num == 1:
+            load_contrib[:6, ] = load
+        else:
+            load_contrib[6:, ] = load
+
+        if loc_system:
+            load_contrib = self.T @ load_contrib
+
+        self.load_vector_glob += load_contrib
 
     #################################################################
     #################################################################
@@ -199,40 +239,6 @@ class Element:
         N[5, 11] = M6
 
         return N
-
-    @property
-    def transformation_matrix(self):
-        """Transformation matrix"""
-
-        x_glob = GlobalSystem.X
-        y_glob = GlobalSystem.Y
-        z_glob = GlobalSystem.Z
-
-        x_elem = self.x_elem
-        y_elem = self.y_elem
-        z_elem = self.z_elem
-
-        lx = direction_cosine(x_elem, x_glob)
-        ly = direction_cosine(y_elem, x_glob)
-        lz = direction_cosine(z_elem, x_glob)
-
-        mx = direction_cosine(x_elem, y_glob)
-        my = direction_cosine(y_elem, y_glob)
-        mz = direction_cosine(z_elem, y_glob)
-
-        nx = direction_cosine(x_elem, z_glob)
-        ny = direction_cosine(y_elem, z_glob)
-        nz = direction_cosine(z_elem, z_glob)
-
-        T3 = np.array([
-              [lx, mx, nx],
-              [ly, my, ny],
-              [lz, mz, nz],
-        ])
-
-        T = np.zeros((12, 12))
-        T[0:3, 0:3] = T[3:6, 3:6] = T[6:9, 6:9] = T[9:12, 9:12] = T3
-        return T
 
     @property
     def stiffness_matrix_local(self):
@@ -353,41 +359,39 @@ class Element:
         m_elem *= (rho*A*L)/420
         return m_elem
 
-    @property
-    def point_mass_matrix_local(self):
-        """Point mass matrix"""
+    # @property
+    # def point_mass_matrix_local(self):
+    #     """Point mass matrix"""
 
-        M_point = np.zeros((12, 12))
+    #     M_point = np.zeros((12, 12))
 
-        m1 = self.point_properties['m1']
-        m2 = self.point_properties['m2']
+    #     m1 = self.point_properties['m1']
+    #     m2 = self.point_properties['m2']
 
-        # Exit early if possible...
-        if m1 == 0 and m2 == 0:
-            return M_point
+    #     # Exit early if possible...
+    #     if m1 == 0 and m2 == 0:
+    #         return M_point
 
-        M_point[0:3, 0:3] = m1*np.identity(3)
-        M_point[6:9, 6:9] = m2*np.identity(3)
-        return M_point
+    #     M_point[0:3, 0:3] = m1*np.identity(3)
+    #     M_point[6:9, 6:9] = m2*np.identity(3)
+    #     return M_point
 
-    @property
-    def mass_matrix_glob(self):
-        """Element mass matrix (transformed to global system)"""
+    # @property
+    # def mass_matrix_glob(self):
+    #     """Element mass matrix (transformed to global system)"""
 
-        # Mass matrix due to distributed element mass (density) and due to point masses
-        m_elem = self.mass_matrix_local + self.point_mass_matrix_local
+    #     # Mass matrix due to distributed element mass (density) and due to point masses
+    #     m_elem = self.mass_matrix_local + self.point_mass_matrix_local
 
-        T = self.transformation_matrix
-        m_glob = T.T @ m_elem @ T
-        return m_glob
+    #     m_glob = self.T.T @ m_elem @ self.T
+    #     return m_glob
 
     @property
     def stiffness_matrix_glob(self):
         """Element stiffness matrix (transformed to global system)"""
 
         k_elem = self.stiffness_matrix_local
-        T = self.transformation_matrix
-        k_glob = T.T @ k_elem @ T
+        k_glob = self.T.T @ k_elem @ self.T
         return k_glob
 
     @property
@@ -426,7 +430,7 @@ class Element:
     def distributed_load_vector_glob(self):
         """Distributed load vector (transformed to global system)"""
 
-        T = self.transformation_matrix
+        self.T = self.transformation_matrix
         f_d_elem = self.distributed_load_vector
 
         # if self.distributed_loads_in_loc_system:
@@ -448,7 +452,6 @@ class Element:
     def concentrated_load_vector_glob(self):
         """Concentrated load vector (transformed to global system)"""
 
-        T = self.transformation_matrix
         f_c_elem = self.concentrated_load_vector
 
         # if self.concentrated_loads_in_loc_system:
@@ -456,14 +459,14 @@ class Element:
 
         return f_c_elem
 
-    @property
-    def load_vector_glob(self):
-        """Element load vector (transformed to global system)"""
+    # @property
+    # def load_vector_glob(self):
+    #     """Element load vector (transformed to global system)"""
 
-        f_d_elem = self.distributed_load_vector_glob
-        f_c_elem = self.concentrated_load_vector_glob
-        f_elem_glob = f_d_elem + f_c_elem
-        return f_elem_glob
+    #     f_d_elem = self.distributed_load_vector_glob
+    #     f_c_elem = self.concentrated_load_vector_glob
+    #     f_elem_glob = f_d_elem + f_c_elem
+    #     return f_elem_glob
 
     def update_distributed_loads(self, loads, is_loc_system):
         """
@@ -485,32 +488,6 @@ class Element:
 
         for load_type in loads.keys():
             self.distributed_loads[load_type] += loads.get(load_type, 0)
-
-    def update_concentrated_loads(self, loads, loc_node_number, is_loc_system):
-        """
-        Add concentrated loads to the element
-
-        Notes:
-            * Acceptable dictionary keys see __class__.CONC_LOAD_TYPES
-
-        Args:
-            :loads: dict with concentrated loads
-            :loc_node_number: node to which loads are to be applied (1, 2)
-            :is_loc_system: flag, which, if True, makes loads be treated
-                according to local coordinate system
-        """
-
-        if loc_node_number not in (1, 2):
-            raise ValueError
-
-        if is_loc_system not in (True, False):
-            raise ValueError
-
-        self.concentrated_loads_in_loc_system = is_loc_system
-
-        for load_type in loads.keys():
-            self.concentrated_loads[load_type + str(loc_node_number)] \
-                    += float(loads.get(load_type, 0))
 
     def add_pointmass(self, pointmass, loc_node_number):
         """

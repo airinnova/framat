@@ -1,9 +1,33 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+# ----------------------------------------------------------------------
+# Copyright 2019-2020 Airinnova AB and the FramAT authors
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# ----------------------------------------------------------------------
+
+# Author: Aaron Dettmann
+
+"""
+Solving
+"""
+
 import numpy as np
 
 
 def solve(m):
     static_load_analysis(m)
-
 
 
 def static_load_analysis(m):
@@ -15,15 +39,12 @@ def static_load_analysis(m):
         :F_react: reaction loads
     """
 
-    r = m.results
-    mat = m.results.get('system').get('matrices')
-    ndof = mat['K'].shape[0]
+    mat = m.results.get('matrices')
+    K = mat.get('K')
+    B = mat.get('B')
+    F = mat.get('F')
 
-    K = mat['K']
-    B = mat['B']
-    F = mat['F']
-    F_accel = mat['F']
-
+    ndof = K.shape[0]
     b = np.zeros((B.shape[0], 1))
 
     # ===== Assemble the system of equations =====
@@ -36,11 +57,27 @@ def static_load_analysis(m):
         [B, Z]
     ])
     x_system = np.block([
-        [F + F_accel],
+        [F],  # + F_accel
         [b]
     ])
     solution = np.linalg.solve(A_system, x_system)
 
     U = solution[0:ndof]
     F_react = solution[ndof:]
-    return U, F_react
+
+    m.results.get('matrices').set('U', U)
+    m.results.get('matrices').set('F_react', F_react)
+
+    #############
+    beam = m.results.get('beam')[0]
+    beam.set(
+        'deformation',
+        {
+            'ux': U[0::6, ].flatten(),
+            'uy': U[1::6, ].flatten(),
+            'uz': U[2::6, ].flatten(),
+            'thx': U[3::6, ].flatten(),
+            'thy': U[4::6, ].flatten(),
+            'thz': U[5::6, ].flatten(),
+        },
+    )
