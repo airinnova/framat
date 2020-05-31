@@ -31,53 +31,13 @@ Feature: material
    :align: left
    :alt: singleton
 
-*Singleton*: True
+*Singleton*: False
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
    :alt: required
 
-*Required*: True
-
-Property: uid
-~~~~~~~~~~~~~
-
-.. mermaid::
-
-    graph LR
-    A[Model]
-    A --> F1[material] 
-    F1 --> P1[uid] 
-
-
-.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/notes.svg
-   :align: left
-   :alt: description
-
-*Description*: Material UID
-
-.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
-   :align: left
-   :alt: singleton
-
-*Singleton*: True
-
-.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
-   :align: left
-   :alt: required
-
-*Required*: True
-
-.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
-   :align: left
-   :alt: schema
-
-*Schema*:
-
-======== =============
-**type** <class 'str'>
- **>**         0      
-======== =============
+*Required*: False
 
 Property: E
 ~~~~~~~~~~~
@@ -100,13 +60,13 @@ Property: E
    :align: left
    :alt: singleton
 
-*Singleton*: True
+*Singleton*: False
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
    :alt: required
 
-*Required*: True
+*Required*: False
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
    :align: left
@@ -140,13 +100,13 @@ Property: G
    :align: left
    :alt: singleton
 
-*Singleton*: True
+*Singleton*: False
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
    :alt: required
 
-*Required*: True
+*Required*: False
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
    :align: left
@@ -180,13 +140,13 @@ Property: rho
    :align: left
    :alt: singleton
 
-*Singleton*: True
+*Singleton*: False
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
    :alt: required
 
-*Required*: True
+*Required*: False
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
    :align: left
@@ -212,53 +172,13 @@ Feature: cross_section
    :align: left
    :alt: singleton
 
-*Singleton*: True
+*Singleton*: False
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
    :alt: required
 
 *Required*: False
-
-Property: uid
-~~~~~~~~~~~~~
-
-.. mermaid::
-
-    graph LR
-    A[Model]
-    A --> F1[cross_section] 
-    F1 --> P1[uid] 
-
-
-.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/notes.svg
-   :align: left
-   :alt: description
-
-*Description*: Cross section UID
-
-.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
-   :align: left
-   :alt: singleton
-
-*Singleton*: True
-
-.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
-   :align: left
-   :alt: required
-
-*Required*: False
-
-.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
-   :align: left
-   :alt: schema
-
-*Schema*:
-
-======== =============
-**type** <class 'str'>
- **>**         0      
-======== =============
 
 Property: A
 ~~~~~~~~~~~
@@ -281,7 +201,7 @@ Property: A
    :align: left
    :alt: singleton
 
-*Singleton*: True
+*Singleton*: False
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
@@ -321,7 +241,7 @@ Property: Iy
    :align: left
    :alt: singleton
 
-*Singleton*: True
+*Singleton*: False
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
@@ -361,7 +281,7 @@ Property: Iz
    :align: left
    :alt: singleton
 
-*Singleton*: True
+*Singleton*: False
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
@@ -401,7 +321,7 @@ Property: J
    :align: left
    :alt: singleton
 
-*Singleton*: True
+*Singleton*: False
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
@@ -916,15 +836,57 @@ Feature: post_proc
 
 *Required*: True
 
-Property: plot_geom
-~~~~~~~~~~~~~~~~~~~
+Property: plot_settings
+~~~~~~~~~~~~~~~~~~~~~~~
 
 .. mermaid::
 
     graph LR
     A[Model]
     A --> F1[post_proc] 
-    F1 --> P1[plot_geom] 
+    F1 --> P1[plot_settings] 
+
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/notes.svg
+   :align: left
+   :alt: description
+
+*Description*: General plot settings
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
+   :align: left
+   :alt: singleton
+
+*Singleton*: True
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
+   :align: left
+   :alt: required
+
+*Required*: True
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
+   :align: left
+   :alt: schema
+
+*Schema*:
+
+============== ==========================================
+   **show**             {'type', <class 'bool'>}         
+**linewidth**  {'type': <class 'numbers.Number'>, '>': 0}
+**markersize** {'type': <class 'numbers.Number'>, '>': 0}
+ **fontsize**       {'type': <class 'int'>, '>': 0}      
+============== ==========================================
+
+Property: plot
+~~~~~~~~~~~~~~
+
+.. mermaid::
+
+    graph LR
+    A[Model]
+    A --> F1[post_proc] 
+    F1 --> P1[plot] 
 
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/notes.svg
@@ -951,9 +913,8 @@ Property: plot_geom
 
 *Schema*:
 
-============ =========================================================================================================================================================
-  **file**                                                                    {'type': <class 'str'>}                                                                 
-  **show**                                                                    {'type', <class 'bool'>}                                                                
-**settings** {'plot': {'type': <class 'list'>, 'allowed_items': ('nodes', 'node_uids')}, 'ls': {'type': <class 'int'>, '>': 0}, 'ms': {'type': <class 'int'>, '>': 0}}
-============ =========================================================================================================================================================
+================= ================================================
+     **type**                     <class 'tuple'>                 
+**allowed_items** ('deformed', 'node_uids', 'nodes', 'undeformed')
+================= ================================================
 
