@@ -54,7 +54,7 @@ class C:
 def plot_all(m):
     """Create all plots defined in the model object"""
 
-    if not m.get('post_proc', {}).get('plot', ()):
+    if not m.get('post_proc', default={}).get('plot', ()):
         return
 
     abm = m.results.get('mesh').get('abm')
@@ -117,8 +117,8 @@ def set_equal_aspect_3D(ax):
 
 def args_plot(m, color, marker=None):
     args = {
-        'linewidth': m.get('post_proc').get('plot_settings', {}).get('linewidth', 2),
-        'markersize': m.get('post_proc').get('plot_settings', {}).get('markersize', 5),
+        'linewidth': m.get('post_proc').get('plot_settings', default={}).get('linewidth', 2),
+        'markersize': m.get('post_proc').get('plot_settings', default={}).get('markersize', 5),
         'color': color,
     }
     if marker is not None:
@@ -128,7 +128,7 @@ def args_plot(m, color, marker=None):
 
 def args_scatter(m, color, marker=None):
     args = {
-        'linewidth': m.get('post_proc').get('plot_settings', {}).get('linewidth', 2),
+        'linewidth': m.get('post_proc').get('plot_settings', default={}).get('linewidth', 2),
         'color': color,
     }
     return args
@@ -136,7 +136,7 @@ def args_scatter(m, color, marker=None):
 
 def args_text(m, color):
     args = {
-        'fontsize': m.get('post_proc').get('plot_settings', {}).get('fontsize', 10),
+        'fontsize': m.get('post_proc').get('plot_settings', default={}).get('fontsize', 10),
         'color': color,
         'bbox': dict(facecolor='orange', alpha=0.5),
         'horizontalalignment': 'center',

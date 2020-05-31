@@ -11,14 +11,12 @@ REL_TOL = 1e-4
 def get_cantilever_model():
     model = Model()
 
-    mat = model.set_feature('material')
-    mat.set('uid', 'dummy')
+    mat = model.add_feature('material', uid='dummy')
     mat.set('E', 1)
     mat.set('G', 1)
     mat.set('rho', 1)
 
-    cs = model.set_feature('cross_section')
-    cs.set('uid', 'dummy')
+    cs = model.add_feature('cross_section', uid='dummy')
     cs.set('A', 1)
     cs.set('Iy', 1)
     cs.set('Iz', 1)

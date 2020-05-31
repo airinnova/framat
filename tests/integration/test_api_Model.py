@@ -14,14 +14,12 @@ from framat import Model
 def test_x():
     model = Model()
 
-    mat = model.set_feature('material')
-    mat.set('uid', 'dummy')
+    mat = model.add_feature('material', uid='dummy')
     mat.set('E', 1)
     mat.set('G', 1)
     mat.set('rho', 1)
 
-    cs = model.set_feature('cross_section')
-    cs.set('uid', 'dummy')
+    cs = model.add_feature('cross_section', uid='dummy')
     cs.set('A', 1)
     cs.set('Iy', 1)
     cs.set('Iz', 1)
@@ -32,7 +30,7 @@ def test_x():
     beam.add('node', {'uid': 'mid1', 'coord': [0.5, 0, 0]})
     beam.add('node', {'uid': 'tip1', 'coord': [1, 0, 0]})
     beam.set('nelem', 10)
-    beam.add('material', {'from': 'root1', 'to': 'tip1', 'uid': 'dummy1'})
+    beam.add('material', {'from': 'root1', 'to': 'tip1', 'uid': 'dummy'})
     beam.add('cross_section', {'from': 'root1', 'to': 'tip1', 'uid': 'dummy'})
     beam.add('orientation', {'from': 'root1', 'to': 'tip1', 'up': [0, 0, 1]})
     beam.add('point_load', {'at': 'tip1', 'load': [0, 0, -1, 0, 0, 0]})

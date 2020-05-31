@@ -47,12 +47,6 @@ mspec = ModelSpec()
 
 fspec = FeatureSpec()
 fspec.add_prop_spec(
-    'uid',
-    S.string,
-    required=True,
-    doc="Material UID"
-)
-fspec.add_prop_spec(
     'E',
     S.pos_number,
     required=True,
@@ -73,17 +67,14 @@ fspec.add_prop_spec(
 mspec.add_feature_spec(
     'material',
     fspec,
-    doc='Material properties'
+    singleton=False,
+    required=False,
+    doc='Material properties',
+    uid_required=True,
 )
 
 # ===== Cross-section =====
 fspec = FeatureSpec()
-fspec.add_prop_spec(
-    'uid',
-    S.string,
-    required=True,
-    doc="Cross section UID"
-)
 fspec.add_prop_spec(
     'A',
     S.pos_number,
@@ -111,8 +102,10 @@ fspec.add_prop_spec(
 mspec.add_feature_spec(
     'cross_section',
     fspec,
+    singleton=False,
     required=False,
-    doc='Cross-section properties'
+    doc='Cross-section properties',
+    uid_required=True,
 )
 
 # ===== Beam =====
@@ -376,14 +369,12 @@ class Model(mspec.user_class):
 
 def get_example_cantilever():
     model = Model()
-    mat = model.set_feature('material')
-    mat.set('uid', 'dummy')
+    mat = model.add_feature('material', uid='dummy')
     mat.set('E', 1)
     mat.set('G', 1)
     mat.set('rho', 1)
 
-    cs = model.set_feature('cross_section')
-    cs.set('uid', 'dummy')
+    cs = model.add_feature('cross_section', uid='dummy')
     cs.set('A', 1)
     cs.set('Iy', 1)
     cs.set('Iz', 1)

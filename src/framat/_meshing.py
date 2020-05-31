@@ -61,16 +61,16 @@ def create_mesh(m):
                 elem.set('up', pdef['up'])
 
         for pdef in mbeam.get('material'):
+            mat = m.get('material', uid=pdef['uid'])
             for elem in elemlu[(pdef['from'], pdef['to'])]:
                 for p in ('E', 'G', 'rho'):
-                    val = m.get('material').get(p)  # TODO: non-singleton
-                    elem.set(p, val)
+                    elem.set(p, mat.get(p))
 
         for pdef in mbeam.get('cross_section'):
+            mat = m.get('cross_section', uid=pdef['uid'])
             for elem in elemlu[(pdef['from'], pdef['to'])]:
                 for p in ('A', 'Iy', 'Iz', 'J'):
-                    val = m.get('cross_section').get(p)  # TODO: non-singleton
-                    elem.set(p, val)
+                    elem.set(p, mat.get(p))
 
         for pdef in mbeam.get('point_load'):
             (node_id, elem) = elemlu[pdef['at']]
