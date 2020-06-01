@@ -24,10 +24,9 @@ Module for creating the geometric mesh
 """
 
 from collections import OrderedDict
-from collections.abc import MutableMapping
 from math import ceil
 
-from mframework import FeatureSpec
+from mframework import FeatureSpec, UIDDict
 import numpy as np
 
 from ._element import Element
@@ -35,6 +34,8 @@ from ._log import logger
 from ._util import Schemas as S
 from ._util import pairwise
 
+# TODO: Element --> Warning when overwriting data (first, from 'b' to 'c', then, from 'a' to 'c')
+# TODO: need check that all material, cross section data is set from start to end....
 
 
 def create_mesh(m):
@@ -52,40 +53,49 @@ def create_mesh(m):
             sup_points[node['uid']] = node['coord']
 
         # Element lookup object for the new beam
-        elemlu = abm.add_beam_line(sup_points, n=mbeam.get('nelem'))
-        logger.info(f"Beam {i} has {elemlu.nelem} elements")
+        beam_id = abm.add_beam_line(sup_points, n=mbeam.get('nelem'))
+        logger.info(f"Beam {i} has {abm.nelem_beam(beam_id)} elements")
 
         # ----- Beam element properties -----
         for pdef in mbeam.get('orientation'):
-            for elem in elemlu[(pdef['from'], pdef['to'])]:
+            for elem in abm.beams.iter_from_to(beam_id, pdef['from'], pdef['to']):
                 elem.set('up', pdef['up'])
 
         for pdef in mbeam.get('material'):
             mat = m.get('material', uid=pdef['uid'])
-            for elem in elemlu[(pdef['from'], pdef['to'])]:
+            for elem in abm.beams.iter_from_to(beam_id, pdef['from'], pdef['to']):
                 for p in ('E', 'G', 'rho'):
                     elem.set(p, mat.get(p))
 
         for pdef in mbeam.get('cross_section'):
             mat = m.get('cross_section', uid=pdef['uid'])
-            for elem in elemlu[(pdef['from'], pdef['to'])]:
+            for elem in abm.beams.iter_from_to(beam_id, pdef['from'], pdef['to']):
                 for p in ('A', 'Iy', 'Iz', 'J'):
                     elem.set(p, mat.get(p))
 
+        # ----- Loads -----
         for pdef in mbeam.get('point_load'):
-            (node_id, elem) = elemlu[pdef['at']]
+            elem = abm.beams.get_by_uid(beam_id, pdef['at'])
+            node_id = 1 if elem.p1.uid == pdef['at'] else 2
             elem.add('point_load', {'load': pdef['load'], 'node': node_id, 'local_sys': True})
 
-    # # ----- Boundary conditions -----
-    # bc = m.get('bc')
+        # for pdef in mbeam.get('distr_load'):
+        #     for elem in abm.beams.iter_from_to(beam_id, pdef['from'], pdef['to']):
+        #         ...
 
-    # for pdef in bc.iter('fix'):
-    #     abc.set_attr('fix')
-    #     elem = elemlu[pdef['at']]
-    #     elem.set_attr('point_load', pdef['load'], applies_to=elem.node_id(pdef['at']))
+        # ----- Additional mass -----
+        # for pdef in mbeam.get('point_mass'):
+        #     elem = abm.beams.get_by_uid(beam_id, pdef['at'])
+        #     node_id = 1 if elem.p1.uid == pdef['at'] else 2
+        #     elem.add('point_load', {'load': pdef['load'], 'node': node_id, 'local_sys': True})
 
-    rmesh = r.set_feature('mesh')
-    rmesh.set('abm', abm)
+    logger.info(f"Abstract mesh created")
+    logger.info(f"Discretisation:")
+    logger.info(f"--> n_beams: {abm.nbeams:4d}")
+    logger.info(f"--> n_elems: {abm.nelems:4d}")
+    logger.info(f"--> n_nodes: {abm.nnodes:4d}")
+
+    r.set_feature('mesh').set('abm', abm)
 
 
 class Point:
@@ -221,6 +231,7 @@ class PolygonalChain:
             eta_poly = curr_len/self.len + p.rel_coord*(seg.len/self.len)  # TODO: duplicate
             yield Point(p.coord, rel_coord=eta_poly, uid=p.uid)
 
+
 # ===== Abstract beam element =====
 
 schema_load = {'load': S.vector6x1, 'node': S.pos_int, 'local_sys': {'type': bool}}
@@ -241,8 +252,6 @@ fspec.add_prop_spec('point_mass', schema_mass, singleton=False)
 
 class AbstractEdgeElement(fspec.user_class):
 
-    NUM = 0
-
     def __init__(self, p1, p2):
         """
         Edge element defined by spatial coordinates and abstract attributes
@@ -253,8 +262,6 @@ class AbstractEdgeElement(fspec.user_class):
         """
 
         super().__init__()
-
-        self.NUM += 1
 
         assert isinstance(p1, Point) and isinstance(p2, Point)
         self.p1 = p1
@@ -276,34 +283,81 @@ class AbstractBeamMesh:
         """
 
         # Each beam has a lookup dict object
-        self.beams = []
+        self.beams = UIDDict()
 
-        self.named_nodes = {}
+        # Bookkeeping
+        self._num_beams = -1  # Number of beams -1
+        self._num_elems = -1  # Number of elements -1
+        self._num_nodes = -1  # Number of nodes -1
+
+        # Global node numbers of named nodes
+        self.glob_nums = {}
 
     def __repr__(self):
-        return f"< {self.__class__.__qualname__} for {self.beams!r} >"
+        return f"< {self.__class__.__qualname__} for {self.glob_nums!r} >"
 
     def add_beam_line(self, sup_points, n=10):
-        for uid, coord in sup_points.items():
-            self.named_nodes[uid] = np.array(coord)
+        """
+        TODO
+        """
+
+        self._num_beams += 1
+        self._num_nodes += 1
 
         polygon = PolygonalChain(sup_points, n=n)
-        elemlu = ElementLookup()
-        for p1, p2 in pairwise(polygon.iter_points()):
-            elemlu.elements.append(AbstractEdgeElement(p1, p2))
-        self.beams.append(elemlu)
-        return self.beams[-1]
+        for (num1, p1), (num2, p2) in pairwise(enumerate(polygon.iter_points(), start=self._num_nodes)):
+            self._num_elems += 1
+            self.beams[self._num_beams] = AbstractEdgeElement(p1, p2)
+
+            if p1.uid is not None:
+                self.glob_nums[p1.uid] = num1
+                try:
+                    self.beams.assign_uid(self._num_beams, p1.uid)
+                except KeyError:
+                    pass
+            if p2.uid is not None:
+                self.glob_nums[p2.uid] = num2
+                try:
+                    self.beams.assign_uid(self._num_beams, p2.uid)
+                except KeyError:
+                    pass
+
+        self._num_nodes += len(self.beams[self._num_beams])
+        return self._num_beams
 
     @property
     def nbeams(self):
-        return len(self.beams)
+        return self._num_beams + 1
+
+    def nelem_beam(self, beam_id):
+        return len(self.beams[beam_id])
+
+    @property
+    def nelems(self):
+        return self._num_elems + 1
 
     @property
     def nnodes(self):
-        return sum([beam.nnodes for beam in self.beams])
+        return sum(len(v.values()) + 1 for v in self.beams.values())
 
     def ndofs(self, ndof_per_node=6):
         return self.nnodes*ndof_per_node
+
+    def get_sup_points(self, beam_id):
+        xyz = self.beams[beam_id][0].p1.coord.reshape((1, 3))
+        for elem in self.beams[beam_id].values():
+            xyz = np.append(xyz, elem.p2.coord.reshape((1, 3)), axis=0)
+        return xyz
+
+    def get_lims_beam(self, beam_id):
+        xyz = self.get_sup_points(beam_id)
+        x_max = np.max(xyz[:, 0])
+        y_max = np.max(xyz[:, 1])
+        z_max = np.max(xyz[:, 2])
+        x_min = np.min(xyz[:, 0])
+        y_min = np.min(xyz[:, 1])
+        z_min = np.min(xyz[:, 2])
+        return (x_min, x_max), (y_min, y_max), (z_min, z_max)
 
     def get_lims(self):
         x_max = 0
@@ -312,8 +366,8 @@ class AbstractBeamMesh:
         x_min = 0
         y_min = 0
         z_min = 0
-        for beam in self.beams:
-            (x_minb, x_maxb), (y_minb, y_maxb), (z_minb, z_maxb) = beam.get_lims()
+        for beam_id in self.beams.keys():
+            (x_minb, x_maxb), (y_minb, y_maxb), (z_minb, z_maxb) = self.get_lims_beam(beam_id)
             if x_maxb > x_max:
                 x_max = x_maxb
             if y_maxb > y_max:
@@ -326,90 +380,4 @@ class AbstractBeamMesh:
                 y_min = y_minb
             if z_minb < z_min:
                 z_min = z_minb
-        return (x_min, x_max), (y_min, y_max), (z_min, z_max)
-
-
-class ElementLookup(MutableMapping):
-
-    def __init__(self):
-        """
-        Group of elements (e.g. comprising a polygonal chain). Individual
-        elements or ranges of elements can be looked up with node UIDs.
-
-        Args:
-            :elements: (list) list of all elements in this lookup object
-        """
-
-        # Dummy
-        self._mapping = {}
-        self.elements = []
-
-    def __setitem__(self, key, value):
-        raise RuntimeError
-
-    def __getitem__(self, key):
-        return self.__missing__(key)
-
-    def __delitem__(self, key):
-        raise RuntimeError
-
-    def __iter__(self):
-        raise RuntimeError
-
-    def __len__(self):
-        raise RuntimeError
-
-    def __repr__(self):
-        return f"< {self.__class__.__qualname__} for {self.elements!r} >"
-
-    def __missing__(self, key):
-        if isinstance(key, str):
-            for elem in self.elements:
-                if elem.p1.uid == key:
-                    return (1, elem)
-                elif elem.p2.uid == key:
-                    return (2, elem)
-            else:
-                raise KeyError(f"{key!r}")
-        elif isinstance(key, tuple):
-            uid1, uid2 = key
-            beginning_found = False
-            elements = []
-            for elem in self.elements:
-                if (elem.p1.uid == uid1) or beginning_found:
-                    elements.append(elem)
-                    beginning_found = True
-                if elem.p2.uid == uid2:
-                    return elements
-            else:
-                raise KeyError(f"{key!r}")
-        else:
-            raise KeyError(f"{key!r}")
-
-    @property
-    def nelem(self):
-        return len(self.elements)
-
-    @property
-    def nnodes(self):
-        return self.nelem + 1
-
-    def get_node_points(self):
-        """
-        """
-
-        xyz = self.elements[0].p1.coord.reshape((1, 3))
-        xyz = np.append(xyz, self.elements[0].p2.coord.reshape((1, 3)), axis=0)
-        for elem in self.elements[1:]:
-            xyz = np.append(xyz, elem.p2.coord.reshape((1, 3)), axis=0)
-        return xyz
-
-    def get_lims(self):
-        xyz = self.get_node_points()
-        x_max = np.max(xyz[:, 0])
-        y_max = np.max(xyz[:, 1])
-        z_max = np.max(xyz[:, 2])
-        x_min = np.min(xyz[:, 0])
-        y_min = np.min(xyz[:, 1])
-        z_min = np.min(xyz[:, 2])
         return (x_min, x_max), (y_min, y_max), (z_min, z_max)

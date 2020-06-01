@@ -30,41 +30,6 @@ from ._element import Element
 from ._log import logger
 
 
-# TODO: Element --> Warning when overwriting data (first, from 'b' to 'c', then, from 'a' to 'c')
-# TODO: need check that all material, cross section data is set from start to end....
-
-
-def get_mesh_stats(m):
-    """Count number of beams, elements, nodes and DOFs"""
-
-    r = m.results
-    r.set_feature('mesh')  # TODO: Rename to 'assembly'...?
-
-    nbeam = m.len('beam')
-    nelem = 0
-    nnode = 0
-    ndof = 0
-    for (mbeam, rbeam) in zip(m.iter('beam'), r.iter('beam')):
-        nelem_per_beam = len(rbeam.get('elements'))
-        nnodes_per_beam = nelem_per_beam + 1
-        ndof_per_beam = nnodes_per_beam*Element.DOF_PER_NODE
-
-        nelem += nelem_per_beam
-        nnode += nnodes_per_beam
-        ndof += ndof_per_beam
-
-    logger.info(f"Discretisation:")
-    logger.info(f"--> n_beams: {nbeam:4d}")
-    logger.info(f"--> n_elem:  {nelem:4d}")
-    logger.info(f"--> n_node:  {nnode:4d}")
-    logger.info(f"--> n_dof:   {ndof:4d}")
-
-    r.get('mesh').set('nbeam', nbeam)
-    r.get('mesh').set('nelem', nelem)
-    r.get('mesh').set('nnode', nnode)
-    r.get('mesh').set('ndof', ndof)
-
-
 def create_system_matrices(m):
     """
     Assemble global tensors:
@@ -75,22 +40,19 @@ def create_system_matrices(m):
     """
 
     r = m.results
-
-    __ndof_total = 0
+    abm = m.results.get('mesh').get('abm')
 
     # Create a stiffness matrix for each beam
     K_per_beam = []
     M_per_beam = []
     F_per_beam = []
     for i, (mbeam, rbeam) in enumerate(zip(m.iter('beam'), r.iter('beam'))):
-        blup = r.get('mesh').get('abm').beams[i]
-        ndof_beam = 6*(blup.nelem + 1)
-        __ndof_total += ndof_beam
+        ndof_beam = Element.DOF_PER_NODE*(abm.nelem_beam(i) + 1)
         K_beam = np.zeros((ndof_beam, ndof_beam))
         M_beam = np.zeros((ndof_beam, ndof_beam))
         F_beam = np.zeros((ndof_beam, 1))
 
-        for k, abel in enumerate_with_step(blup.elements, step=6):
+        for k, abel in enumerate_with_step(abm.beams[i].values(), step=6):
             phy_elem = Element.from_abstract_element(abel)
             K_beam[k:k+12, k:k+12] += phy_elem.stiffness_matrix_glob
             M_beam[k:k+12, k:k+12] += phy_elem.mass_matrix_glob
@@ -100,7 +62,7 @@ def create_system_matrices(m):
         M_per_beam.append(M_beam)
         F_per_beam.append(F_beam)
 
-    ndof_total = __ndof_total
+    ndof_total = Element.DOF_PER_NODE*abm.nnodes
     K = np.zeros((ndof_total, ndof_total))
     M = np.zeros((ndof_total, ndof_total))
     F = np.zeros((ndof_total, 1))
@@ -125,21 +87,26 @@ def create_system_matrices(m):
 def create_bc_matrices(m):
     """Assemble the constraint matrix"""
 
-    # ====================================
-    # ====================================
-    # ====================================
     r = m.results
-    ndof = r.get('matrices').get('K').shape[0]
+    abm = r.get('mesh').get('abm')
+    ndof = Element.DOF_PER_NODE*(abm.nnodes)
 
-    # mbc = m.get('bc')
-    # for fix in mbc.get('fix'):
-    #     ...
+    mbc = m.get('bc')
 
-    B = fix_dof(0, ndof, ['all'])
-    m.results.get('matrices').set('B', B)
-    # ====================================
-    # ====================================
-    # ====================================
+    B_tot = np.array([])
+
+    # ----- Fix DOFs -----
+    for fix in mbc.get('fix', []):
+        num_node = abm.glob_nums[fix['node']]
+        B = fix_dof(num_node, ndof, fix['fix'])
+        B_tot = np.vstack((B_tot, B)) if B_tot.size else B
+
+    # ----- Multipoint constraints (MPC) -----
+    for con in mbc.get('connect', []):
+        pass
+        # TODO
+
+    m.results.get('matrices').set('B', B_tot)
 
 
 def fix_dof(node_number, total_ndof, dof_constraints):
@@ -171,4 +138,42 @@ def fix_dof(node_number, total_ndof, dof_constraints):
             B_row[0, 6*node_number+pos] = 1
             B = np.vstack((B, B_row)) if B.size else B_row
 
+    return B
+
+
+def connect(node1_number, node2_number, uid1, uid2, total_ndof, dof_constraints, frame):
+    """
+    Make a connection between two nodes
+
+    Note:
+        * The two nodes may belong to the same or to different beams
+
+    Args:
+        :node1_number: number of first node
+        :node2_number: number of second node
+        :uid1: UID of first node
+        :uid2: UID of second node
+        :total_ndof: total number of degrees of freedom
+        :dof_constraints: list with dofs to be fixed (NOT YET IMPLEMENTED)
+    """
+
+    N1 = np.eye(6)
+    N2 = -np.eye(6)
+
+    x1 = frame.finder.nodes.by_uid[uid1].coord
+    x2 = frame.finder.nodes.by_uid[uid2].coord
+    x1 = np.asarray(x1)
+    x2 = np.asarray(x2)
+    dx, dy, dz = x1 - x2
+
+    N2[0, 4] = -dz
+    N2[0, 5] = dy
+    N2[1, 3] = dz
+    N2[1, 5] = -dx
+    N2[2, 3] = -dy
+    N2[2, 4] = dx
+
+    B = np.zeros((6, frame.ndof))
+    B[0:6, 6*node1_number:6*node1_number+6] = N1
+    B[0:6, 6*node2_number:6*node2_number+6] = N2
     return B

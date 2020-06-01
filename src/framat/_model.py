@@ -20,14 +20,14 @@
 # Author: Aaron Dettmann
 
 """
-Frame model generator
+Model definition
 """
 
 from mframework import FeatureSpec, ModelSpec, SchemadictValidators
 import numpy as np
 
-from ._run import run_model
 from ._meshing import AbstractBeamMesh
+from ._run import run_model
 from ._util import Schemas as S
 
 # Register custom 'schemadict' types
@@ -41,10 +41,6 @@ SchemadictValidators.register_type(np.ndarray)
 mspec = ModelSpec()
 
 # ===== Material =====
-
-# TODO: material and cross section should be non-singleton
-# --> features like this must be identifiable by UID -----> model-framework
-
 fspec = FeatureSpec()
 fspec.add_prop_spec(
     'E',

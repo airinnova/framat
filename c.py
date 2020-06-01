@@ -15,6 +15,9 @@ m = Model.example()
 
 # m.get('beam')[0].set('nelem', 50)
 
+b = m.get('beam')[0]
+# m.get('bc').add('fix', {'node': 'tip', 'fix': ['all']})
+
 pp = m.set_feature('post_proc')
 pp.set('plot_settings', {'linewidth': 2, 'markersize': 4})
 pp.add('plot', ('undeformed', 'deformed', 'nodes', 'node_uids'))
