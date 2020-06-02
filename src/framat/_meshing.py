@@ -49,8 +49,8 @@ def create_mesh(m):
 
         # Support points (= named nodes)
         sup_points = OrderedDict()
-        for node in mbeam.iter('node'):
-            sup_points[node['uid']] = node['coord']
+        for uid, coord in mbeam.iter_uids('node'):
+            sup_points[uid] = coord
 
         # Element lookup object for the new beam
         beam_id = abm.add_beam_line(sup_points, n=mbeam.get('nelem'))

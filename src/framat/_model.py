@@ -36,11 +36,19 @@ from ._util import Schemas as S
 SchemadictValidators.register_type(AbstractBeamMesh)
 SchemadictValidators.register_type(np.ndarray)
 
+# TODO:
+# - acceleration state (define on beam level, or 'global'?)
+
 
 # =================
 # ===== MODEL =====
 # =================
 mspec = ModelSpec()
+
+tmp_doc = "The *{X}* feature is optional and allows to define sets of constant \
+           {X} properties. When defining the properties for a specific beam \
+           (or parts of it), you may refer to a {X} set using its UID. You may \
+           define as many sets as you like."
 
 # ===== Material =====
 fspec = FeatureSpec()
@@ -48,26 +56,26 @@ fspec.add_prop_spec(
     'E',
     S.pos_number,
     required=True,
-    doc="Young's modulus"
+    doc="Young's modulus [N/m²]"
 )
 fspec.add_prop_spec(
     'G',
     S.pos_number,
     required=True,
-    doc="Shear modulus"
+    doc="Shear modulus [N/m²]"
 )
 fspec.add_prop_spec(
     'rho',
     S.pos_number,
     required=True,
-    doc="Density"
+    doc="Density [kg/m³]"
 )
 mspec.add_feature_spec(
     'material',
     fspec,
     singleton=False,
     required=False,
-    doc='Material properties',
+    doc=tmp_doc.format(X='material'),
     uid_required=True,
 )
 
@@ -77,65 +85,82 @@ fspec.add_prop_spec(
     'A',
     S.pos_number,
     required=True,
-    doc="Area"
+    doc="Area [m²]"
 )
 fspec.add_prop_spec(
     'Iy',
     S.pos_number,
     required=True,
-    doc="Second moment of area about the local y-axis"
+    doc="Second moment of area about the local y-axis [m⁴]"
 )
 fspec.add_prop_spec(
     'Iz',
     S.pos_number,
     required=True,
-    doc="Second moment of area about the local z-axis"
+    doc="Second moment of area about the local z-axis [m⁴]"
 )
 fspec.add_prop_spec(
     'J',
     S.pos_number,
     required=True,
-    doc="Torsional constant"
+    doc="Torsional constant [m⁴]"
 )
 mspec.add_feature_spec(
     'cross_section',
     fspec,
     singleton=False,
     required=False,
-    doc='Cross-section properties',
+    doc=tmp_doc.format(X='cross section'),
     uid_required=True,
 )
 
 # ===== Beam =====
+tmp_doc = "Define a constant {X} for a section of a beam. Refer to the start \
+          of the beam section with the key 'from' followed by a node UID, \
+          and refer to the end of the section with the key 'to'. "
+
 fspec = FeatureSpec()
 fspec.add_prop_spec(
     'node',
-    {'$required_keys': ['uid', 'coord'], 'uid': S.string, 'coord': S.vector3x1},
+    S.vector3x1,
     singleton=False,
-    doc="Add a beam node"
-)
-fspec.add_prop_spec(
-    'accel',
-    {'$required_keys': ['direction'], 'direction': S.vector3x1, 'accel_factor': S.any_int},
-    doc="Define a translational acceleration"
+    doc="Add a named beam node, and defines its coordinates in a global \
+         coordinate system. A beam requires at least two nodes. Note that you \
+         must provide a UID.",
+    uid_required=True,
 )
 fspec.add_prop_spec(
     'orientation',
-    {'$required_keys': ['from', 'to', 'up'], 'from': S.string, 'to': S.string, 'up': S.vector3x1},
+    {
+        '$required_keys': ['from', 'to', 'up'],
+        'from': S.string,
+        'to': S.string,
+        'up': S.vector3x1
+    },
     singleton=False,
-    doc="Define the beam orientation"
+    doc=tmp_doc.format(X='beam cross section orientation') +
+        "The key 'up' is followed by a list (vector) indicating the direction \
+        of the local z-axis of the beam element. The 'up' vector does not have \
+        to be a unit vector."
 )
 fspec.add_prop_spec(
     'material',
-    {'$required_keys': ['from', 'to', 'uid'], 'from': S.string, 'to': S.string, 'uid': S.string},
+    {
+        '$required_keys': ['from', 'to', 'uid'],
+        'from': S.string,
+        'to': S.string,
+        'uid': S.string
+    },
     singleton=False,
-    doc="Add a material"
+    doc=tmp_doc.format(X='material') +
+        "The key 'uid' must refer to a material UID defined in the 'material' feature.",
 )
 fspec.add_prop_spec(
     'cross_section',
     {'$required_keys': ['from', 'to', 'uid'], 'from': S.string, 'to': S.string, 'uid': S.string},
     singleton=False,
-    doc="Add a cross section"
+    doc=tmp_doc.format(X='cross section') +
+    "The key 'uid' must refer to a cross section UID defined in the 'cross_section' feature.",
 )
 fspec.add_prop_spec(
     'point_load',
@@ -147,14 +172,23 @@ fspec.add_prop_spec(
     'nelem',
     S.pos_int,
     singleton=True,
-    doc="Specify the number nodes between to named nodes"
+    doc="Define the number of element for the beam object. The number will \
+         apply to the whole polygonal chain. Note that the number is only \
+         approximate, and the actual element number is determined by the \
+         number and location of the named nodes."
 )
 mspec.add_feature_spec(
     'beam',
     fspec,
     singleton=False,
     required=False,
-    doc='Cross-section properties'
+    doc="With the 'beam' feature you can add as many beams as needed for your \
+         model. The beam geometry is defined with so-called 'named nodes'. \
+         These are special nodes which have a UID and which together make up a \
+         polygonal chain. In addition, you must also specify the cross section \
+         orientation. Beam properties (material and cross-section data) has to \
+         be defined for the entire beam length. Optionally, you can define \
+         loads or mass properties for an individual beam."
 )
 
 # ===== Boundary conditions =====
@@ -162,7 +196,8 @@ fspec = FeatureSpec()
 fspec.add_prop_spec(
     'fix',
     {
-        '$required_keys': ['node', 'fix'], 'node': S.string,
+        '$required_keys': ['node', 'fix'],
+        'node': S.string,
         'fix': {'type': list, 'min_len': 1, 'max_len': 6, 'item_types': str}
     },
     singleton=False,
@@ -388,8 +423,8 @@ def get_example_cantilever():
     model = init_examples()
 
     beam = model.add_feature('beam')
-    beam.add('node', {'uid': 'root', 'coord': [0, 0, 0]})
-    beam.add('node', {'uid': 'tip', 'coord': [1, 0, 0]})
+    beam.add('node', [0, 0, 0], uid='root')
+    beam.add('node', [1, 0, 0], uid='tip')
     beam.set('nelem', 10)
     beam.add('material', {'from': 'root', 'to': 'tip', 'uid': 'dummy'})
     beam.add('cross_section', {'from': 'root', 'to': 'tip', 'uid': 'dummy'})
@@ -424,10 +459,10 @@ def get_example_helix():
 
     beam = model.add_feature('beam')
     for x_coord, y_coord, z_coord in zip(x, y, z):
-        beam.add('node', {'uid': str(uuid4()), 'coord': [x_coord, y_coord, z_coord]})
+        beam.add('node', [x_coord, y_coord, z_coord], uid=str(uuid4()))
 
-    first_uid = beam.get('node')[0]['uid']
-    last_uid = beam.get('node')[-1]['uid']
+    first_uid = beam.get_uid('node', 'first')
+    last_uid = beam.get_uid('node', 'last')
 
     beam.set('nelem', 1)
     beam.add('material', {'from': first_uid, 'to': last_uid, 'uid': 'dummy'})

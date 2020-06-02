@@ -24,7 +24,7 @@ Feature: mesh
    :align: left
    :alt: description
 
-*Description*: Mesh
+Mesh
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
@@ -53,7 +53,7 @@ Property: named_nodes
    :align: left
    :alt: description
 
-*Description*: Mapping of named nodes to global node numbers
+Mapping of named nodes to global node numbers
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
@@ -253,7 +253,7 @@ Feature: beam
    :align: left
    :alt: description
 
-*Description*: Beam
+Beam
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
@@ -282,7 +282,7 @@ Property: named_node
    :align: left
    :alt: description
 
-*Description*: List of named nodes belonging to beam
+List of named nodes belonging to beam
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
@@ -322,13 +322,13 @@ Property: mesh
    :align: left
    :alt: description
 
-*Description*: List of named nodes belonging to beam
+List of named nodes belonging to beam
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
    :alt: singleton
 
-*Singleton*: False
+*Singleton*: True
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
@@ -361,13 +361,13 @@ Property: elements
    :align: left
    :alt: description
 
-*Description*: List of elements
+List of elements
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
    :alt: singleton
 
-*Singleton*: False
+*Singleton*: True
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
@@ -400,13 +400,13 @@ Property: deformation
    :align: left
    :alt: description
 
-*Description*: List of elements
+List of elements
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
    :alt: singleton
 
-*Singleton*: False
+*Singleton*: True
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
@@ -436,7 +436,7 @@ Feature: matrices
    :align: left
    :alt: description
 
-*Description*: System matrices
+System matrices
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
@@ -465,7 +465,7 @@ Property: K
    :align: left
    :alt: description
 
-*Description*: TODO
+TODO
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
@@ -477,7 +477,7 @@ Property: K
    :align: left
    :alt: required
 
-*Required*: True
+*Required*: False
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
    :align: left
@@ -504,7 +504,7 @@ Property: M
    :align: left
    :alt: description
 
-*Description*: TODO
+TODO
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
@@ -516,7 +516,7 @@ Property: M
    :align: left
    :alt: required
 
-*Required*: True
+*Required*: False
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
    :align: left
@@ -543,7 +543,7 @@ Property: F
    :align: left
    :alt: description
 
-*Description*: TODO
+TODO
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
@@ -555,7 +555,7 @@ Property: F
    :align: left
    :alt: required
 
-*Required*: True
+*Required*: False
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
    :align: left
@@ -582,7 +582,7 @@ Property: U
    :align: left
    :alt: description
 
-*Description*: TODO
+TODO
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
@@ -594,7 +594,7 @@ Property: U
    :align: left
    :alt: required
 
-*Required*: True
+*Required*: False
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
    :align: left
@@ -621,7 +621,7 @@ Property: B
    :align: left
    :alt: description
 
-*Description*: TODO
+TODO
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
@@ -633,7 +633,7 @@ Property: B
    :align: left
    :alt: required
 
-*Required*: True
+*Required*: False
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
    :align: left
@@ -660,7 +660,7 @@ Property: F_react
    :align: left
    :alt: description
 
-*Description*: TODO
+TODO
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
@@ -672,7 +672,7 @@ Property: F_react
    :align: left
    :alt: required
 
-*Required*: True
+*Required*: False
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
    :align: left
@@ -691,7 +691,7 @@ Feature: deformation
    :align: left
    :alt: description
 
-*Description*: Deformation
+Deformation
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
@@ -720,7 +720,7 @@ Property: max
    :align: left
    :alt: description
 
-*Description*: Maximum deformation
+Maximum deformation
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left

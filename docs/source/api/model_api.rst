@@ -25,7 +25,7 @@ Feature: material
    :align: left
    :alt: description
 
-*Description*: Material properties
+The *material* feature is optional and allows to define sets of constant            material properties. When defining the properties for a specific beam            (or parts of it), you may refer to a material set using its UID. You may            define as many sets as you like.
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
@@ -38,6 +38,12 @@ Feature: material
    :alt: required
 
 *Required*: False
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
+   :align: left
+   :alt: required
+
+A UID must be provided.
 
 Property: E
 ~~~~~~~~~~~
@@ -54,19 +60,19 @@ Property: E
    :align: left
    :alt: description
 
-*Description*: Young's modulus
+Young's modulus [N/m²]
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
    :alt: singleton
 
-*Singleton*: False
+*Singleton*: True
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
    :alt: required
 
-*Required*: False
+*Required*: True
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
    :align: left
@@ -94,19 +100,19 @@ Property: G
    :align: left
    :alt: description
 
-*Description*: Shear modulus
+Shear modulus [N/m²]
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
    :alt: singleton
 
-*Singleton*: False
+*Singleton*: True
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
    :alt: required
 
-*Required*: False
+*Required*: True
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
    :align: left
@@ -134,19 +140,19 @@ Property: rho
    :align: left
    :alt: description
 
-*Description*: Density
+Density [kg/m³]
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
    :alt: singleton
 
-*Singleton*: False
+*Singleton*: True
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
    :alt: required
 
-*Required*: False
+*Required*: True
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
    :align: left
@@ -166,7 +172,7 @@ Feature: cross_section
    :align: left
    :alt: description
 
-*Description*: Cross-section properties
+The *cross section* feature is optional and allows to define sets of constant            cross section properties. When defining the properties for a specific beam            (or parts of it), you may refer to a cross section set using its UID. You may            define as many sets as you like.
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
@@ -179,6 +185,12 @@ Feature: cross_section
    :alt: required
 
 *Required*: False
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
+   :align: left
+   :alt: required
+
+A UID must be provided.
 
 Property: A
 ~~~~~~~~~~~
@@ -195,19 +207,19 @@ Property: A
    :align: left
    :alt: description
 
-*Description*: Area
+Area [m²]
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
    :alt: singleton
 
-*Singleton*: False
+*Singleton*: True
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
    :alt: required
 
-*Required*: False
+*Required*: True
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
    :align: left
@@ -235,19 +247,19 @@ Property: Iy
    :align: left
    :alt: description
 
-*Description*: Second moment of area about the local y-axis
+Second moment of area about the local y-axis [m⁴]
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
    :alt: singleton
 
-*Singleton*: False
+*Singleton*: True
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
    :alt: required
 
-*Required*: False
+*Required*: True
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
    :align: left
@@ -275,19 +287,19 @@ Property: Iz
    :align: left
    :alt: description
 
-*Description*: Second moment of area about the local z-axis
+Second moment of area about the local z-axis [m⁴]
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
    :alt: singleton
 
-*Singleton*: False
+*Singleton*: True
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
    :alt: required
 
-*Required*: False
+*Required*: True
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
    :align: left
@@ -315,19 +327,19 @@ Property: J
    :align: left
    :alt: description
 
-*Description*: Torsional constant
+Torsional constant [m⁴]
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
    :alt: singleton
 
-*Singleton*: False
+*Singleton*: True
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
    :alt: required
 
-*Required*: False
+*Required*: True
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
    :align: left
@@ -347,7 +359,7 @@ Feature: beam
    :align: left
    :alt: description
 
-*Description*: Cross-section properties
+With the 'beam' feature you can add as many beams as needed for your          model. The beam geometry is defined with so-called 'named nodes'.          These are special nodes which have a UID and which together make up a          polygonal chain. In addition, you must also specify the cross section          orientation. Beam properties (material and cross-section data) has to          be defined for the entire beam length. Optionally, you can define          loads or mass properties for an individual beam.
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
@@ -376,7 +388,7 @@ Property: node
    :align: left
    :alt: description
 
-*Description*: Add a beam node
+Add a named beam node, and defines its coordinates in a global          coordinate system. A beam requires at least two nodes. Note that you          must provide a UID.
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
@@ -390,46 +402,11 @@ Property: node
 
 *Required*: False
 
-.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
-   :align: left
-   :alt: schema
-
-*Schema*:
-
-================== ============================================================================================
-**$required_keys**                                       ['uid', 'coord']                                      
-     **uid**                                     {'type': <class 'str'>, '>': 0}                               
-    **coord**      {'type': <class 'list'>, 'min_len': 3, 'max_len': 3, 'item_types': <class 'numbers.Number'>}
-================== ============================================================================================
-
-Property: accel
-~~~~~~~~~~~~~~~
-
-.. mermaid::
-
-    graph LR
-    A[Model]
-    A --> F1[beam] 
-    F1 --> P1[accel] 
-
-
-.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/notes.svg
-   :align: left
-   :alt: description
-
-*Description*: Define a translational acceleration
-
-.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
-   :align: left
-   :alt: singleton
-
-*Singleton*: False
-
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
    :alt: required
 
-*Required*: False
+A UID must be provided.
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
    :align: left
@@ -437,11 +414,12 @@ Property: accel
 
 *Schema*:
 
-================== ============================================================================================
-**$required_keys**                                        ['direction']                                        
-  **direction**    {'type': <class 'list'>, 'min_len': 3, 'max_len': 3, 'item_types': <class 'numbers.Number'>}
- **accel_factor**                                    {'type': <class 'int'>}                                   
-================== ============================================================================================
+============== ========================
+   **type**         <class 'list'>     
+ **min_len**              3            
+ **max_len**              3            
+**item_types** <class 'numbers.Number'>
+============== ========================
 
 Property: orientation
 ~~~~~~~~~~~~~~~~~~~~~
@@ -458,7 +436,7 @@ Property: orientation
    :align: left
    :alt: description
 
-*Description*: Define the beam orientation
+Define a constant beam cross section orientation for a section of a beam. Refer to the start           of the beam section with the key 'from' followed by a node UID,           and refer to the end of the section with the key 'to'. The key 'up' is followed by a list (vector) indicating the direction         of the local z-axis of the beam element. The 'up' vector does not have         to be a unit vector.
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
@@ -500,7 +478,7 @@ Property: material
    :align: left
    :alt: description
 
-*Description*: Add a material
+Define a constant material for a section of a beam. Refer to the start           of the beam section with the key 'from' followed by a node UID,           and refer to the end of the section with the key 'to'. The key 'uid' must refer to a material UID defined in the 'material' feature.
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
@@ -542,7 +520,7 @@ Property: cross_section
    :align: left
    :alt: description
 
-*Description*: Add a cross section
+Define a constant cross section for a section of a beam. Refer to the start           of the beam section with the key 'from' followed by a node UID,           and refer to the end of the section with the key 'to'. The key 'uid' must refer to a cross section UID defined in the 'cross_section' feature.
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
@@ -584,7 +562,7 @@ Property: point_load
    :align: left
    :alt: description
 
-*Description*: Add a point load
+Add a point load
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
@@ -625,13 +603,13 @@ Property: nelem
    :align: left
    :alt: description
 
-*Description*: Specify the number nodes between to named nodes
+Define the number of element for the beam object. The number will          apply to the whole polygonal chain. Note that the number is only          approximate, and the actual element number is determined by the          number and location of the named nodes.
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
    :alt: singleton
 
-*Singleton*: False
+*Singleton*: True
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
@@ -657,7 +635,7 @@ Feature: bc
    :align: left
    :alt: description
 
-*Description*: Boundary conditions
+Boundary conditions
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
@@ -686,19 +664,19 @@ Property: fix
    :align: left
    :alt: description
 
-*Description*: Fix a beam node
+Fix a beam node
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
    :alt: singleton
 
-*Singleton*: True
+*Singleton*: False
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
    :alt: required
 
-*Required*: True
+*Required*: False
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
    :align: left
@@ -727,19 +705,19 @@ Property: connect
    :align: left
    :alt: description
 
-*Description*: Connect two beam nodes
+Connect two beam nodes
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
    :alt: singleton
 
-*Singleton*: True
+*Singleton*: False
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
    :alt: required
 
-*Required*: True
+*Required*: False
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
    :align: left
@@ -761,7 +739,7 @@ Feature: study
    :align: left
    :alt: description
 
-*Description*: Cross-section properties
+Cross-section properties
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
@@ -790,7 +768,7 @@ Property: type
    :align: left
    :alt: description
 
-*Description*: Define a study type
+Define a study type
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
@@ -802,7 +780,7 @@ Property: type
    :align: left
    :alt: required
 
-*Required*: True
+*Required*: False
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
    :align: left
@@ -822,7 +800,7 @@ Feature: post_proc
    :align: left
    :alt: description
 
-*Description*: Cross-section properties
+Cross-section properties
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
@@ -851,7 +829,7 @@ Property: plot_settings
    :align: left
    :alt: description
 
-*Description*: General plot settings
+General plot settings
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
@@ -863,7 +841,7 @@ Property: plot_settings
    :align: left
    :alt: required
 
-*Required*: True
+*Required*: False
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
    :align: left
@@ -893,19 +871,19 @@ Property: plot
    :align: left
    :alt: description
 
-*Description*: Add a geometry plot
+Add a geometry plot
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
    :alt: singleton
 
-*Singleton*: True
+*Singleton*: False
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
    :alt: required
 
-*Required*: True
+*Required*: False
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
    :align: left

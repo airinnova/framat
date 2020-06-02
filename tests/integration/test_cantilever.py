@@ -23,8 +23,8 @@ def get_cantilever_model():
     cs.set('J', 1)
 
     beam = model.add_feature('beam')
-    beam.add('node', {'uid': 'root', 'coord': [0, 0, 0]})
-    beam.add('node', {'uid': 'tip', 'coord': [1, 0, 0]})
+    beam.add('node', [0, 0, 0], uid='root')
+    beam.add('node', [1, 0, 0], uid='tip')
     beam.set('nelem', 10)
     beam.add('material', {'from': 'root', 'to': 'tip', 'uid': 'dummy'})
     beam.add('cross_section', {'from': 'root', 'to': 'tip', 'uid': 'dummy'})
