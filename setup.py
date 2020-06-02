@@ -4,7 +4,7 @@
 import setuptools
 import os
 
-from src.lib.framat.__version__ import __version__
+from src.framat.__version__ import __version__
 
 # See also: https://github.com/kennethreitz/setup.py/blob/master/setup.py
 
@@ -21,13 +21,12 @@ REQUIRED = [
     'matplotlib>=3.0.2',
     'numpy',
     'scipy',
+    'model-framework',
 ]
 README = 'README.rst'
-PACKAGE_DIR = 'src/lib/'
+PACKAGE_DIR = 'src/'
 LICENSE = 'Apache License 2.0'
-SCRIPTS = [
-    'src/bin/framat',
-]
+SCRIPTS = []
 
 
 here = os.path.abspath(os.path.dirname(__file__))

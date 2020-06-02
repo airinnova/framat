@@ -4,5 +4,5 @@
 
 cd $(dirname $0)
 
-sphinx-apidoc -f -o . ../../../src/lib/framat/
+sphinx-apidoc -f -o . ../../../src/framat/
 sed -i -e '1,3d' modules.rst

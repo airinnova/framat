@@ -1,9 +1,0 @@
-usage: framat [-h] {run,example} ...
-
-positional arguments:
-  {run,example}  execution modes
-    run          run a FEM analysis
-    example      create an example file
-
-optional arguments:
-  -h, --help     show this help message and exit

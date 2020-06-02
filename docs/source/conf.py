@@ -8,11 +8,10 @@
 import os
 import sys
 
-from framat.stdfun import DEFAULT_MODEL_FILENAME
 from framat.__version__ import __version__
 
 
-sys.path.insert(0, os.path.abspath('../../src/lib/framat'))
+sys.path.insert(0, os.path.abspath('../../lib/framat'))
 sys.setrecursionlimit(1500)
 
 NAME = 'FramAT'
@@ -37,8 +36,7 @@ version = __version__
 # ######### AUTOMATE THINGS ##########
 # ====================================
 os.system('bash ./dev_doc/gen_auto_doc.sh')
-os.system('bash ./_gen_help_page.sh')
-os.system('python ./user_guide/make_example.py')
+os.system('python ./api/gen_model_doc.py')
 
 # -- General configuration ---------------------------------------------------
 extensions = [
@@ -48,7 +46,10 @@ extensions = [
     'sphinx.ext.ifconfig',
     # 'sphinx.ext.viewcode',
     'sphinx.ext.autosummary',
+    'sphinxcontrib.mermaid',
 ]
+
+mermaid_params = ['--theme', 'forest', '--backgroundColor', 'transparent']
 
 # Paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -78,10 +79,7 @@ pygments_style = None
 rst_prolog = f"""
 .. |name| replace:: {NAME}
 .. |name_long| replace:: {NAME_LONG}
-.. |name_cli| replace:: ``{NAME_CLI}``
 .. |eb| replace:: Euler-Bernoulli
-.. |std_model_filename| replace:: ``{DEFAULT_MODEL_FILENAME}``
-.. |std_model_filename_unformatted| replace:: {DEFAULT_MODEL_FILENAME}
 .. |name_bold| replace:: **{NAME}**
 .. |dof| replace:: d.o.f.
 .. |dof_long| replace:: degrees of freedom

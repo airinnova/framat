@@ -32,6 +32,8 @@
     :alt: Example
     :scale: 50 %
 
+⚠ **Note** From version 0.3.2 to 0.4.0 interface for *FramAT* has been changed completely to a more user-friendly Python API. Please refer to the documentation for instructions and examples. Older development versions can still be found under `releases <https://github.com/airinnova/framat/releases>`_ (not recommended). The current interface is still under development.
+
 How to get started
 ------------------
 
