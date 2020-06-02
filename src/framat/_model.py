@@ -23,6 +23,8 @@
 Model definition
 """
 
+from uuid import uuid4
+
 from mframework import FeatureSpec, ModelSpec, SchemadictValidators
 import numpy as np
 
@@ -359,11 +361,15 @@ class Model(mspec.user_class):
 
     @classmethod
     def example(cls, example='cantilever'):
-        model = get_example_cantilever()
-        return model
+        if example == 'cantilever':
+            return get_example_cantilever()
+        elif example == 'helix':
+            return get_example_helix()
+        else:
+            raise ValueError('unknown model: {example!r}')
 
 
-def get_example_cantilever():
+def init_examples():
     model = Model()
     mat = model.add_feature('material', uid='dummy')
     mat.set('E', 1)
@@ -375,6 +381,11 @@ def get_example_cantilever():
     cs.set('Iy', 1)
     cs.set('Iz', 1)
     cs.set('J', 1)
+    return model
+
+
+def get_example_cantilever():
+    model = init_examples()
 
     beam = model.add_feature('beam')
     beam.add('node', {'uid': 'root', 'coord': [0, 0, 0]})
@@ -387,4 +398,43 @@ def get_example_cantilever():
 
     bc = model.set_feature('bc')
     bc.add('fix', {'node': 'root', 'fix': ['all']})
+    return model
+
+
+def get_example_helix():
+    model = init_examples()
+
+    model.get('material')[0].set('E', 1e5)
+    model.get('material')[0].set('G', 1e4)
+
+    def helix(a, b, c, t):
+        """
+        Make a Helix
+        See: https://en.wikipedia.org/wiki/Helix
+        """
+
+        x = a*np.cos(t)
+        y = b*np.sin(t)
+        z = c*t
+        return (x, y, z)
+
+    # Generate node coordinates
+    t = np.linspace(0, 20, num=200)
+    x, y, z = helix(a=10, b=5, c=0.5, t=t)
+
+    beam = model.add_feature('beam')
+    for x_coord, y_coord, z_coord in zip(x, y, z):
+        beam.add('node', {'uid': str(uuid4()), 'coord': [x_coord, y_coord, z_coord]})
+
+    first_uid = beam.get('node')[0]['uid']
+    last_uid = beam.get('node')[-1]['uid']
+
+    beam.set('nelem', 1)
+    beam.add('material', {'from': first_uid, 'to': last_uid, 'uid': 'dummy'})
+    beam.add('cross_section', {'from': first_uid, 'to': last_uid, 'uid': 'dummy'})
+    beam.add('orientation', {'from': first_uid, 'to': last_uid, 'up': [0, 0, 1]})
+    beam.add('point_load', {'at': last_uid, 'load': [0, 0, -1, 0, 0, 0]})
+
+    bc = model.set_feature('bc')
+    bc.add('fix', {'node': first_uid, 'fix': ['all']})
     return model

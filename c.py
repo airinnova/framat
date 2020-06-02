@@ -1,6 +1,7 @@
 from framat import Model
 
-m = Model.example()
+m = Model.example('helix')
+# m = Model.example()
 
 # beam = m.add_feature('beam')
 # beam.add('node', {'uid': 'a', 'coord': [0, 1, 1]})
@@ -15,7 +16,7 @@ m = Model.example()
 
 # m.get('beam')[0].set('nelem', 50)
 
-b = m.get('beam')[0]
+# b = m.get('beam')[0]
 # m.get('bc').add('fix', {'node': 'tip', 'fix': ['all']})
 
 pp = m.set_feature('post_proc')
@@ -24,4 +25,3 @@ pp.add('plot', ('undeformed', 'deformed', 'nodes', 'node_uids'))
 pp.add('plot', ('undeformed', 'deformed', 'node_uids'))
 
 r = m.run()
-print(r.get('mesh').get('abm').nnodes)
