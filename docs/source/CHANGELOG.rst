@@ -4,7 +4,15 @@ Changelog
 Changelog for FramAT. Version numbers try to follow `Semantic
 Versioning <https://semver.org/spec/v2.0.0.html>`__.
 
-[0.4.0] -- 2020-05-15
+[0.4.1] -- 2020-06-03
+---------------------
+
+Added
+~~~~~
+
+* Minor model definition update
+
+[0.4.0] -- 2020-06-02
 ---------------------
 
 Added

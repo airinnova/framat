@@ -21,10 +21,10 @@ REQUIRED = [
     'matplotlib>=3.0.2',
     'numpy',
     'scipy',
-    'model-framework',
+    'model-framework>=0.0.14',
 ]
 README = 'README.rst'
-PACKAGE_DIR = 'src/'
+PACKAGE_DIR = 'src'
 LICENSE = 'Apache License 2.0'
 SCRIPTS = []
 
