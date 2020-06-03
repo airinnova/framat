@@ -23,8 +23,6 @@
 Model definition
 """
 
-from uuid import uuid4
-
 from mframework import FeatureSpec, ModelSpec, SchemadictValidators
 import numpy as np
 
@@ -38,6 +36,7 @@ SchemadictValidators.register_type(np.ndarray)
 
 # TODO:
 # - acceleration state (define on beam level, or 'global'?)
+# - different study types... time-domain, frequency-domain, static
 
 
 # =================
@@ -192,42 +191,55 @@ mspec.add_feature_spec(
 )
 
 # ===== Boundary conditions =====
+schema_fix = {
+    'fix': {
+        'type': list,
+        'min_len': 1,
+        'max_len': 6,
+        'item_types': str,
+        'allowed_items': ['ux', 'uy', 'uz', 'thx', 'thy', 'thz', 'all'],
+    }
+}
+
 fspec = FeatureSpec()
 fspec.add_prop_spec(
     'fix',
     {
         '$required_keys': ['node', 'fix'],
         'node': S.string,
-        'fix': {'type': list, 'min_len': 1, 'max_len': 6, 'item_types': str}
+        **schema_fix,
     },
     singleton=False,
-    doc="Fix a beam node"
+    doc="Fix degrees of freedom (DOF) at a specific named beam node. Specify \
+         which node to fix with the correct node UID. In addition, you must \
+         also speficy which DOFs to fix. To constrain *all* DOFs, set \
+         'fix' to ['all']."
 )
 fspec.add_prop_spec(
     'connect',
     {
-        '$required_keys': ['node1', 'node2', 'fix'], 'node1': S.string, 'node2': S.string,
-        'fix': {'type': list, 'min_len': 1, 'max_len': 6, 'item_types': str}
+        '$required_keys': ['node1', 'node2', 'fix'],
+        'node1': S.string,
+        'node2': S.string,
+        **schema_fix,
     },
     singleton=False,
-    doc="Connect two beam nodes"
+    doc="Connect two beam nodes with a rigid connection. Specify the two nodes \
+         to connect with the keys 'node1' and 'node2' followed by the \
+         respective UIDs. Use the 'fix' key to constrain 'all' DOFs, or \
+         just specific DOFs. The two nodes may belong to the same beam, or two \
+         separate beams."
 )
 mspec.add_feature_spec(
     'bc',
     fspec,
     singleton=True,
     required=True,
-    doc="Boundary conditions"
+    doc="The boundary condition (bc) feature allows you to constrain the beam \
+         model. Both single point and multipoint constraints (MPC) can be set \
+         up. Note that the beam structure must be at least 'statically \
+         determined' (i.e. no rigid body motion) to run a static analysis."
 )
-
-# ===== Study =====
-fspec = FeatureSpec()
-fspec.add_prop_spec(
-    'type',
-    S.string,
-    doc="Define a study type"
-)
-mspec.add_feature_spec('study', fspec, singleton=True, required=True, doc='Cross-section properties')
 
 # ===== Post-proc =====
 fspec = FeatureSpec()
@@ -239,7 +251,7 @@ fspec.add_prop_spec(
         'markersize': S.pos_number,
         'fontsize': S.pos_int,
     },
-    doc="General plot settings"
+    doc="Define general plot settings."
 )
 fspec.add_prop_spec(
     'plot',
@@ -253,14 +265,15 @@ fspec.add_prop_spec(
         ),
     },
     singleton=False,
-    doc="Add a geometry plot"
+    doc="Add a plot. You may add as many plots as you like. List the parts to \
+         show in the plot."
 )
 mspec.add_feature_spec(
     'post_proc',
     fspec,
     singleton=True,
     required=True,
-    doc='Cross-section properties'
+    doc="Post-processing.",
 )
 
 # ===================
@@ -271,69 +284,21 @@ rspec = ModelSpec()
 # ===== Mesh =====
 fspec = FeatureSpec()
 fspec.add_prop_spec(
-    'named_nodes',
-    {'type': dict},
-    singleton=True,
-    doc="Mapping of named nodes to global node numbers"
-)
-fspec.add_prop_spec(
-    'nbeam',
-    S.pos_int,
-    singleton=True,
-    doc=""
-)
-fspec.add_prop_spec(
-    'nelem',
-    S.pos_int,
-    singleton=True,
-    doc=""
-)
-fspec.add_prop_spec(
-    'nnode',
-    S.pos_int,
-    singleton=True,
-    doc=""
-)
-fspec.add_prop_spec(
-    'ndof',
-    S.pos_int,
-    singleton=True,
-    doc=""
-)
-fspec.add_prop_spec(
     'abm',
     {'type': AbstractBeamMesh},
     singleton=True,
-    doc=""
+    doc="Abstract beam mesh"
 )
 rspec.add_feature_spec(
     'mesh',
     fspec,
     singleton=True,
     required=False,
-    doc="Mesh"
+    doc="Mesh data."
 )
 
 # ===== Beam =====
 fspec = FeatureSpec()
-fspec.add_prop_spec(
-    'named_node',
-    S.string,
-    singleton=False,
-    doc="List of named nodes belonging to beam"
-)
-fspec.add_prop_spec(
-    'mesh',
-    {'type': AbstractBeamMesh},
-    singleton=True,
-    doc="List of named nodes belonging to beam"
-)
-fspec.add_prop_spec(
-    'elements',
-    {'type': list},
-    singleton=True,
-    doc="List of elements"
-)
 fspec.add_prop_spec(
     'deformation',
     {
@@ -345,7 +310,7 @@ fspec.add_prop_spec(
         'thz': {'type': np.ndarray},
     },
     singleton=True,
-    doc="List of elements"
+    doc="Displacements and rotation vectors for each for each beam."
 )
 rspec.add_feature_spec(
     'beam',
@@ -357,31 +322,17 @@ rspec.add_feature_spec(
 
 # ===== Deformation =====
 fspec = FeatureSpec()
-fspec.add_prop_spec('K', {'type': np.ndarray}, doc="TODO")
-fspec.add_prop_spec('M', {'type': np.ndarray}, doc="TODO")
-fspec.add_prop_spec('F', {'type': np.ndarray}, doc="TODO")
-fspec.add_prop_spec('U', {'type': np.ndarray}, doc="TODO")
-fspec.add_prop_spec('B', {'type': np.ndarray}, doc="TODO")
-fspec.add_prop_spec('F_react', {'type': np.ndarray}, doc="TODO")
+fspec.add_prop_spec('K', {'type': np.ndarray}, doc="Stiffness matrix.")
+fspec.add_prop_spec('M', {'type': np.ndarray}, doc="Mass matrix.")
+fspec.add_prop_spec('F', {'type': np.ndarray}, doc="External load vector.")
+fspec.add_prop_spec('U', {'type': np.ndarray}, doc="Displacement vector (solution).")
+fspec.add_prop_spec('B', {'type': np.ndarray}, doc="Constraint matrix.")
+fspec.add_prop_spec('F_react', {'type': np.ndarray}, doc="Reaction forces at constrained nodes.")
 rspec.add_feature_spec(
-    'matrices',
+    'tensors',
     fspec,
     singleton=True,
-    doc='System matrices'
-)
-
-# ===== Deformation =====
-fspec = FeatureSpec()
-fspec.add_prop_spec(
-    'max',
-    S.pos_number,
-    required=True,
-    doc="Maximum deformation"
-)
-rspec.add_feature_spec(
-    'deformation',
-    fspec,
-    doc='Deformation'
+    doc='System tensors.'
 )
 
 mspec.results = rspec
@@ -458,8 +409,8 @@ def get_example_helix():
     x, y, z = helix(a=10, b=5, c=0.5, t=t)
 
     beam = model.add_feature('beam')
-    for x_coord, y_coord, z_coord in zip(x, y, z):
-        beam.add('node', [x_coord, y_coord, z_coord], uid=str(uuid4()))
+    for i, (x_coord, y_coord, z_coord) in enumerate(zip(x, y, z)):
+        beam.add('node', [x_coord, y_coord, z_coord], uid=str(i))
 
     first_uid = beam.get_uid('node', 'first')
     last_uid = beam.get_uid('node', 'last')

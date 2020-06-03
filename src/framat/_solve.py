@@ -39,7 +39,7 @@ def static_load_analysis(m):
         :F_react: reaction loads
     """
 
-    mat = m.results.get('matrices')
+    mat = m.results.get('tensors')
     K = mat.get('K')
     B = mat.get('B')
     F = mat.get('F')
@@ -65,8 +65,8 @@ def static_load_analysis(m):
     U = solution[0:ndof]
     F_react = solution[ndof:]
 
-    m.results.get('matrices').set('U', U)
-    m.results.get('matrices').set('F_react', F_react)
+    m.results.get('tensors').set('U', U)
+    m.results.get('tensors').set('F_react', F_react)
 
     #############
     beam = m.results.get('beam')[0]

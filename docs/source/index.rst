@@ -38,7 +38,6 @@ Welcome to |name|'s documentation!
 
    theory/index
    theory/fem
-   theory/nomenclature
 
 .. toctree::
    :maxdepth: 2

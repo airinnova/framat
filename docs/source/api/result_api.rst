@@ -13,8 +13,7 @@ itself. The following results are available in the result object.
     A[Model]
     A --> F0[mesh]
     A --> F1[beam]
-    A --> F2[matrices]
-    A --> F3[deformation]
+    A --> F2[tensors]
 
 
 Feature: mesh
@@ -24,7 +23,7 @@ Feature: mesh
    :align: left
    :alt: description
 
-Mesh
+Mesh data.
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
@@ -37,181 +36,6 @@ Mesh
    :alt: required
 
 *Required*: False
-
-Property: named_nodes
-~~~~~~~~~~~~~~~~~~~~~
-
-.. mermaid::
-
-    graph LR
-    A[Model]
-    A --> F1[mesh] 
-    F1 --> P1[named_nodes] 
-
-
-.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/notes.svg
-   :align: left
-   :alt: description
-
-Mapping of named nodes to global node numbers
-
-.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
-   :align: left
-   :alt: singleton
-
-*Singleton*: True
-
-.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
-   :align: left
-   :alt: required
-
-*Required*: False
-
-.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
-   :align: left
-   :alt: schema
-
-*Schema*:
-
-======== ==============
-**type** <class 'dict'>
-======== ==============
-
-Property: nbeam
-~~~~~~~~~~~~~~~
-
-.. mermaid::
-
-    graph LR
-    A[Model]
-    A --> F1[mesh] 
-    F1 --> P1[nbeam] 
-
-
-.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
-   :align: left
-   :alt: singleton
-
-*Singleton*: True
-
-.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
-   :align: left
-   :alt: required
-
-*Required*: False
-
-.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
-   :align: left
-   :alt: schema
-
-*Schema*:
-
-======== =============
-**type** <class 'int'>
- **>**         0      
-======== =============
-
-Property: nelem
-~~~~~~~~~~~~~~~
-
-.. mermaid::
-
-    graph LR
-    A[Model]
-    A --> F1[mesh] 
-    F1 --> P1[nelem] 
-
-
-.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
-   :align: left
-   :alt: singleton
-
-*Singleton*: True
-
-.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
-   :align: left
-   :alt: required
-
-*Required*: False
-
-.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
-   :align: left
-   :alt: schema
-
-*Schema*:
-
-======== =============
-**type** <class 'int'>
- **>**         0      
-======== =============
-
-Property: nnode
-~~~~~~~~~~~~~~~
-
-.. mermaid::
-
-    graph LR
-    A[Model]
-    A --> F1[mesh] 
-    F1 --> P1[nnode] 
-
-
-.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
-   :align: left
-   :alt: singleton
-
-*Singleton*: True
-
-.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
-   :align: left
-   :alt: required
-
-*Required*: False
-
-.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
-   :align: left
-   :alt: schema
-
-*Schema*:
-
-======== =============
-**type** <class 'int'>
- **>**         0      
-======== =============
-
-Property: ndof
-~~~~~~~~~~~~~~
-
-.. mermaid::
-
-    graph LR
-    A[Model]
-    A --> F1[mesh] 
-    F1 --> P1[ndof] 
-
-
-.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
-   :align: left
-   :alt: singleton
-
-*Singleton*: True
-
-.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
-   :align: left
-   :alt: required
-
-*Required*: False
-
-.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
-   :align: left
-   :alt: schema
-
-*Schema*:
-
-======== =============
-**type** <class 'int'>
- **>**         0      
-======== =============
 
 Property: abm
 ~~~~~~~~~~~~~
@@ -223,6 +47,12 @@ Property: abm
     A --> F1[mesh] 
     F1 --> P1[abm] 
 
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/notes.svg
+   :align: left
+   :alt: description
+
+Abstract beam mesh
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
@@ -267,124 +97,6 @@ Beam
 
 *Required*: False
 
-Property: named_node
-~~~~~~~~~~~~~~~~~~~~
-
-.. mermaid::
-
-    graph LR
-    A[Model]
-    A --> F1[beam] 
-    F1 --> P1[named_node] 
-
-
-.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/notes.svg
-   :align: left
-   :alt: description
-
-List of named nodes belonging to beam
-
-.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
-   :align: left
-   :alt: singleton
-
-*Singleton*: False
-
-.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
-   :align: left
-   :alt: required
-
-*Required*: False
-
-.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
-   :align: left
-   :alt: schema
-
-*Schema*:
-
-======== =============
-**type** <class 'str'>
- **>**         0      
-======== =============
-
-Property: mesh
-~~~~~~~~~~~~~~
-
-.. mermaid::
-
-    graph LR
-    A[Model]
-    A --> F1[beam] 
-    F1 --> P1[mesh] 
-
-
-.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/notes.svg
-   :align: left
-   :alt: description
-
-List of named nodes belonging to beam
-
-.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
-   :align: left
-   :alt: singleton
-
-*Singleton*: True
-
-.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
-   :align: left
-   :alt: required
-
-*Required*: False
-
-.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
-   :align: left
-   :alt: schema
-
-*Schema*:
-
-======== ==========================================
-**type** <class 'framat._meshing.AbstractBeamMesh'>
-======== ==========================================
-
-Property: elements
-~~~~~~~~~~~~~~~~~~
-
-.. mermaid::
-
-    graph LR
-    A[Model]
-    A --> F1[beam] 
-    F1 --> P1[elements] 
-
-
-.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/notes.svg
-   :align: left
-   :alt: description
-
-List of elements
-
-.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
-   :align: left
-   :alt: singleton
-
-*Singleton*: True
-
-.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
-   :align: left
-   :alt: required
-
-*Required*: False
-
-.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
-   :align: left
-   :alt: schema
-
-*Schema*:
-
-======== ==============
-**type** <class 'list'>
-======== ==============
-
 Property: deformation
 ~~~~~~~~~~~~~~~~~~~~~
 
@@ -400,7 +112,7 @@ Property: deformation
    :align: left
    :alt: description
 
-List of elements
+Displacements and rotation vectors for each for each beam.
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
@@ -429,14 +141,14 @@ List of elements
 **thz** {'type': <class 'numpy.ndarray'>}
 ======= =================================
 
-Feature: matrices
------------------
+Feature: tensors
+----------------
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/notes.svg
    :align: left
    :alt: description
 
-System matrices
+System tensors.
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
@@ -457,7 +169,7 @@ Property: K
 
     graph LR
     A[Model]
-    A --> F1[matrices] 
+    A --> F1[tensors] 
     F1 --> P1[K] 
 
 
@@ -465,7 +177,7 @@ Property: K
    :align: left
    :alt: description
 
-TODO
+Stiffness matrix.
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
@@ -496,7 +208,7 @@ Property: M
 
     graph LR
     A[Model]
-    A --> F1[matrices] 
+    A --> F1[tensors] 
     F1 --> P1[M] 
 
 
@@ -504,7 +216,7 @@ Property: M
    :align: left
    :alt: description
 
-TODO
+Mass matrix.
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
@@ -535,7 +247,7 @@ Property: F
 
     graph LR
     A[Model]
-    A --> F1[matrices] 
+    A --> F1[tensors] 
     F1 --> P1[F] 
 
 
@@ -543,7 +255,7 @@ Property: F
    :align: left
    :alt: description
 
-TODO
+External load vector.
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
@@ -574,7 +286,7 @@ Property: U
 
     graph LR
     A[Model]
-    A --> F1[matrices] 
+    A --> F1[tensors] 
     F1 --> P1[U] 
 
 
@@ -582,7 +294,7 @@ Property: U
    :align: left
    :alt: description
 
-TODO
+Displacement vector (solution).
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
@@ -613,7 +325,7 @@ Property: B
 
     graph LR
     A[Model]
-    A --> F1[matrices] 
+    A --> F1[tensors] 
     F1 --> P1[B] 
 
 
@@ -621,7 +333,7 @@ Property: B
    :align: left
    :alt: description
 
-TODO
+Constraint matrix.
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
@@ -652,7 +364,7 @@ Property: F_react
 
     graph LR
     A[Model]
-    A --> F1[matrices] 
+    A --> F1[tensors] 
     F1 --> P1[F_react] 
 
 
@@ -660,7 +372,7 @@ Property: F_react
    :align: left
    :alt: description
 
-TODO
+Reaction forces at constrained nodes.
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
@@ -683,65 +395,4 @@ TODO
 ======== =======================
 **type** <class 'numpy.ndarray'>
 ======== =======================
-
-Feature: deformation
---------------------
-
-.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/notes.svg
-   :align: left
-   :alt: description
-
-Deformation
-
-.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
-   :align: left
-   :alt: singleton
-
-*Singleton*: True
-
-.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
-   :align: left
-   :alt: required
-
-*Required*: True
-
-Property: max
-~~~~~~~~~~~~~
-
-.. mermaid::
-
-    graph LR
-    A[Model]
-    A --> F1[deformation] 
-    F1 --> P1[max] 
-
-
-.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/notes.svg
-   :align: left
-   :alt: description
-
-Maximum deformation
-
-.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
-   :align: left
-   :alt: singleton
-
-*Singleton*: True
-
-.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
-   :align: left
-   :alt: required
-
-*Required*: True
-
-.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
-   :align: left
-   :alt: schema
-
-*Schema*:
-
-======== ========================
-**type** <class 'numbers.Number'>
- **>**              0            
-======== ========================
 

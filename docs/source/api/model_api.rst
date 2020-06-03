@@ -14,8 +14,7 @@ available features and properties. The model object has the following features:
     A --> F1[cross_section]
     A --> F2[beam]
     A --> F3[bc]
-    A --> F4[study]
-    A --> F5[post_proc]
+    A --> F4[post_proc]
 
 
 Feature: material
@@ -635,7 +634,7 @@ Feature: bc
    :align: left
    :alt: description
 
-Boundary conditions
+The boundary condition (bc) feature allows you to constrain the beam          model. Both single point and multipoint constraints (MPC) can be set          up. Note that the beam structure must be at least 'statically          determined' (i.e. no rigid body motion) to run a static analysis.
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
@@ -664,7 +663,7 @@ Property: fix
    :align: left
    :alt: description
 
-Fix a beam node
+Fix degrees of freedom (DOF) at a specific named beam node. Specify          which node to fix with the correct node UID. In addition, you must          also speficy which DOFs to fix. To constrain *all* DOFs, set          'fix' to ['all'].
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
@@ -684,11 +683,11 @@ Fix a beam node
 
 *Schema*:
 
-================== =================================================================================
-**$required_keys**                                  ['node', 'fix']                                 
-     **node**                               {'type': <class 'str'>, '>': 0}                         
-     **fix**       {'type': <class 'list'>, 'min_len': 1, 'max_len': 6, 'item_types': <class 'str'>}
-================== =================================================================================
+================== ==================================================================================================================================================
+**$required_keys**                                                                  ['node', 'fix']                                                                  
+     **node**                                                               {'type': <class 'str'>, '>': 0}                                                          
+     **fix**       {'type': <class 'list'>, 'min_len': 1, 'max_len': 6, 'item_types': <class 'str'>, 'allowed_items': ['ux', 'uy', 'uz', 'thx', 'thy', 'thz', 'all']}
+================== ==================================================================================================================================================
 
 Property: connect
 ~~~~~~~~~~~~~~~~~
@@ -705,7 +704,7 @@ Property: connect
    :align: left
    :alt: description
 
-Connect two beam nodes
+Connect two beam nodes with a rigid connection. Specify the two nodes          to connect with the keys 'node1' and 'node2' followed by the          respective UIDs. Use the 'fix' key to constrain 'all' DOFs, or          just specific DOFs. The two nodes may belong to the same beam, or two          separate beams.
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
@@ -725,73 +724,12 @@ Connect two beam nodes
 
 *Schema*:
 
-================== =================================================================================
-**$required_keys**                             ['node1', 'node2', 'fix']                            
-    **node1**                               {'type': <class 'str'>, '>': 0}                         
-    **node2**                               {'type': <class 'str'>, '>': 0}                         
-     **fix**       {'type': <class 'list'>, 'min_len': 1, 'max_len': 6, 'item_types': <class 'str'>}
-================== =================================================================================
-
-Feature: study
---------------
-
-.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/notes.svg
-   :align: left
-   :alt: description
-
-Cross-section properties
-
-.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
-   :align: left
-   :alt: singleton
-
-*Singleton*: True
-
-.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
-   :align: left
-   :alt: required
-
-*Required*: True
-
-Property: type
-~~~~~~~~~~~~~~
-
-.. mermaid::
-
-    graph LR
-    A[Model]
-    A --> F1[study] 
-    F1 --> P1[type] 
-
-
-.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/notes.svg
-   :align: left
-   :alt: description
-
-Define a study type
-
-.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
-   :align: left
-   :alt: singleton
-
-*Singleton*: True
-
-.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
-   :align: left
-   :alt: required
-
-*Required*: False
-
-.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
-   :align: left
-   :alt: schema
-
-*Schema*:
-
-======== =============
-**type** <class 'str'>
- **>**         0      
-======== =============
+================== ==================================================================================================================================================
+**$required_keys**                                                             ['node1', 'node2', 'fix']                                                             
+    **node1**                                                               {'type': <class 'str'>, '>': 0}                                                          
+    **node2**                                                               {'type': <class 'str'>, '>': 0}                                                          
+     **fix**       {'type': <class 'list'>, 'min_len': 1, 'max_len': 6, 'item_types': <class 'str'>, 'allowed_items': ['ux', 'uy', 'uz', 'thx', 'thy', 'thz', 'all']}
+================== ==================================================================================================================================================
 
 Feature: post_proc
 ------------------
@@ -800,7 +738,7 @@ Feature: post_proc
    :align: left
    :alt: description
 
-Cross-section properties
+Post-processing.
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
@@ -829,7 +767,7 @@ Property: plot_settings
    :align: left
    :alt: description
 
-General plot settings
+Define general plot settings.
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
@@ -871,7 +809,7 @@ Property: plot
    :align: left
    :alt: description
 
-Add a geometry plot
+Add a plot. You may add as many plots as you like. List the parts to          show in the plot.
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left

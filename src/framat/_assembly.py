@@ -78,10 +78,10 @@ def create_system_matrices(m):
         M[from_r:to_r, from_r:to_r] = M_beam
         F[from_r:to_r] += F_beam
 
-    mat = r.set_feature('matrices')
-    mat.set('K', K)
-    mat.set('M', M)
-    mat.set('F', F)
+    rtensors = r.set_feature('tensors')
+    rtensors.set('K', K)
+    rtensors.set('M', M)
+    rtensors.set('F', F)
 
 
 def create_bc_matrices(m):
@@ -106,7 +106,7 @@ def create_bc_matrices(m):
         pass
         # TODO
 
-    m.results.get('matrices').set('B', B_tot)
+    m.results.get('tensors').set('B', B_tot)
 
 
 def fix_dof(node_number, total_ndof, dof_constraints):
