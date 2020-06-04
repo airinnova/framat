@@ -29,6 +29,22 @@ import numpy as np
 def solve(m):
     static_load_analysis(m)
 
+    # TODO : get deformation per beam
+
+    U = m.results.get('tensors').get('U')
+    beam = m.results.get('beam')[0]
+    beam.set(
+        'deformation',
+        {
+            'ux': U[0::6, ].flatten(),
+            'uy': U[1::6, ].flatten(),
+            'uz': U[2::6, ].flatten(),
+            'thx': U[3::6, ].flatten(),
+            'thy': U[4::6, ].flatten(),
+            'thz': U[5::6, ].flatten(),
+        },
+    )
+
 
 def static_load_analysis(m):
     """
@@ -67,17 +83,3 @@ def static_load_analysis(m):
 
     m.results.get('tensors').set('U', U)
     m.results.get('tensors').set('F_react', F_react)
-
-    #############
-    beam = m.results.get('beam')[0]
-    beam.set(
-        'deformation',
-        {
-            'ux': U[0::6, ].flatten(),
-            'uy': U[1::6, ].flatten(),
-            'uz': U[2::6, ].flatten(),
-            'thx': U[3::6, ].flatten(),
-            'thy': U[4::6, ].flatten(),
-            'thz': U[5::6, ].flatten(),
-        },
-    )

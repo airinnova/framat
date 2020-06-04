@@ -94,15 +94,14 @@ def create_bc_matrices(m):
     mbc = m.get('bc')
 
     B_tot = np.array([])
-
     # ----- Fix DOFs -----
-    for fix in mbc.get('fix', []):
+    for fix in mbc.iter('fix'):
         num_node = abm.glob_nums[fix['node']]
         B = fix_dof(num_node, ndof, fix['fix'])
         B_tot = np.vstack((B_tot, B)) if B_tot.size else B
 
     # ----- Multipoint constraints (MPC) -----
-    for con in mbc.get('connect', []):
+    for con in mbc.iter('connect'):
         pass
         # TODO
 

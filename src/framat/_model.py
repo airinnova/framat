@@ -179,7 +179,7 @@ fspec.add_prop_spec(
 fspec.add_prop_spec(
     'point_mass',
     {
-        '$required_keys': ['at', 'load'],
+        '$required_keys': ['at', 'mass'],
         'at': S.string,
         'mass': S.pos_int,
     },
@@ -189,7 +189,7 @@ fspec.add_prop_spec(
 fspec.add_prop_spec(
     'distr_load',
     {
-        '$required_keys': ['from', 'to', 'uid'],
+        '$required_keys': ['from', 'to', 'load'],
         'from': S.string,
         'to': S.string,
         'load': S.vector6x1,

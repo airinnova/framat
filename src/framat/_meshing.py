@@ -57,37 +57,37 @@ def create_mesh(m):
         logger.info(f"Beam {i} has {abm.nelem_beam(beam_id)} elements")
 
         # ----- Beam element properties -----
-        for pdef in mbeam.get('orientation'):
-            for elem in abm.beams.iter_from_to(beam_id, pdef['from'], pdef['to']):
+        for pdef in mbeam.iter('orientation'):
+            for elem in abm.iter_from_to(beam_id, pdef['from'], pdef['to']):
                 elem.set('up', pdef['up'])
 
-        for pdef in mbeam.get('material'):
+        for pdef in mbeam.iter('material'):
             mat = m.get('material', uid=pdef['uid'])
-            for elem in abm.beams.iter_from_to(beam_id, pdef['from'], pdef['to']):
+            for elem in abm.iter_from_to(beam_id, pdef['from'], pdef['to']):
                 for p in ('E', 'G', 'rho'):
                     elem.set(p, mat.get(p))
 
-        for pdef in mbeam.get('cross_section'):
+        for pdef in mbeam.iter('cross_section'):
             mat = m.get('cross_section', uid=pdef['uid'])
-            for elem in abm.beams.iter_from_to(beam_id, pdef['from'], pdef['to']):
+            for elem in abm.iter_from_to(beam_id, pdef['from'], pdef['to']):
                 for p in ('A', 'Iy', 'Iz', 'J'):
                     elem.set(p, mat.get(p))
 
         # ----- Loads -----
-        for pdef in mbeam.get('point_load'):
-            elem = abm.beams.get_by_uid(beam_id, pdef['at'])
+        for pdef in mbeam.iter('point_load'):
+            elem = abm.get_by_uid(beam_id, pdef['at'])
             node_id = 1 if elem.p1.uid == pdef['at'] else 2
-            elem.add('point_load', {'load': pdef['load'], 'node': node_id, 'local_sys': True})
+            elem.add('point_load', {'load': pdef['load'], 'node': node_id, 'local_sys': False})
 
-        # for pdef in mbeam.get('distr_load'):
-        #     for elem in abm.beams.iter_from_to(beam_id, pdef['from'], pdef['to']):
-        #         ...
+        for pdef in mbeam.iter('distr_load'):
+            for elem in abm.iter_from_to(beam_id, pdef['from'], pdef['to']):
+                elem.add('distr_load', {'load': pdef['load'], 'local_sys': pdef.get('local_sys', False)})
 
         # ----- Additional mass -----
-        # for pdef in mbeam.get('point_mass'):
-        #     elem = abm.beams.get_by_uid(beam_id, pdef['at'])
-        #     node_id = 1 if elem.p1.uid == pdef['at'] else 2
-        #     elem.add('point_load', {'load': pdef['load'], 'node': node_id, 'local_sys': True})
+        for pdef in mbeam.iter('point_mass'):
+            elem = abm.get_by_uid(beam_id, pdef['at'])
+            node_id = 1 if elem.p1.uid == pdef['at'] else 2
+            elem.add('point_mass', {'load': pdef['mass'], 'node': node_id})
 
     logger.info(f"Abstract mesh created")
     logger.info(f"Discretisation:")
@@ -314,18 +314,27 @@ class AbstractBeamMesh:
             if p1.uid is not None:
                 self.glob_nums[p1.uid] = num1
                 try:
-                    self.beams.assign_uid(self._num_beams, p1.uid)
+                    self.beams.assign_uid(self._num_beams, f"FROM:{p1.uid}")
                 except KeyError:
                     pass
             if p2.uid is not None:
                 self.glob_nums[p2.uid] = num2
                 try:
-                    self.beams.assign_uid(self._num_beams, p2.uid)
+                    self.beams.assign_uid(self._num_beams, f"TO:{p2.uid}")
                 except KeyError:
                     pass
 
         self._num_nodes += len(self.beams[self._num_beams])
         return self._num_beams
+
+    def iter_from_to(self, beam_id, uid1, uid2):
+        return self.beams.iter_from_to(beam_id, f"FROM:{uid1}", f"TO:{uid2}")
+
+    def get_by_uid(self, beam_id, uid):
+        try:
+            return self.beams.get_by_uid(beam_id, f"FROM:{uid}")
+        except KeyError:
+            return self.beams.get_by_uid(beam_id, f"TO:{uid}")
 
     @property
     def nbeams(self):
