@@ -235,6 +235,7 @@ class PolygonalChain:
 # ===== Abstract beam element =====
 
 schema_load = {'load': S.vector6x1, 'node': S.pos_int, 'local_sys': {'type': bool}}
+schema_distr_load = {'load': S.vector6x1, 'local_sys': {'type': bool}}
 schema_mass = {'mass': {'type': S.pos_number}, 'node': S.pos_int}
 
 fspec = FeatureSpec()
@@ -244,6 +245,7 @@ for p in Element.PROP_TYPES:
 
 fspec.add_prop_spec('up', S.vector3x1)
 fspec.add_prop_spec('point_load', schema_load, singleton=False)
+fspec.add_prop_spec('distr_load', schema_load, singleton=False)
 fspec.add_prop_spec('dist_load', schema_load, singleton=False)
 fspec.add_prop_spec('point_mass', schema_mass, singleton=False)
 

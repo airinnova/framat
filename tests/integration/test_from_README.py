@@ -37,7 +37,7 @@ def test_README_model():
     bc.add('fix', {'node': 'root', 'fix': ['all']})
 
     pp = model.set_feature('post_proc')
-    # pp.add('plot', ('undeformed', 'deformed', 'nodes'))
+    pp.add('plot', ['undeformed', 'deformed', 'nodes'])
 
     model.run()
 

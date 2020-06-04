@@ -9,6 +9,12 @@ Installation
 
     pip install framat
 
+To update an existing installation, run:
+
+.. code::
+
+    pip install --upgrade framat
+
 .. seealso::
 
     How to get started with pip_:

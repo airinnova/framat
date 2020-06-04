@@ -39,6 +39,12 @@ Installation
 
     pip install framat
 
+To update an existing installation, run:
+
+.. code::
+
+    pip install --upgrade framat
+
 
 Example
 -------
@@ -76,7 +82,7 @@ FramAT provides a user-friendly, easy-to-read Python interface which can be inte
     bc.add('fix', {'node': 'root', 'fix': ['all']})
 
     pp = model.set_feature('post_proc')
-    pp.add('plot', ('undeformed', 'deformed', 'nodes'))
+    pp.add('plot', ['undeformed', 'deformed', 'nodes'])
 
     model.run()
 

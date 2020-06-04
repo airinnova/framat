@@ -561,7 +561,7 @@ Property: point_load
    :align: left
    :alt: description
 
-Add a point load
+Add a point load to a specific node.
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
@@ -585,6 +585,91 @@ Add a point load
 **$required_keys**                                        ['at', 'load']                                       
       **at**                                     {'type': <class 'str'>, '>': 0}                               
      **load**      {'type': <class 'list'>, 'min_len': 6, 'max_len': 6, 'item_types': <class 'numbers.Number'>}
+  **local_sys**                                      {'type': <class 'bool'>}                                  
+================== ============================================================================================
+
+Property: point_mass
+~~~~~~~~~~~~~~~~~~~~
+
+.. mermaid::
+
+    graph LR
+    A[Model]
+    A --> F1[beam] 
+    F1 --> P1[point_mass] 
+
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/notes.svg
+   :align: left
+   :alt: description
+
+Add a point mass to a specific node.
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
+   :align: left
+   :alt: singleton
+
+*Singleton*: False
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
+   :align: left
+   :alt: required
+
+*Required*: False
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
+   :align: left
+   :alt: schema
+
+*Schema*:
+
+================== ===============================
+**$required_keys**          ['at', 'load']        
+      **at**       {'type': <class 'str'>, '>': 0}
+     **mass**      {'type': <class 'int'>, '>': 0}
+================== ===============================
+
+Property: distr_load
+~~~~~~~~~~~~~~~~~~~~
+
+.. mermaid::
+
+    graph LR
+    A[Model]
+    A --> F1[beam] 
+    F1 --> P1[distr_load] 
+
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/notes.svg
+   :align: left
+   :alt: description
+
+Add a distributed load.
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
+   :align: left
+   :alt: singleton
+
+*Singleton*: False
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
+   :align: left
+   :alt: required
+
+*Required*: False
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
+   :align: left
+   :alt: schema
+
+*Schema*:
+
+================== ============================================================================================
+**$required_keys**                                    ['from', 'to', 'uid']                                    
+     **from**                                    {'type': <class 'str'>, '>': 0}                               
+      **to**                                     {'type': <class 'str'>, '>': 0}                               
+     **load**      {'type': <class 'list'>, 'min_len': 6, 'max_len': 6, 'item_types': <class 'numbers.Number'>}
+  **local_sys**                                      {'type': <class 'bool'>}                                  
 ================== ============================================================================================
 
 Property: nelem
@@ -830,7 +915,7 @@ Add a plot. You may add as many plots as you like. List the parts to          sh
 *Schema*:
 
 ================= ================================================
-     **type**                     <class 'tuple'>                 
+     **type**                      <class 'list'>                 
 **allowed_items** ('deformed', 'node_uids', 'nodes', 'undeformed')
 ================= ================================================
 

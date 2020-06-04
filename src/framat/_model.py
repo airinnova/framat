@@ -137,10 +137,12 @@ fspec.add_prop_spec(
         'up': S.vector3x1
     },
     singleton=False,
-    doc=tmp_doc.format(X='beam cross section orientation') +
+    doc=(
+        tmp_doc.format(X='beam cross section orientation') +
         "The key 'up' is followed by a list (vector) indicating the direction \
         of the local z-axis of the beam element. The 'up' vector does not have \
         to be a unit vector."
+    )
 )
 fspec.add_prop_spec(
     'material',
@@ -151,8 +153,10 @@ fspec.add_prop_spec(
         'uid': S.string
     },
     singleton=False,
-    doc=tmp_doc.format(X='material') +
-        "The key 'uid' must refer to a material UID defined in the 'material' feature.",
+    doc=(
+        tmp_doc.format(X='material') +
+        "The key 'uid' must refer to a material UID defined in the 'material' feature."
+    )
 )
 fspec.add_prop_spec(
     'cross_section',
@@ -163,9 +167,36 @@ fspec.add_prop_spec(
 )
 fspec.add_prop_spec(
     'point_load',
-    {'$required_keys': ['at', 'load'], 'at': S.string, 'load': S.vector6x1},
+    {
+        '$required_keys': ['at', 'load'],
+        'at': S.string,
+        'load': S.vector6x1,
+        'local_sys': {'type': bool}
+    },
     singleton=False,
-    doc="Add a point load"
+    doc="Add a point load to a specific node."
+)
+fspec.add_prop_spec(
+    'point_mass',
+    {
+        '$required_keys': ['at', 'load'],
+        'at': S.string,
+        'mass': S.pos_int,
+    },
+    singleton=False,
+    doc="Add a point mass to a specific node."
+)
+fspec.add_prop_spec(
+    'distr_load',
+    {
+        '$required_keys': ['from', 'to', 'uid'],
+        'from': S.string,
+        'to': S.string,
+        'load': S.vector6x1,
+        'local_sys': {'type': bool}
+    },
+    singleton=False,
+    doc="Add a distributed load."
 )
 fspec.add_prop_spec(
     'nelem',
@@ -256,7 +287,7 @@ fspec.add_prop_spec(
 fspec.add_prop_spec(
     'plot',
     {
-        'type': tuple,
+        'type': list,
         'allowed_items': (
             'deformed',
             'node_uids',
