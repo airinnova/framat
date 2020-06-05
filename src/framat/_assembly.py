@@ -27,17 +27,26 @@ import numpy as np
 
 from ._util import enumerate_with_step
 from ._element import Element
-from ._log import logger
+
+# TODO: use sparse matrices
 
 
 def create_system_matrices(m):
     """
-    Assemble global tensors:
+    Assemble global tensors
 
         * :K: global stiffness matrix
         * :M: global mass matrix
         * :F: global load vector
+        * :B: constraint matrix
     """
+
+    create_main_tensors(m)
+    create_bc_matrices(m)
+
+
+def create_main_tensors(m):
+    """Create K, M and F"""
 
     r = m.results
     abm = m.results.get('mesh').get('abm')
@@ -46,23 +55,23 @@ def create_system_matrices(m):
     K_per_beam = []
     M_per_beam = []
     F_per_beam = []
-    for i, (mbeam, rbeam) in enumerate(zip(m.iter('beam'), r.iter('beam'))):
-        ndof_beam = Element.DOF_PER_NODE*(abm.nelem_beam(i) + 1)
+    for i, mbeam in enumerate(m.iter('beam')):
+        ndof_beam = abm.ndofs_beam(i)
         K_beam = np.zeros((ndof_beam, ndof_beam))
         M_beam = np.zeros((ndof_beam, ndof_beam))
         F_beam = np.zeros((ndof_beam, 1))
 
-        for k, abel in enumerate_with_step(abm.beams[i].values(), step=6):
-            phy_elem = Element.from_abstract_element(abel)
-            K_beam[k:k+12, k:k+12] += phy_elem.stiffness_matrix_glob
-            M_beam[k:k+12, k:k+12] += phy_elem.mass_matrix_glob
-            F_beam[k:k+12] += phy_elem.load_vector_glob
+        for k, abstr_elem in enumerate_with_step(abm.beams[i].values(), step=6):
+            phys_elem = Element.from_abstract_element(abstr_elem)
+            K_beam[k:k+12, k:k+12] += phys_elem.stiffness_matrix_glob
+            M_beam[k:k+12, k:k+12] += phys_elem.mass_matrix_glob
+            F_beam[k:k+12] += phys_elem.load_vector_glob
 
         K_per_beam.append(K_beam)
         M_per_beam.append(M_beam)
         F_per_beam.append(F_beam)
 
-    ndof_total = Element.DOF_PER_NODE*abm.nnodes
+    ndof_total = abm.ndofs()
     K = np.zeros((ndof_total, ndof_total))
     M = np.zeros((ndof_total, ndof_total))
     F = np.zeros((ndof_total, 1))
@@ -85,12 +94,11 @@ def create_system_matrices(m):
 
 
 def create_bc_matrices(m):
-    """Assemble the constraint matrix"""
+    """Assemble the constraint matrix B"""
 
     r = m.results
     abm = r.get('mesh').get('abm')
-    ndof = Element.DOF_PER_NODE*(abm.nnodes)
-
+    ndof = abm.ndofs()
     mbc = m.get('bc')
 
     B_tot = np.array([])

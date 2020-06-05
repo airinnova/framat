@@ -29,12 +29,11 @@ import numpy as np
 def solve(m):
     static_load_analysis(m)
 
-    # TODO : get deformation per beam
-
-    U = m.results.get('tensors').get('U')
-    beam = m.results.get('beam')[0]
-    beam.set(
-        'deformation',
+    # ----- Dissect tensors -----
+    rtensors = m.results.get('tensors')
+    U = rtensors.get('U')
+    rtensors.set(
+        'comp:U',
         {
             'ux': U[0::6, ].flatten(),
             'uy': U[1::6, ].flatten(),
@@ -42,6 +41,19 @@ def solve(m):
             'thx': U[3::6, ].flatten(),
             'thy': U[4::6, ].flatten(),
             'thz': U[5::6, ].flatten(),
+        },
+    )
+
+    F = rtensors.get('F')
+    rtensors.set(
+        'comp:F',
+        {
+            'Fx': F[0::6, ].flatten(),
+            'Fy': F[1::6, ].flatten(),
+            'Fz': F[2::6, ].flatten(),
+            'Mx': F[3::6, ].flatten(),
+            'My': F[4::6, ].flatten(),
+            'Mz': F[5::6, ].flatten(),
         },
     )
 
@@ -63,9 +75,8 @@ def static_load_analysis(m):
     ndof = K.shape[0]
     b = np.zeros((B.shape[0], 1))
 
-    # ===== Assemble the system of equations =====
-    # Number of linear constraints
-    n_lr = B.shape[0]
+    # Assemble the system of equations
+    n_lr = B.shape[0]  # Number of linear constraints
     Z = np.zeros((n_lr, n_lr))
 
     A_system = np.block([

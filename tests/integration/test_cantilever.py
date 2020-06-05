@@ -42,7 +42,7 @@ def test_tip_force():
     for nelem in (5, 17, 41, 83, 107):
         model.get('beam')[0].set('nelem', nelem)
         r = model.run()
-        deform = r.get('beam')[0].get('deformation')
+        deform = r.get('tensors').get('comp:U')
         # Expected non-zero
         assert -1/3 == pytest.approx(deform['uz'][-1], rel=1e-4)
         assert 0.5 == pytest.approx(deform['thy'][-1], rel=REL_TOL)

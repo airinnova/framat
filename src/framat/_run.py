@@ -24,12 +24,12 @@ Run the model
 """
 
 from . import MODULE_NAME
-from . import _assembly as ass
-from . import _meshing as mesh
-from . import _plot as plot
-from . import _solve as sol
 from .__version__ import __version__
+from ._assembly import create_system_matrices
 from ._log import logger
+from ._meshing import create_mesh
+from ._plot import plot_all
+from ._solve import solve
 
 
 def run_model(m):
@@ -37,28 +37,23 @@ def run_model(m):
     Run the complete model analysis
 
     Args:
-        :m: instance of model
+        :m: model instance
     """
 
     logger.info(f"===== {MODULE_NAME} {__version__} =====")
 
-    # Instantiate result storage for each beam
-    for mbeam in m.iter('beam'):
-        m.results.add_feature('beam')
-
     # ----- MESHING -----
     logger.info("Meshing...")
-    mesh.create_mesh(m)
+    create_mesh(m)
 
     # ----- ASSEMBLING SYSTEM MATRICES -----
     logger.info("Assembling matrices...")
-    ass.create_system_matrices(m)
-    ass.create_bc_matrices(m)
+    create_system_matrices(m)
 
     # ----- SOLVING -----
     logger.info("Solving...")
-    sol.solve(m)
+    solve(m)
 
     # ----- POST-PROCESSING -----
     logger.info("Post-processing...")
-    plot.plot_all(m)
+    plot_all(m)

@@ -23,7 +23,7 @@
 Module for creating the geometric mesh
 """
 
-from collections import OrderedDict
+from collections import OrderedDict, defaultdict
 from math import ceil
 
 from mframework import FeatureSpec, UIDDict
@@ -33,9 +33,6 @@ from ._element import Element
 from ._log import logger
 from ._util import Schemas as S
 from ._util import pairwise
-
-# TODO: Element --> Warning when overwriting data (first, from 'b' to 'c', then, from 'a' to 'c')
-# TODO: need check that all material, cross section data is set from start to end....
 
 
 def create_mesh(m):
@@ -53,48 +50,48 @@ def create_mesh(m):
             sup_points[uid] = coord
 
         # Element lookup object for the new beam
-        beam_id = abm.add_beam_line(sup_points, n=mbeam.get('nelem'))
-        logger.info(f"Beam {i} has {abm.nelem_beam(beam_id)} elements")
+        beam_idx = abm.add_beam_line(sup_points, n=mbeam.get('nelem'))
+        logger.info(f"Beam {i} has {abm.nelem_beam(beam_idx)} elements")
 
         # ----- Beam element properties -----
         for pdef in mbeam.iter('orientation'):
-            for elem in abm.iter_from_to(beam_id, pdef['from'], pdef['to']):
+            for elem in abm.iter_from_to(beam_idx, pdef['from'], pdef['to']):
                 elem.set('up', pdef['up'])
 
         for pdef in mbeam.iter('material'):
             mat = m.get('material', uid=pdef['uid'])
-            for elem in abm.iter_from_to(beam_id, pdef['from'], pdef['to']):
+            for elem in abm.iter_from_to(beam_idx, pdef['from'], pdef['to']):
                 for p in ('E', 'G', 'rho'):
                     elem.set(p, mat.get(p))
 
         for pdef in mbeam.iter('cross_section'):
             mat = m.get('cross_section', uid=pdef['uid'])
-            for elem in abm.iter_from_to(beam_id, pdef['from'], pdef['to']):
+            for elem in abm.iter_from_to(beam_idx, pdef['from'], pdef['to']):
                 for p in ('A', 'Iy', 'Iz', 'J'):
                     elem.set(p, mat.get(p))
 
         # ----- Loads -----
         for pdef in mbeam.iter('point_load'):
-            elem = abm.get_by_uid(beam_id, pdef['at'])
+            elem = abm.get_by_uid(beam_idx, pdef['at'])
             node_id = 1 if elem.p1.uid == pdef['at'] else 2
             elem.add('point_load', {'load': pdef['load'], 'node': node_id, 'local_sys': False})
 
         for pdef in mbeam.iter('distr_load'):
-            for elem in abm.iter_from_to(beam_id, pdef['from'], pdef['to']):
+            for elem in abm.iter_from_to(beam_idx, pdef['from'], pdef['to']):
                 elem.add('distr_load', {'load': pdef['load'], 'local_sys': pdef.get('local_sys', False)})
 
         # ----- Additional mass -----
         for pdef in mbeam.iter('point_mass'):
-            elem = abm.get_by_uid(beam_id, pdef['at'])
+            elem = abm.get_by_uid(beam_idx, pdef['at'])
             node_id = 1 if elem.p1.uid == pdef['at'] else 2
             elem.add('point_mass', {'load': pdef['mass'], 'node': node_id})
 
+    # ----- Summary -----
     logger.info(f"Abstract mesh created")
     logger.info(f"Discretisation:")
     logger.info(f"--> n_beams: {abm.nbeams:4d}")
     logger.info(f"--> n_elems: {abm.nelems:4d}")
     logger.info(f"--> n_nodes: {abm.nnodes:4d}")
-
     r.set_feature('mesh').set('abm', abm)
 
 
@@ -292,7 +289,10 @@ class AbstractBeamMesh:
         self._num_elems = -1  # Number of elements -1
         self._num_nodes = -1  # Number of nodes -1
 
-        # Global node numbers of named nodes
+        # Named nodes per beam (maps [beam_idx][node_uid] --> point_coord)
+        self.named_nodes = defaultdict(dict)
+
+        # Global node numbers of named nodes (maps [node_uid] --> global number)
         self.glob_nums = {}
 
     def __repr__(self):
@@ -300,7 +300,11 @@ class AbstractBeamMesh:
 
     def add_beam_line(self, sup_points, n=10):
         """
-        TODO
+        Add a new beam to the entire beam structure
+
+        Args:
+            :sup_points: (dict) key: support point uid, value: nodes coordinates
+            :n: (int) number of elements for the entire chain
         """
 
         self._num_beams += 1
@@ -311,57 +315,94 @@ class AbstractBeamMesh:
             self._num_elems += 1
             self.beams[self._num_beams] = AbstractEdgeElement(p1, p2)
 
-            if p1.uid is not None:
-                self.glob_nums[p1.uid] = num1
+            # Bookkeeping
+            for p, num, prefix in zip((p1, p2), (num1, num2), ('FROM:', 'TO:')):
+                if p.uid is None:
+                    continue
+                self.glob_nums[p.uid] = num
+                self.named_nodes[self._num_beams][p.uid] = p.coord
                 try:
-                    self.beams.assign_uid(self._num_beams, f"FROM:{p1.uid}")
-                except KeyError:
-                    pass
-            if p2.uid is not None:
-                self.glob_nums[p2.uid] = num2
-                try:
-                    self.beams.assign_uid(self._num_beams, f"TO:{p2.uid}")
+                    self.beams.assign_uid(self._num_beams, f"{prefix}{p.uid}")
                 except KeyError:
                     pass
 
         self._num_nodes += len(self.beams[self._num_beams])
         return self._num_beams
 
-    def iter_from_to(self, beam_id, uid1, uid2):
-        return self.beams.iter_from_to(beam_id, f"FROM:{uid1}", f"TO:{uid2}")
+    def iter_from_to(self, beam_idx, uid1, uid2):
+        """
+        Iterate trough elements from UID1 to UID2
 
-    def get_by_uid(self, beam_id, uid):
+        Args:
+            :beam_idx: (int) beam index
+            :uid1: UID of first node
+            :uid2: UID of second node
+        """
+
+        yield from self.beams.iter_from_to(beam_idx, f"FROM:{uid1}", f"TO:{uid2}")
+
+    def get_by_uid(self, beam_idx, uid):
+        """
+        Return an element with a named node
+
+        Args:
+            :beam_idx: (int) beam index
+            :uid: UID of named node
+        """
+
         try:
-            return self.beams.get_by_uid(beam_id, f"FROM:{uid}")
+            return self.beams.get_by_uid(beam_idx, f"FROM:{uid}")
         except KeyError:
-            return self.beams.get_by_uid(beam_id, f"TO:{uid}")
+            return self.beams.get_by_uid(beam_idx, f"TO:{uid}")
+
+    def nelem_beam(self, beam_idx):
+        """Number of elements in beam with given beam index"""
+        return len(self.beams[beam_idx])
+
+    def nnodes_beam(self, beam_idx):
+        """Number of nodes in beam with given beam index"""
+        return self.nelem_beam(beam_idx) + 1
+
+    def ndofs_beam(self, beam_idx, ndof_per_node=Element.DOF_PER_NODE):
+        """Number of DOFs per beam"""
+        return self.nnodes_beam(beam_idx)*ndof_per_node
 
     @property
     def nbeams(self):
+        """Total number of beam elements"""
         return self._num_beams + 1
-
-    def nelem_beam(self, beam_id):
-        return len(self.beams[beam_id])
 
     @property
     def nelems(self):
+        """Total number of elements"""
         return self._num_elems + 1
 
     @property
     def nnodes(self):
+        """Total number of nodes"""
         return sum(len(v.values()) + 1 for v in self.beams.values())
 
-    def ndofs(self, ndof_per_node=6):
+    def ndofs(self, ndof_per_node=Element.DOF_PER_NODE):
+        """Total number of DOFs"""
         return self.nnodes*ndof_per_node
 
-    def get_sup_points(self, beam_id):
-        xyz = self.beams[beam_id][0].p1.coord.reshape((1, 3))
-        for elem in self.beams[beam_id].values():
+    def get_sup_points(self, beam_idx):
+        """Return an array (n x 3) with support point coordinates"""
+        xyz = np.empty((1, 3))
+        for coord in self.named_nodes[beam_idx].values():
+            xyz = np.append(xyz, coord.reshape((1, 3)), axis=0)
+        return xyz
+
+    def get_all_points(self, beam_idx):
+        """Return an array (n x 3) with all node coordinates"""
+        xyz = self.beams[beam_idx][0].p1.coord.reshape((1, 3))
+        for elem in self.beams[beam_idx].values():
             xyz = np.append(xyz, elem.p2.coord.reshape((1, 3)), axis=0)
         return xyz
 
-    def get_lims_beam(self, beam_id):
-        xyz = self.get_sup_points(beam_id)
+    def get_lims_beam(self, beam_idx):
+        """Return the bounding box of a specific beam"""
+        xyz = self.get_sup_points(beam_idx)
         x_max = np.max(xyz[:, 0])
         y_max = np.max(xyz[:, 1])
         z_max = np.max(xyz[:, 2])
@@ -371,14 +412,10 @@ class AbstractBeamMesh:
         return (x_min, x_max), (y_min, y_max), (z_min, z_max)
 
     def get_lims(self):
-        x_max = 0
-        y_max = 0
-        z_max = 0
-        x_min = 0
-        y_min = 0
-        z_min = 0
-        for beam_id in self.beams.keys():
-            (x_minb, x_maxb), (y_minb, y_maxb), (z_minb, z_maxb) = self.get_lims_beam(beam_id)
+        """Return the bounding box for the entire beam structure"""
+        x_max = y_max = z_max = x_min = y_min = z_min = 0
+        for beam_idx in self.beams.keys():
+            (x_minb, x_maxb), (y_minb, y_maxb), (z_minb, z_maxb) = self.get_lims_beam(beam_idx)
             if x_maxb > x_max:
                 x_max = x_maxb
             if y_maxb > y_max:
@@ -392,3 +429,13 @@ class AbstractBeamMesh:
             if z_minb < z_min:
                 z_min = z_minb
         return (x_min, x_max), (y_min, y_max), (z_min, z_max)
+
+    def gnv(self, vector, uid):
+        """
+        Return the nodal value from a given vector (e.g. displacement or load)
+
+        Args:
+            :vector: vector
+            :uid: UID of named node
+        """
+        return vector[self.glob_nums[uid]]

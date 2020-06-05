@@ -61,5 +61,3 @@ class Schemas:
     string = {'type': str, '>': 0}
     vector3x1 = {'type': list, 'min_len': 3, 'max_len': 3, 'item_types': Number}
     vector6x1 = {'type': list, 'min_len': 6, 'max_len': 6, 'item_types': Number}
-
-

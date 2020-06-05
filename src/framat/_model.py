@@ -29,14 +29,11 @@ import numpy as np
 from ._meshing import AbstractBeamMesh
 from ._run import run_model
 from ._util import Schemas as S
+from ._plot import PlotItems
 
 # Register custom 'schemadict' types
 SchemadictValidators.register_type(AbstractBeamMesh)
 SchemadictValidators.register_type(np.ndarray)
-
-# TODO:
-# - acceleration state (define on beam level, or 'global'?)
-# - different study types... time-domain, frequency-domain, static
 
 
 # =================
@@ -281,20 +278,13 @@ fspec.add_prop_spec(
         'linewidth': S.pos_number,
         'markersize': S.pos_number,
         'fontsize': S.pos_int,
+        # 'save': {'type': str, 'check_dir': ...}  # TODO
     },
     doc="Define general plot settings."
 )
 fspec.add_prop_spec(
     'plot',
-    {
-        'type': list,
-        'allowed_items': (
-            'deformed',
-            'node_uids',
-            'nodes',
-            'undeformed',
-        ),
-    },
+    {'type': list, 'allowed_items': PlotItems.to_list()},
     singleton=False,
     doc="Add a plot. You may add as many plots as you like. List the parts to \
          show in the plot."
@@ -328,10 +318,16 @@ rspec.add_feature_spec(
     doc="Mesh data."
 )
 
-# ===== Beam =====
+# ===== Deformation =====
 fspec = FeatureSpec()
+fspec.add_prop_spec('K', {'type': np.ndarray}, doc="Stiffness matrix.")
+fspec.add_prop_spec('M', {'type': np.ndarray}, doc="Mass matrix.")
+fspec.add_prop_spec('B', {'type': np.ndarray}, doc="Constraint matrix.")
+fspec.add_prop_spec('F', {'type': np.ndarray}, doc="External load vector.")
+fspec.add_prop_spec('F_react', {'type': np.ndarray}, doc="Reaction forces at constrained nodes.")
+fspec.add_prop_spec('U', {'type': np.ndarray}, doc="Displacement vector (solution).")
 fspec.add_prop_spec(
-    'deformation',
+    'comp:U',
     {
         'ux': {'type': np.ndarray},
         'uy': {'type': np.ndarray},
@@ -340,32 +336,26 @@ fspec.add_prop_spec(
         'thy': {'type': np.ndarray},
         'thz': {'type': np.ndarray},
     },
-    singleton=True,
-    doc="Displacements and rotation vectors for each for each beam."
+    doc="Displacement components"
 )
-rspec.add_feature_spec(
-    'beam',
-    fspec,
-    singleton=False,
-    required=False,
-    doc='Beam'
+fspec.add_prop_spec(
+    'comp:F',
+    {
+        'Fx': {'type': np.ndarray},
+        'Fy': {'type': np.ndarray},
+        'Fz': {'type': np.ndarray},
+        'Mx': {'type': np.ndarray},
+        'My': {'type': np.ndarray},
+        'Mz': {'type': np.ndarray},
+    },
+    doc="Force components"
 )
-
-# ===== Deformation =====
-fspec = FeatureSpec()
-fspec.add_prop_spec('K', {'type': np.ndarray}, doc="Stiffness matrix.")
-fspec.add_prop_spec('M', {'type': np.ndarray}, doc="Mass matrix.")
-fspec.add_prop_spec('F', {'type': np.ndarray}, doc="External load vector.")
-fspec.add_prop_spec('U', {'type': np.ndarray}, doc="Displacement vector (solution).")
-fspec.add_prop_spec('B', {'type': np.ndarray}, doc="Constraint matrix.")
-fspec.add_prop_spec('F_react', {'type': np.ndarray}, doc="Reaction forces at constrained nodes.")
 rspec.add_feature_spec(
     'tensors',
     fspec,
     singleton=True,
-    doc='System tensors.'
+    doc="System tensors."
 )
-
 mspec.results = rspec
 
 

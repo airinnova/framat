@@ -57,35 +57,36 @@ def test_horseshoe_beam_distr_load():
     r = model.run()
 
     abm = r.get('mesh').get('abm')
-    deform = r.get('beam')[0].get('deformation')
+    deform = r.get('tensors').get('comp:U')
+    ux, uy, uz = deform['ux'], deform['uy'], deform['uz']
+    thx, thy, thz = deform['thx'], deform['thy'], deform['thz']
 
     # ----- Expected deformation at nodes 'a' and 'd' -----
     for fixed_node in ('a', 'd'):
         for p in ('ux', 'uy', 'uz', 'thx', 'thy', 'thz'):
-            assert deform[p][abm.glob_nums[fixed_node]] == pytest.approx(0, abs=ABS_TOL)
+            assert abm.gnv(deform[p], fixed_node) == pytest.approx(0, abs=ABS_TOL)
 
     # ----- Expected deformation at nodes 'b' and 'c' -----
     for free_node in ('c', 'd'):
-        assert deform['ux'][abm.glob_nums[free_node]] == pytest.approx(0, abs=ABS_TOL)
-        assert deform['uy'][abm.glob_nums[free_node]] == pytest.approx(0, abs=ABS_TOL)
-        assert deform['thz'][abm.glob_nums[free_node]] == pytest.approx(0, abs=ABS_TOL)
+        for d in (ux, uy, thz):
+            assert abm.gnv(d, free_node) == pytest.approx(0, abs=ABS_TOL)
 
-    assert deform['uz'][abm.glob_nums['b']] == pytest.approx(0.42188, rel=REL_TOL)
-    # assert deform['thx'][abm.glob_nums['b']] == pytest.approx(0.75000, rel=REL_TOL)
-    assert deform['thy'][abm.glob_nums['b']] == pytest.approx(-0.56250, rel=REL_TOL)
+    assert abm.gnv(uz, 'b') == pytest.approx(0.42188, rel=REL_TOL)
+    # assert abm.gnv(thx, 'b') == pytest.approx(0.75000, rel=REL_TOL)
+    assert abm.gnv(thy, 'b') == pytest.approx(-0.56250, rel=REL_TOL)
 
-    assert deform['uz'][abm.glob_nums['c']] == pytest.approx(0.42188, rel=REL_TOL)
-    # assert deform['thx'][abm.glob_nums['c']] == pytest.approx(-0.75000, rel=REL_TOL)
-    assert deform['thy'][abm.glob_nums['c']] == pytest.approx(-0.56250, rel=REL_TOL)
+    assert abm.gnv(uz, 'c') == pytest.approx(0.42188, rel=REL_TOL)
+    # assert abm.gnv(thx, 'c') == pytest.approx(-0.75000, rel=REL_TOL)
+    assert abm.gnv(thy, 'c') == pytest.approx(-0.56250, rel=REL_TOL)
 
     # # ----- Maximux deformations -----
-    # assert np.max(deform['ux']) == pytest.approx(0, abs=ABS_TOL)
-    # assert np.max(deform['uy']) == pytest.approx(0, abs=ABS_TOL)
-    # assert np.max(deform['thz']) == pytest.approx(0, abs=ABS_TOL)
+    # assert np.max(ux) == pytest.approx(0, abs=ABS_TOL)
+    # assert np.max(uy) == pytest.approx(0, abs=ABS_TOL)
+    # assert np.max(thz) == pytest.approx(0, abs=ABS_TOL)
 
-    # assert np.max(deform['uz']) == pytest.approx(1.1953, rel=REL_TOL)
-    # assert np.max(deform['thx']) == pytest.approx(0.77165, rel=REL_TOL)
-    # assert np.max(deform['thy']) == pytest.approx(0.56250, rel=REL_TOL)
+    # assert np.max(uz) == pytest.approx(1.1953, rel=REL_TOL)
+    # assert np.max(thx) == pytest.approx(0.77165, rel=REL_TOL)
+    # assert np.max(thy) == pytest.approx(0.56250, rel=REL_TOL)
 
 
 def test_horseshoe_beam_point_loads():
@@ -93,7 +94,9 @@ def test_horseshoe_beam_point_loads():
     r = model.run()
 
     abm = r.get('mesh').get('abm')
-    deform = r.get('beam')[0].get('deformation')
+    deform = r.get('tensors').get('comp:U')
+    ux, uy, uz = deform['ux'], deform['uy'], deform['uz']
+    thx, thy, thz = deform['thx'], deform['thy'], deform['thz']
 
     # ----- Expected deformation at nodes 'a' and 'd' -----
     for fixed_node in ('a', 'd'):
@@ -101,24 +104,24 @@ def test_horseshoe_beam_point_loads():
             assert deform[p][abm.glob_nums[fixed_node]] == pytest.approx(0, abs=ABS_TOL)
 
     # ----- Expected deformation at nodes 'b' and 'c' -----
-    assert deform['ux'][abm.glob_nums['b']] == pytest.approx(0.11250, rel=REL_TOL)
-    assert deform['uy'][abm.glob_nums['b']] == pytest.approx(0.13793, rel=REL_TOL)
-    # assert deform['uz'][abm.glob_nums['b']] == pytest.approx(0.22863, rel=REL_TOL)
-    # assert deform['thx'][abm.glob_nums['b']] == pytest.approx(-0.13065, rel=REL_TOL)
-    # assert deform['thy'][abm.glob_nums['b']] == pytest.approx(-0.20323, rel=REL_TOL)
-    assert deform['thz'][abm.glob_nums['b']] == pytest.approx(0.13285, rel=REL_TOL)
+    assert ux[abm.glob_nums['b']] == pytest.approx(0.11250, rel=REL_TOL)
+    assert uy[abm.glob_nums['b']] == pytest.approx(0.13793, rel=REL_TOL)
+    # assert uz[abm.glob_nums['b']] == pytest.approx(0.22863, rel=REL_TOL)
+    # assert thx[abm.glob_nums['b']] == pytest.approx(-0.13065, rel=REL_TOL)
+    # assert thy[abm.glob_nums['b']] == pytest.approx(-0.20323, rel=REL_TOL)
+    assert thz[abm.glob_nums['b']] == pytest.approx(0.13285, rel=REL_TOL)
 
-    assert deform['ux'][abm.glob_nums['c']] == pytest.approx(-0.11250, rel=REL_TOL)
-    assert deform['uy'][abm.glob_nums['c']] == pytest.approx(-0.053557, rel=REL_TOL)
-    # assert deform['uz'][abm.glob_nums['c']] == pytest.approx(-0.22863, rel=REL_TOL)
-    # assert deform['thx'][abm.glob_nums['c']] == pytest.approx(-0.13065, rel=REL_TOL)
-    # assert deform['thy'][abm.glob_nums['c']] == pytest.approx(0.20323, rel=REL_TOL)
-    assert deform['thz'][abm.glob_nums['c']] == pytest.approx(-0.020346, rel=REL_TOL)
+    assert ux[abm.glob_nums['c']] == pytest.approx(-0.11250, rel=REL_TOL)
+    assert uy[abm.glob_nums['c']] == pytest.approx(-0.053557, rel=REL_TOL)
+    # assert uz[abm.glob_nums['c']] == pytest.approx(-0.22863, rel=REL_TOL)
+    # assert thx[abm.glob_nums['c']] == pytest.approx(-0.13065, rel=REL_TOL)
+    # assert thy[abm.glob_nums['c']] == pytest.approx(0.20323, rel=REL_TOL)
+    assert thz[abm.glob_nums['c']] == pytest.approx(-0.020346, rel=REL_TOL)
 
     # # # ----- Maximux deformations -----
-    # assert np.max(deform['ux']) == pytest.approx(0.11489, rel=REL_TOL)
-    assert np.max(deform['uy']) == pytest.approx(0.13793, rel=REL_TOL)
-    # assert np.max(deform['uz']) == pytest.approx(0.22863, rel=REL_TOL)
-    # assert np.max(deform['thx']) == pytest.approx(0.16331, rel=REL_TOL)
-    # assert np.max(deform['thy']) == pytest.approx(0.21168, rel=REL_TOL)
-    assert np.max(deform['thz']) == pytest.approx(0.13349, rel=REL_TOL)
+    # assert np.max(ux) == pytest.approx(0.11489, rel=REL_TOL)
+    assert np.max(uy) == pytest.approx(0.13793, rel=REL_TOL)
+    # assert np.max(uz) == pytest.approx(0.22863, rel=REL_TOL)
+    # assert np.max(thx) == pytest.approx(0.16331, rel=REL_TOL)
+    # assert np.max(thy) == pytest.approx(0.21168, rel=REL_TOL)
+    assert np.max(thz) == pytest.approx(0.13349, rel=REL_TOL)

@@ -1,78 +1,76 @@
 # TODO
 
+## Plotting
+* Add back plotting functionality
+    - Constraints
+    - Plot per beam
+* Save plots
+* Create matrix plot (see 0.3.2)
+* Compute and plot centre of mass, and mass of individual beams
+* Plot inertia loads --> `F_accel`
+* Plot accel vector
+* Plot beam indices
+* Plot local axes
+
+## Model definition
+* Add acceleration state (define on beam level, or 'global'?) --> inertia loads
+* Support for non-constant distributed properties with 'callable'
+    - Loads
+    - Cross section properties
+    - Material properties
+* Add support for "free-node" loads
+
+## Meshing
+* Element --> Warning when overwriting data (first, from 'b' to 'c', then, from 'a' to 'c')
+* Need check that all material, cross section data is set from start to end....
+* Check if two nodes are "too close" to each other
+
+## Assembly
+* (!!!) Add multipoint-constraints again (+ tests)
+* Use sparse matrices
+
+## Misc
 * Test run multiprocessing
+* Compute elastic energy
 
-## Important issues
-* Mass matrix --> get definitions correct --> "torsional constant"/"polar moment of inertia"?
-* In `Element()` --> Cover case --> Some loads may be given in global system and some given in local system (currently: if some loads defined in global system and some in local system, this might not work)
-* Reduce number of "upwards dependencies": "parent beam", "parent frame", ... (better for testing and code complexity)
-* `Frame()`: Work break down --> make work for individual beams
-* Check: Is FE bookkeeping handled correctly? (Loads/masses/etc. always applied to "primary" nodes! How prevent adding to "secondary nodes?")
-* Simplify JSON input file
+## Testing
+* Loads given in local/global coordinate system
 
-#### ----------------------------------------------------------------------
-
-## Non-critical things
+## Enhancements
 * Use "Cook" notation for stiffness matrix
-* Plot loads per `Beamline()` (ux, uy, ...)
-* Torsional constant: `J` good name?
-* Add skew bending ($E_{yz} \neq 0$)
+* Add skew bending (`E_{yz} \neq 0`)
 * Analysis of free vibrations
-* Define the element/beam orientation with direction cosines as alternative option (check: how done in COMSOL?)
-* Rename local nodes (1) and (2) to (a) and (b)? (less confusing?)
+* Time-domain analysis/Frequency-domain analysis
+* Define the element/beam orientation with direction cosines as alternative option
 
-### Boundary condition modelling
+## Boundary condition modelling
 * Add option for prescribed deformations? ($b$)
 * Make rigid connector more general (only restrict some dof's on each node)
 * Apply boundary condition over a range of elements
 
-### JSON schema
-* Add missing schema validation checks
-
-### Improve
-* Better exception messages (and also make sure code fails at early at "correct" position)
-
-### Beamline()
-* Option to choose either linear or cubic interpolation when computing new points? And/or use approach as in COMSOL? (build from "shapes": rectangles, circles, ...)
-* Mirrored loads --> sensible default?
-* Add check: have beam props been applied from first to last node?
-* More compact: `_get_property_interpolator` and `_get_dist_load_interpolator`
-
-#### ----------------------------------------------------------------------
-
 ## Feature ideas
-* Use a "ModelGenerator" to create a frame (create `Frame()` from dictionary or class?)
 * GUI
-* Use a "pathlib" for handling of paths
 * Compute stresses
 * Timoshenko beam theory
 * Non-linear beam theory
 * Thermal loads
 
-### Reference axes
+## Reference axes
 * Shear: Model off-centre shear axis (skew bending) --> see also COMSOL documentation
 * CG: CG-axis with off-set of elastic axis
 * CG: Is there a difference between a locally/globally defined point mass matrix?
 * CG: Add discrete rotational moment of inertia
 * CG: Apply point masses with an offset to elastic axis
 
-#### ----------------------------------------------------------------------
-
 ## Testing
-* Add unit tests
 * Test all elementary cases cantilever
 * Test beam mirror correct (same deformations for mirrored `Beamline()`)?
-*  Different boundary conditions
-   *  Rigid connectors (1x)
-   *  Fixed boundary conditions (all + a few)
 * Varying beam properties
 *  Loads:
     * Point masses
     * Distributed masses
     * Gravity loads
     * "Free node" loads
-
-#### ----------------------------------------------------------------------
 
 ## Understand
 * $1/2 U^T * K * U$ equivalent to $0.5 * F * U$?
@@ -87,4 +85,3 @@
 ## Documentation
 * Numbers in numbered equations misaligned (on top instead of on right side)
 * Large matrices don't fit on page (smaller math font? smaller matrix?)
-* NOTE: `tkinter` may have to be installed separately for matplotlib to work (not included in matplotlib PyPI package?)
