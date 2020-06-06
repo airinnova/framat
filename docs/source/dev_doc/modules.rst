@@ -1,3 +1,6 @@
+framat
+======
+
 .. toctree::
    :maxdepth: 4
 

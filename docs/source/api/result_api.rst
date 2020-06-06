@@ -12,8 +12,7 @@ itself. The following results are available in the result object.
     graph TD
     A[Model]
     A --> F0[mesh]
-    A --> F1[beam]
-    A --> F2[tensors]
+    A --> F1[tensors]
 
 
 Feature: mesh
@@ -75,71 +74,6 @@ Abstract beam mesh
 ======== ==========================================
 **type** <class 'framat._meshing.AbstractBeamMesh'>
 ======== ==========================================
-
-Feature: beam
--------------
-
-.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/notes.svg
-   :align: left
-   :alt: description
-
-Beam
-
-.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
-   :align: left
-   :alt: singleton
-
-*Singleton*: False
-
-.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
-   :align: left
-   :alt: required
-
-*Required*: False
-
-Property: deformation
-~~~~~~~~~~~~~~~~~~~~~
-
-.. mermaid::
-
-    graph LR
-    A[Model]
-    A --> F1[beam] 
-    F1 --> P1[deformation] 
-
-
-.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/notes.svg
-   :align: left
-   :alt: description
-
-Displacements and rotation vectors for each for each beam.
-
-.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
-   :align: left
-   :alt: singleton
-
-*Singleton*: True
-
-.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
-   :align: left
-   :alt: required
-
-*Required*: False
-
-.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
-   :align: left
-   :alt: schema
-
-*Schema*:
-
-======= =================================
- **ux** {'type': <class 'numpy.ndarray'>}
- **uy** {'type': <class 'numpy.ndarray'>}
- **uz** {'type': <class 'numpy.ndarray'>}
-**thx** {'type': <class 'numpy.ndarray'>}
-**thy** {'type': <class 'numpy.ndarray'>}
-**thz** {'type': <class 'numpy.ndarray'>}
-======= =================================
 
 Feature: tensors
 ----------------
@@ -240,6 +174,45 @@ Mass matrix.
 **type** <class 'numpy.ndarray'>
 ======== =======================
 
+Property: B
+~~~~~~~~~~~
+
+.. mermaid::
+
+    graph LR
+    A[Model]
+    A --> F1[tensors] 
+    F1 --> P1[B] 
+
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/notes.svg
+   :align: left
+   :alt: description
+
+Constraint matrix.
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
+   :align: left
+   :alt: singleton
+
+*Singleton*: True
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
+   :align: left
+   :alt: required
+
+*Required*: False
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
+   :align: left
+   :alt: schema
+
+*Schema*:
+
+======== =======================
+**type** <class 'numpy.ndarray'>
+======== =======================
+
 Property: F
 ~~~~~~~~~~~
 
@@ -256,6 +229,45 @@ Property: F
    :alt: description
 
 External load vector.
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
+   :align: left
+   :alt: singleton
+
+*Singleton*: True
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
+   :align: left
+   :alt: required
+
+*Required*: False
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
+   :align: left
+   :alt: schema
+
+*Schema*:
+
+======== =======================
+**type** <class 'numpy.ndarray'>
+======== =======================
+
+Property: F_react
+~~~~~~~~~~~~~~~~~
+
+.. mermaid::
+
+    graph LR
+    A[Model]
+    A --> F1[tensors] 
+    F1 --> P1[F_react] 
+
+
+.. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/notes.svg
+   :align: left
+   :alt: description
+
+Reaction forces at constrained nodes.
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
@@ -318,22 +330,22 @@ Displacement vector (solution).
 **type** <class 'numpy.ndarray'>
 ======== =======================
 
-Property: B
-~~~~~~~~~~~
+Property: comp:U
+~~~~~~~~~~~~~~~~
 
 .. mermaid::
 
     graph LR
     A[Model]
     A --> F1[tensors] 
-    F1 --> P1[B] 
+    F1 --> P1[comp:U] 
 
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/notes.svg
    :align: left
    :alt: description
 
-Constraint matrix.
+Displacement components
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
@@ -353,26 +365,31 @@ Constraint matrix.
 
 *Schema*:
 
-======== =======================
-**type** <class 'numpy.ndarray'>
-======== =======================
+======= =================================
+ **ux** {'type': <class 'numpy.ndarray'>}
+ **uy** {'type': <class 'numpy.ndarray'>}
+ **uz** {'type': <class 'numpy.ndarray'>}
+**thx** {'type': <class 'numpy.ndarray'>}
+**thy** {'type': <class 'numpy.ndarray'>}
+**thz** {'type': <class 'numpy.ndarray'>}
+======= =================================
 
-Property: F_react
-~~~~~~~~~~~~~~~~~
+Property: comp:F
+~~~~~~~~~~~~~~~~
 
 .. mermaid::
 
     graph LR
     A[Model]
     A --> F1[tensors] 
-    F1 --> P1[F_react] 
+    F1 --> P1[comp:F] 
 
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/notes.svg
    :align: left
    :alt: description
 
-Reaction forces at constrained nodes.
+Force components
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
@@ -392,7 +409,12 @@ Reaction forces at constrained nodes.
 
 *Schema*:
 
-======== =======================
-**type** <class 'numpy.ndarray'>
-======== =======================
+====== =================================
+**Fx** {'type': <class 'numpy.ndarray'>}
+**Fy** {'type': <class 'numpy.ndarray'>}
+**Fz** {'type': <class 'numpy.ndarray'>}
+**Mx** {'type': <class 'numpy.ndarray'>}
+**My** {'type': <class 'numpy.ndarray'>}
+**Mz** {'type': <class 'numpy.ndarray'>}
+====== =================================
 

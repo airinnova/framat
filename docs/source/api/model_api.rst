@@ -624,7 +624,7 @@ Add a point mass to a specific node.
 *Schema*:
 
 ================== ===============================
-**$required_keys**          ['at', 'load']        
+**$required_keys**          ['at', 'mass']        
       **at**       {'type': <class 'str'>, '>': 0}
      **mass**      {'type': <class 'int'>, '>': 0}
 ================== ===============================
@@ -665,7 +665,7 @@ Add a distributed load.
 *Schema*:
 
 ================== ============================================================================================
-**$required_keys**                                    ['from', 'to', 'uid']                                    
+**$required_keys**                                    ['from', 'to', 'load']                                   
      **from**                                    {'type': <class 'str'>, '>': 0}                               
       **to**                                     {'type': <class 'str'>, '>': 0}                               
      **load**      {'type': <class 'list'>, 'min_len': 6, 'max_len': 6, 'item_types': <class 'numbers.Number'>}
@@ -873,10 +873,11 @@ Define general plot settings.
 *Schema*:
 
 ============== ==========================================
-   **show**             {'type', <class 'bool'>}         
+   **show**             {'type': <class 'bool'>}         
 **linewidth**  {'type': <class 'numbers.Number'>, '>': 0}
 **markersize** {'type': <class 'numbers.Number'>, '>': 0}
  **fontsize**       {'type': <class 'int'>, '>': 0}      
+   **save**    {'type': <class 'str'>, 'is_dir': 'dummy'}
 ============== ==========================================
 
 Property: plot
@@ -914,8 +915,8 @@ Add a plot. You may add as many plots as you like. List the parts to          sh
 
 *Schema*:
 
-================= ================================================
-     **type**                      <class 'list'>                 
-**allowed_items** ('deformed', 'node_uids', 'nodes', 'undeformed')
-================= ================================================
+================= ==========================================================================================================================================
+     **type**                                                                   <class 'list'>                                                              
+**allowed_items** ['beam_index', 'deformed', 'forces', 'global_axes', 'moments', 'node_uids', 'nodes', 'undeformed', <classmethod object at 0x7f2cbcf59e20>]
+================= ==========================================================================================================================================
 
