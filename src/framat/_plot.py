@@ -23,16 +23,24 @@
 Plotting
 """
 
+from datetime import datetime
+from math import ceil
+from random import randint
+import os
+
 from commonlibs.math.vectors import unit_vector
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 import numpy as np
 
+from . import MODULE_NAME
 from ._element import GlobalSystem
+from ._log import logger
 
 
 class PlotItems:
+    beam_index = 'beam_index'
     deformed = 'deformed'
     forces = 'forces'
     global_axes = 'global_axes'
@@ -62,7 +70,7 @@ class C:
     LOCAL_SYS = 'green'
     MASS = 'maroon'
     MASS_LOAD = 'maroon'
-    UNDEFORMED = 'blue'
+    UNDEFORMED = 'grey'
 
 
 def plot_all(m):
@@ -74,15 +82,29 @@ def plot_all(m):
     if not mpp.get('plot', ()):
         return
 
+    ps = m.get('post_proc').get('plot_settings', {})
     abm = m.results.get('mesh').get('abm')
 
+    num_tot = m.get('post_proc').len('plot')
     for plot_num, _ in enumerate(m.get('post_proc').iter('plot')):
+        logger.info(f"Creating plot {plot_num + 1}/{num_tot}...")
         ax = init_3D_plot(*abm.get_lims())
-        add_deformed_undeformed(m, ax, plot_num)
+        add_items_per_beam(m, ax, plot_num)
         add_global_axes(m, ax, plot_num)
+        plt.tight_layout()
 
-    plt.tight_layout()
-    plt.show()
+        if ps.get('save', False):
+            now = datetime.now().strftime("%F_%H%M%S")
+            ext = 'png'
+            rand = randint(100, 999)
+            fname = f"{MODULE_NAME.lower()}_{now}_{plot_num+1:02}_{rand}.{ext}"
+            fname = os.path.join(os.path.abspath(ps.get('save')), fname)
+            logger.info(f"Saving plot to file {fname!r}...")
+            plt.savefig(fname, dpi=300, format='png')
+
+    if ps.get('show', False):
+        plt.show()
+
     plt.close('all')
 
 
@@ -197,48 +219,52 @@ def _coordinate_system(plot, origin, axes, axes_names, color, scale=1):
     plot.plot_surface(xx, yy, z, alpha=0.4, color=color)
 
 
-def add_deformed_undeformed(m, ax, plot_num):
+def add_items_per_beam(m, ax, plot_num):
     to_show = m.get('post_proc').get('plot')[plot_num]
     abm = m.results.get('mesh').get('abm')
     marker = 'o' if 'nodes' in to_show else None
 
-    for beam_id in abm.beams.keys():
-        xyz = abm.get_all_points(beam_id)
+    for beam_idx in abm.beams.keys():
+        xyz = abm.get_all_points(beam_idx)
         x, y, z = xyz[:, 0], xyz[:, 1], xyz[:, 2]
 
+        # ----- Undeformed mesh -----
         if PlotItems.undeformed in to_show:
-            ax.plot(x, y, z, **args_plot(m, C.UNDEFORMED, marker=marker))
+            ax.plot(x, y, z, **args_plot(m, C.UNDEFORMED))
 
+        # ----- Deformed mesh -----
         if PlotItems.deformed in to_show:
-            # ==================
-            # TODO: pick range for beam only
             d = m.results.get('tensors').get('comp:U')
-            xd = x + d['ux']
-            yd = y + d['uy']
-            zd = z + d['uz']
+            xd = x + abm.gbv(d['ux'], beam_idx)
+            yd = y + abm.gbv(d['uy'], beam_idx)
+            zd = z + abm.gbv(d['uz'], beam_idx)
             ax.plot(xd, yd, zd, **args_plot(m, C.DEFORMED, marker=marker))
-            # ==================
 
+        # ----- Forces -----
         if PlotItems.forces in to_show:
-            # ==================
             d = m.results.get('tensors').get('comp:F')
-            Fx = d['Fx']
-            Fy = d['Fy']
-            Fz = d['Fz']
-            ax.quiver(x, y, z, Fx, Fy, Fz, color=C.CONC_FORCE)
-            # ax.quiver(xd, yd, zd, Fx, Fy, Fz, color=C.CONC_FORCE)
-            # ==================
+            Fx = abm.gbv(d['Fx'], beam_idx)
+            Fy = abm.gbv(d['Fy'], beam_idx)
+            Fz = abm.gbv(d['Fz'], beam_idx)
+            # ax.quiver(x, y, z, Fx, Fy, Fz, color=C.CONC_FORCE)
+            ax.quiver(xd, yd, zd, Fx, Fy, Fz, color=C.CONC_FORCE)
 
+        # ----- Moments -----
         if PlotItems.moments in to_show:
-            # ==================
             d = m.results.get('tensors').get('comp:F')
-            Mx = d['Mx']
-            My = d['My']
-            Mz = d['Mz']
-            ax.quiver(x, y, z, Mx, My, Mz, color=C.CONC_FORCE)
-            # ==================
+            Fx = abm.gbv(d['Mx'], beam_idx)
+            Fy = abm.gbv(d['My'], beam_idx)
+            Fz = abm.gbv(d['Mz'], beam_idx)
+            # ax.quiver(x, y, z, Fx, Fy, Fz, color=C.CONC_FORCE)
+            ax.quiver(xd, yd, zd, Fx, Fy, Fz, color=C.CONC_FORCE)
 
-        # TODO: separate func
-        if 'node_uids' in to_show:
-            for uid, coord in abm.named_nodes[beam_id].items():
+        # ----- Beam index -----
+        if PlotItems.beam_index in to_show:
+            center = ceil(len(x)/2)
+            coord = (x[center], y[center], z[center])
+            ax.text(*coord, str(beam_idx), **args_text(m, color=C.BC))
+
+        # ----- Named nodes -----
+        if PlotItems.node_uids in to_show:
+            for uid, coord in abm.named_nodes[beam_idx].items():
                 ax.text(*coord, uid, **args_text(m, color=C.BC))

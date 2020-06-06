@@ -290,7 +290,7 @@ class AbstractBeamMesh:
         self._num_nodes = -1  # Number of nodes -1
 
         # Named nodes per beam (maps [beam_idx][node_uid] --> point_coord)
-        self.named_nodes = defaultdict(dict)
+        self.named_nodes = defaultdict(OrderedDict)
 
         # Global node numbers of named nodes (maps [node_uid] --> global number)
         self.glob_nums = {}
@@ -439,3 +439,19 @@ class AbstractBeamMesh:
             :uid: UID of named node
         """
         return vector[self.glob_nums[uid]]
+
+    def gbv(self, vector, beam_idx):
+        """
+        Return the beam value from a given vector (e.g. displacement or load)
+
+        Args:
+            :vector: vector
+            :beam_idx: (int) beam index
+        """
+        uids = list(self.named_nodes[beam_idx].keys())
+        uid_first = uids[0]
+        uid_last = uids[-1]
+        idx1 = self.glob_nums[uid_first]
+        idx2 = self.glob_nums[uid_last]
+        # breakpoint()
+        return vector[idx1:idx2+1]

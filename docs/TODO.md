@@ -3,14 +3,13 @@
 ## Plotting
 * Add back plotting functionality
     - Constraints
-    - Plot per beam
-* Save plots
 * Create matrix plot (see 0.3.2)
 * Compute and plot centre of mass, and mass of individual beams
 * Plot inertia loads --> `F_accel`
 * Plot accel vector
-* Plot beam indices
 * Plot local axes
+* Scale for deformations, vector size, ...
+* Flag to chose if loads plotted in deformed or undeformed mesh
 
 ## Model definition
 * Add acceleration state (define on beam level, or 'global'?) --> inertia loads

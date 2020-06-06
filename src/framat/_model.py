@@ -23,6 +23,9 @@
 Model definition
 """
 
+from pathlib import Path
+import os
+
 from mframework import FeatureSpec, ModelSpec, SchemadictValidators
 import numpy as np
 
@@ -31,10 +34,19 @@ from ._run import run_model
 from ._util import Schemas as S
 from ._plot import PlotItems
 
+
+def is_dir(key, value, comp_value, _):
+    """Validator to check if the value is a writeable directory"""
+    # Try to create directory if non-existent
+    Path(value).mkdir(parents=True, exist_ok=True)
+    if not os.access(value, os.W_OK):
+        raise ValueError(f"{value!r} is not a valid directory")
+
+
 # Register custom 'schemadict' types
 SchemadictValidators.register_type(AbstractBeamMesh)
 SchemadictValidators.register_type(np.ndarray)
-
+SchemadictValidators[str]['is_dir'] = is_dir
 
 # =================
 # ===== MODEL =====
@@ -274,11 +286,11 @@ fspec = FeatureSpec()
 fspec.add_prop_spec(
     'plot_settings',
     {
-        'show': {'type', bool},
+        'show': {'type': bool},
         'linewidth': S.pos_number,
         'markersize': S.pos_number,
         'fontsize': S.pos_int,
-        # 'save': {'type': str, 'check_dir': ...}  # TODO
+        'save': {'type': str, 'is_dir': 'dummy'}
     },
     doc="Define general plot settings."
 )
