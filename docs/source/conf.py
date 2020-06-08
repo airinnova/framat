@@ -9,7 +9,9 @@ import os
 import sys
 
 from framat.__version__ import __version__
+from framat import Builtin
 
+HERE = os.path.abspath(os.path.dirname(__file__))
 
 sys.path.insert(0, os.path.abspath('../../lib/framat'))
 sys.setrecursionlimit(1500)
@@ -37,6 +39,15 @@ version = __version__
 # ====================================
 os.system('bash ./dev_doc/gen_auto_doc.sh')
 os.system('python ./api/gen_model_doc.py')
+
+# Generate a list of built-in models
+model_list = "**Built-in models**\n"
+for model in Builtin.to_list():
+    model_list += f"   * ``{model!r}``\n"
+model_list += "\n"
+
+with open(os.path.join(HERE, 'builtin_models.txt'), 'w') as fp:
+    fp.writelines(model_list)
 
 # -- General configuration ---------------------------------------------------
 extensions = [

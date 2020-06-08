@@ -28,6 +28,7 @@ Welcome to |name|'s documentation!
    :caption: User guide
 
    user_guide/installation
+   user_guide/getting_started
    api/model_api_general
    api/model_api
    api/result_api
@@ -40,7 +41,7 @@ Welcome to |name|'s documentation!
    theory/fem
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Links
 
    references

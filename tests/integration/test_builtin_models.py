@@ -12,13 +12,13 @@ from framat import Model
 
 def test_non_existent():
     with pytest.raises(ValueError):
-        Model.example('MODEL_DOES_NOT_EXIST')
+        Model.from_example('MODEL_DOES_NOT_EXIST')
 
 
 def test_cantilever():
-    Model.example().run()
-    Model.example('cantilever').run()
+    Model.from_example().run()
+    Model.from_example('cantilever').run()
 
 
 def test_helix():
-    Model.example('helix').run()
+    Model.from_example('helix').run()

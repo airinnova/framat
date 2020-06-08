@@ -23,6 +23,7 @@
 Model definition
 """
 
+from enum import Enum
 from pathlib import Path
 import os
 
@@ -370,19 +371,48 @@ rspec.add_feature_spec(
 )
 mspec.results = rspec
 
+# ===== Files =====
+fspec = FeatureSpec()
+fspec.add_prop_spec(
+    'plots',
+    {'type': list, 'item_types': str},
+    singleton=True,
+    doc="List of created plot files"
+)
+rspec.add_feature_spec(
+    'files',
+    fspec,
+    singleton=True,
+    required=False,
+    doc="File data"
+)
 
 # ===== MODEL =====
+
+
+class Builtin(Enum):
+    """Built-in models"""
+
+    CANTILEVER = 'cantilever'
+    HELIX = 'helix'
+
+    @classmethod
+    def to_list(cls):
+        return [e.value for e in cls]
+
+
 class Model(mspec.user_class):
+
     def run(self):
         super().run()
         run_model(self)
         return self.results
 
     @classmethod
-    def example(cls, example='cantilever'):
-        if example == 'cantilever':
+    def from_example(cls, example=Builtin.CANTILEVER.value):
+        if example == Builtin.CANTILEVER.value:
             return get_example_cantilever()
-        elif example == 'helix':
+        elif example == Builtin.HELIX.value:
             return get_example_helix()
         else:
             raise ValueError('unknown model: {example!r}')
@@ -417,6 +447,10 @@ def get_example_cantilever():
 
     bc = model.set_feature('bc')
     bc.add('fix', {'node': 'root', 'fix': ['all']})
+
+    pp = model.set_feature('post_proc')
+    pp.set('plot_settings', {'show': True})
+    pp.add('plot', ['undeformed', 'deformed', 'node_uids', 'nodes', 'forces'])
     return model
 
 
@@ -456,4 +490,8 @@ def get_example_helix():
 
     bc = model.set_feature('bc')
     bc.add('fix', {'node': first_uid, 'fix': ['all']})
+
+    pp = model.set_feature('post_proc')
+    pp.set('plot_settings', {'show': True})
+    pp.add('plot', ['undeformed', 'deformed', 'nodes', 'forces'])
     return model

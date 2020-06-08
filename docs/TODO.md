@@ -1,5 +1,9 @@
 # TODO
 
+# DOC
+* Add "getting started" page --> + Add link from README
+ --->  Add example r.get('tensors').get('F')
+
 ## Plotting
 * Add back plotting functionality
     - Constraints

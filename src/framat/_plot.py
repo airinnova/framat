@@ -24,6 +24,7 @@ Plotting
 """
 
 from datetime import datetime
+from enum import Enum
 from math import ceil
 from random import randint
 import os
@@ -39,7 +40,7 @@ from ._element import GlobalSystem
 from ._log import logger
 
 
-class PlotItems:
+class PlotItems(Enum):
     beam_index = 'beam_index'
     deformed = 'deformed'
     forces = 'forces'
@@ -51,7 +52,7 @@ class PlotItems:
 
     @classmethod
     def to_list(cls):
-        return [v for k, v in cls.__dict__.items() if not k.startswith('__')]
+        return [e.value for e in cls]
 
 
 class C:
@@ -84,8 +85,10 @@ def plot_all(m):
 
     ps = m.get('post_proc').get('plot_settings', {})
     abm = m.results.get('mesh').get('abm')
+    rfiles = m.results.set_feature('files')
 
     num_tot = m.get('post_proc').len('plot')
+    file_list = []
     for plot_num, _ in enumerate(m.get('post_proc').iter('plot')):
         logger.info(f"Creating plot {plot_num + 1}/{num_tot}...")
         ax = init_3D_plot(*abm.get_lims())
@@ -101,6 +104,9 @@ def plot_all(m):
             fname = os.path.join(os.path.abspath(ps.get('save')), fname)
             logger.info(f"Saving plot to file {fname!r}...")
             plt.savefig(fname, dpi=300, format='png')
+            file_list.append(fname)
+
+    rfiles.set('plots', file_list)
 
     if ps.get('show', False):
         plt.show()
@@ -229,11 +235,11 @@ def add_items_per_beam(m, ax, plot_num):
         x, y, z = xyz[:, 0], xyz[:, 1], xyz[:, 2]
 
         # ----- Undeformed mesh -----
-        if PlotItems.undeformed in to_show:
+        if PlotItems.undeformed.value in to_show:
             ax.plot(x, y, z, **args_plot(m, C.UNDEFORMED))
 
         # ----- Deformed mesh -----
-        if PlotItems.deformed in to_show:
+        if PlotItems.deformed.value in to_show:
             d = m.results.get('tensors').get('comp:U')
             xd = x + abm.gbv(d['ux'], beam_idx)
             yd = y + abm.gbv(d['uy'], beam_idx)
@@ -241,7 +247,7 @@ def add_items_per_beam(m, ax, plot_num):
             ax.plot(xd, yd, zd, **args_plot(m, C.DEFORMED, marker=marker))
 
         # ----- Forces -----
-        if PlotItems.forces in to_show:
+        if PlotItems.forces.value in to_show:
             d = m.results.get('tensors').get('comp:F')
             Fx = abm.gbv(d['Fx'], beam_idx)
             Fy = abm.gbv(d['Fy'], beam_idx)
@@ -250,7 +256,7 @@ def add_items_per_beam(m, ax, plot_num):
             ax.quiver(xd, yd, zd, Fx, Fy, Fz, color=C.CONC_FORCE)
 
         # ----- Moments -----
-        if PlotItems.moments in to_show:
+        if PlotItems.moments.value in to_show:
             d = m.results.get('tensors').get('comp:F')
             Fx = abm.gbv(d['Mx'], beam_idx)
             Fy = abm.gbv(d['My'], beam_idx)
@@ -259,12 +265,12 @@ def add_items_per_beam(m, ax, plot_num):
             ax.quiver(xd, yd, zd, Fx, Fy, Fz, color=C.CONC_FORCE)
 
         # ----- Beam index -----
-        if PlotItems.beam_index in to_show:
+        if PlotItems.beam_index.value in to_show:
             center = ceil(len(x)/2)
             coord = (x[center], y[center], z[center])
             ax.text(*coord, str(beam_idx), **args_text(m, color=C.BC))
 
         # ----- Named nodes -----
-        if PlotItems.node_uids in to_show:
+        if PlotItems.node_uids.value in to_show:
             for uid, coord in abm.named_nodes[beam_idx].items():
                 ax.text(*coord, uid, **args_text(m, color=C.BC))
