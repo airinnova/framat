@@ -355,6 +355,22 @@ class AbstractBeamMesh:
         except KeyError:
             return self.beams.get_by_uid(beam_idx, f"TO:{uid}")
 
+    def get_point_by_uid(self, uid):
+        """
+        Return a node point
+
+        Args:
+            :uid: UID of named node
+        """
+
+        for beam_dict in self.named_nodes.values():
+            try:
+                return beam_dict[uid]
+            except KeyError:
+                pass
+        else:
+            raise KeyError
+
     def nelem_beam(self, beam_idx):
         """Number of elements in beam with given beam index"""
         return len(self.beams[beam_idx])

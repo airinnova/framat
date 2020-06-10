@@ -98,20 +98,25 @@ def create_bc_matrices(m):
 
     r = m.results
     abm = r.get('mesh').get('abm')
-    ndof = abm.ndofs()
+    ndofs = abm.ndofs()
     mbc = m.get('bc')
 
     B_tot = np.array([])
     # ----- Fix DOFs -----
     for fix in mbc.iter('fix'):
         num_node = abm.glob_nums[fix['node']]
-        B = fix_dof(num_node, ndof, fix['fix'])
+        B = fix_dof(num_node, ndofs, fix['fix'])
         B_tot = np.vstack((B_tot, B)) if B_tot.size else B
 
     # ----- Multipoint constraints (MPC) -----
     for con in mbc.iter('connect'):
-        pass
-        # TODO
+        uid1, uid2 = con['node1'], con['node2']
+        num_node1 = abm.glob_nums[uid1]
+        num_node2 = abm.glob_nums[uid2]
+        x1 = abm.get_point_by_uid(uid1)
+        x2 = abm.get_point_by_uid(uid2)
+        B = connect(x1, x2, num_node1, num_node2, ndofs, con['fix'])
+        B_tot = np.vstack((B_tot, B)) if B_tot.size else B
 
     m.results.get('tensors').set('B', B_tot)
 
@@ -148,30 +153,26 @@ def fix_dof(node_number, total_ndof, dof_constraints):
     return B
 
 
-def connect(node1_number, node2_number, uid1, uid2, total_ndof, dof_constraints, frame):
+def connect(x1, x2, num_node1, num_node2, ndofs, dof_constraints):
     """
-    Make a connection between two nodes
+    Make a rigid connection between two nodes
 
     Note:
         * The two nodes may belong to the same or to different beams
 
     Args:
-        :node1_number: number of first node
-        :node2_number: number of second node
-        :uid1: UID of first node
-        :uid2: UID of second node
-        :total_ndof: total number of degrees of freedom
+        :x1: (numpy) coordinate of point 1
+        :x2: (numpy) coordinate of point 2
+        :num_node1: (int) global node number of point 1
+        :num_node2: (int) global node number of point 2
+        :ndofs: (int) number of dofs
         :dof_constraints: list with dofs to be fixed (NOT YET IMPLEMENTED)
     """
 
+    dx, dy, dz = x1 - x2
+
     N1 = np.eye(6)
     N2 = -np.eye(6)
-
-    x1 = frame.finder.nodes.by_uid[uid1].coord
-    x2 = frame.finder.nodes.by_uid[uid2].coord
-    x1 = np.asarray(x1)
-    x2 = np.asarray(x2)
-    dx, dy, dz = x1 - x2
 
     N2[0, 4] = -dz
     N2[0, 5] = dy
@@ -180,7 +181,7 @@ def connect(node1_number, node2_number, uid1, uid2, total_ndof, dof_constraints,
     N2[2, 3] = -dy
     N2[2, 4] = dx
 
-    B = np.zeros((6, frame.ndof))
-    B[0:6, 6*node1_number:6*node1_number+6] = N1
-    B[0:6, 6*node2_number:6*node2_number+6] = N2
+    B = np.zeros((6, ndofs))
+    B[0:6, 6*num_node1:6*num_node1+6] = N1
+    B[0:6, 6*num_node2:6*num_node2+6] = N2
     return B

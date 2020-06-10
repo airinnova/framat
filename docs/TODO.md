@@ -1,9 +1,5 @@
 # TODO
 
-# DOC
-* Add "getting started" page --> + Add link from README
- --->  Add example r.get('tensors').get('F')
-
 ## Plotting
 * Add back plotting functionality
     - Constraints
@@ -29,7 +25,7 @@
 * Check if two nodes are "too close" to each other
 
 ## Assembly
-* (!!!) Add multipoint-constraints again (+ tests)
+* (!!!) Add tests for multipoint-constraints + Add plot items...
 * Use sparse matrices
 
 ## Misc
