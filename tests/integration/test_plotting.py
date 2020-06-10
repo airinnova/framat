@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import os
+from pathlib import Path
+
 import pytest
 
 from framat import Model
@@ -41,9 +44,17 @@ def test_plotting():
 
     pp = model.set_feature('post_proc')
     pp.set('plot_settings', {'save': '.', 'show': False})
+    # Create two plots
     pp.add('plot', ['deformed', 'undeformed'])
     pp.add('plot', PlotItems.to_list())
     model.run()
 
-    # TODO: before test --> remove all plot files
-    # TODO: after test --> assert that files created
+    plot_files = model.results.get('files').get('plots')
+    # Assert that two files have been created
+    assert len(plot_files) == 2
+
+    for fname in plot_files:
+        assert fname.endswith('.png')
+        fname = Path(fname)
+        assert fname.is_file()
+        os.remove(fname)
