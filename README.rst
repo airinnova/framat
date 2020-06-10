@@ -45,6 +45,10 @@ To update an existing installation, run:
 
     pip install --upgrade framat
 
+Getting started
+---------------
+
+If you have installed FramAT, you may want to have a look at the `Getting started <https://framat.readthedocs.io/en/latest/user_guide/getting_started.html>`_ page.
 
 Example
 -------
@@ -86,9 +90,7 @@ FramAT provides a user-friendly, easy-to-read Python interface which can be inte
 
     model.run()
 
-Please refer to the documentation for installation instructions and a user guide:
-
-* https://framat.readthedocs.io/
+Please refer to the `documentation <https://framat.readthedocs.io/>`_ for more information.
 
 Additional information for developers
 -------------------------------------
