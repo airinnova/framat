@@ -872,13 +872,17 @@ Define general plot settings.
 
 *Schema*:
 
-============== ==========================================
-   **show**             {'type': <class 'bool'>}         
-**linewidth**  {'type': <class 'numbers.Number'>, '>': 0}
-**markersize** {'type': <class 'numbers.Number'>, '>': 0}
- **fontsize**       {'type': <class 'int'>, '>': 0}      
-   **save**    {'type': <class 'str'>, 'is_dir': 'dummy'}
-============== ==========================================
+===================== ==========================================
+       **show**                {'type': <class 'bool'>}         
+       **save**       {'type': <class 'str'>, 'is_dir': 'dummy'}
+    **linewidth**     {'type': <class 'numbers.Number'>, '>': 0}
+    **markersize**    {'type': <class 'numbers.Number'>, '>': 0}
+     **fontsize**          {'type': <class 'int'>, '>': 0}      
+   **scale_forces**   {'type': <class 'numbers.Number'>, '>': 0}
+  **scale_moments**   {'type': <class 'numbers.Number'>, '>': 0}
+**scale_deformation** {'type': <class 'numbers.Number'>, '>': 0}
+   **deform_loads**            {'type': <class 'bool'>}         
+===================== ==========================================
 
 Property: plot
 ~~~~~~~~~~~~~~

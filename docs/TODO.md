@@ -6,7 +6,6 @@
 * Plot inertia loads --> `F_accel`
 * Plot accel vector
 * Plot local axes
-* Scale for deformations, vector size, ...
 * Flag to chose if loads plotted in deformed or undeformed mesh
 
 ## Model definition

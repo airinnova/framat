@@ -288,10 +288,16 @@ fspec.add_prop_spec(
     'plot_settings',
     {
         'show': {'type': bool},
+        'save': {'type': str, 'is_dir': 'dummy'},
+
         'linewidth': S.pos_number,
         'markersize': S.pos_number,
         'fontsize': S.pos_int,
-        'save': {'type': str, 'is_dir': 'dummy'}
+
+        'scale_forces': S.pos_number,
+        'scale_moments': S.pos_number,
+        'scale_deformation': S.pos_number,
+        'deform_loads': {'type': bool},
     },
     doc="Define general plot settings."
 )
@@ -449,7 +455,7 @@ def get_example_cantilever():
     bc.add('fix', {'node': 'root', 'fix': ['all']})
 
     pp = model.set_feature('post_proc')
-    pp.set('plot_settings', {'show': True})
+    pp.set('plot_settings', {'show': True, 'deform_loads': False, 'scale_forces': 0.5})
     pp.add('plot', ['undeformed', 'deformed', 'node_uids', 'nodes', 'forces'])
     return model
 

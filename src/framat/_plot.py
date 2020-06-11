@@ -232,6 +232,7 @@ def _coordinate_system(plot, origin, axes, axes_names, color, scale=1):
 
 
 def add_items_per_beam(m, ax, plot_num):
+    ps = m.get('post_proc').get('plot_settings', {})
     to_show = m.get('post_proc').get('plot')[plot_num]
     abm = m.results.get('mesh').get('abm')
     marker = 'o' if 'nodes' in to_show else None
@@ -247,28 +248,35 @@ def add_items_per_beam(m, ax, plot_num):
         # ----- Deformed mesh -----
         if PlotItems.deformed.value in to_show:
             d = m.results.get('tensors').get('comp:U')
-            xd = x + abm.gbv(d['ux'], beam_idx)
-            yd = y + abm.gbv(d['uy'], beam_idx)
-            zd = z + abm.gbv(d['uz'], beam_idx)
+            scale = ps.get('scale_deformation', 1)
+            xd = x + scale*abm.gbv(d['ux'], beam_idx)
+            yd = y + scale*abm.gbv(d['uy'], beam_idx)
+            zd = z + scale*abm.gbv(d['uz'], beam_idx)
             ax.plot(xd, yd, zd, **args_plot(m, C.DEFORMED, marker=marker))
 
         # ----- Forces -----
         if PlotItems.forces.value in to_show:
             d = m.results.get('tensors').get('comp:F')
-            Fx = abm.gbv(d['Fx'], beam_idx)
-            Fy = abm.gbv(d['Fy'], beam_idx)
-            Fz = abm.gbv(d['Fz'], beam_idx)
-            # ax.quiver(x, y, z, Fx, Fy, Fz, color=C.FORCE)
-            ax.quiver(xd, yd, zd, Fx, Fy, Fz, color=C.FORCE)
+            scale = ps.get('scale_forces', 1)
+            Fx = scale*abm.gbv(d['Fx'], beam_idx)
+            Fy = scale*abm.gbv(d['Fy'], beam_idx)
+            Fz = scale*abm.gbv(d['Fz'], beam_idx)
+            if ps.get('deform_loads', True):
+                ax.quiver(xd, yd, zd, Fx, Fy, Fz, color=C.FORCE)
+            else:
+                ax.quiver(x, y, z, Fx, Fy, Fz, color=C.FORCE)
 
         # ----- Moments -----
         if PlotItems.moments.value in to_show:
             d = m.results.get('tensors').get('comp:F')
-            Fx = abm.gbv(d['Mx'], beam_idx)
-            Fy = abm.gbv(d['My'], beam_idx)
-            Fz = abm.gbv(d['Mz'], beam_idx)
-            # ax.quiver(x, y, z, Fx, Fy, Fz, color=C.MOMENT)
-            ax.quiver(xd, yd, zd, Fx, Fy, Fz, color=C.MOMENT)
+            scale = ps.get('scale_moments', 1)
+            Fx = scale*abm.gbv(d['Mx'], beam_idx)
+            Fy = scale*abm.gbv(d['My'], beam_idx)
+            Fz = scale*abm.gbv(d['Mz'], beam_idx)
+            if ps.get('deform_loads', True):
+                ax.quiver(xd, yd, zd, Fx, Fy, Fz, color=C.MOMENT)
+            else:
+                ax.quiver(x, y, z, Fx, Fy, Fz, color=C.MOMENT)
 
         # ----- Beam index -----
         if PlotItems.beam_index.value in to_show:
@@ -304,15 +312,18 @@ def add_boundary_conditions(m, ax, plot_num):
             bc_id = get_bc_id(fix['fix'])
             ax.text(*xyz, f'f{bc_id}', **args_text(m, c_txt=C.TXT_BC, c_box=C.BOX_BC))
 
+    ps = m.get('post_proc').get('plot_settings', {})
+
     for con in mbc.iter('connect'):
         uid1 = con['node1']
         uid2 = con['node2']
+        scale = ps.get('scale_deformation', 1)
         X1 = abm.get_point_by_uid(uid=uid1)
         X2 = abm.get_point_by_uid(uid=uid2)
         ux1, uy1, uz1 = abm.gnv(ux, uid1), abm.gnv(uy, uid1), abm.gnv(uz, uid1)
         ux2, uy2, uz2 = abm.gnv(ux, uid2), abm.gnv(uy, uid2), abm.gnv(uz, uid2)
-        x1 = X1 + [ux1, uy1, uz1]
-        x2 = X2 + [ux2, uy2, uz2]
+        x1 = X1 + scale*np.asarray([ux1, uy1, uz1])
+        x2 = X2 + scale*np.asarray([ux2, uy2, uz2])
         ax.plot(*zip(x1, x2), **args_plot(m, color=C.BOX_BC))
         if PlotItems.bc_id.value in to_show:
             bc_id = get_bc_id(con['fix'])
