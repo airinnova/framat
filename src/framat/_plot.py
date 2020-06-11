@@ -41,6 +41,8 @@ from ._log import logger
 
 
 class PlotItems(Enum):
+    bc = 'bc'
+    bc_id = 'bc_id'
     beam_index = 'beam_index'
     deformed = 'deformed'
     forces = 'forces'
@@ -56,22 +58,25 @@ class PlotItems(Enum):
 
 
 class C:
-    BC = 'black'
-    BC_TEXT = 'white'
-    CONC_FORCE = 'steelblue'
-    CONC_MOMENT = 'purple'
-    DEFAULT = 'grey'
+    BOX_BC = 'black'
+    TXT_BC = 'white'
+
+    BOX_NODE_UID = 'orange'
+    TXT_NODE_UID = 'black'
+
+    BOX_BEAM_IDX = 'navy'
+    TXT_BEAM_IDX = 'white'
+
+    UNDEFORMED = 'grey'
     DEFORMED = 'red'
-    DIST_FORCE = 'steelblue'
-    DIST_MOMENT = 'purple'
-    FREENODE_FORCE = 'black'
-    FREENODE_MOMENT = 'grey'
-    FREENODE_POINT = 'navy'
+
+    FORCE = 'steelblue'
+    MOMENT = 'purple'
+
     GLOBAL_SYS = 'blue'
     LOCAL_SYS = 'green'
+
     MASS = 'maroon'
-    MASS_LOAD = 'maroon'
-    UNDEFORMED = 'grey'
 
 
 def plot_all(m):
@@ -94,7 +99,7 @@ def plot_all(m):
         ax = init_3D_plot(*abm.get_lims())
         add_items_per_beam(m, ax, plot_num)
         add_global_axes(m, ax, plot_num)
-        plt.tight_layout()
+        add_boundary_conditions(m, ax, plot_num)
 
         if ps.get('save', False):
             now = datetime.now().strftime("%F_%H%M%S")
@@ -103,6 +108,7 @@ def plot_all(m):
             fname = f"{MODULE_NAME.lower()}_{now}_{plot_num+1:02}_{rand}.{ext}"
             fname = os.path.join(os.path.abspath(ps.get('save')), fname)
             logger.info(f"Saving plot to file {fname!r}...")
+            plt.tight_layout()
             plt.savefig(fname, dpi=300, format='png')
             file_list.append(fname)
 
@@ -180,11 +186,11 @@ def args_scatter(m, color, marker=None):
     return args
 
 
-def args_text(m, color):
+def args_text(m, c_txt, c_box):
     args = {
         'fontsize': m.get('post_proc').get('plot_settings', {}).get('fontsize', 10),
-        'color': color,
-        'bbox': dict(facecolor='orange', alpha=0.5),
+        'color': c_txt,
+        'bbox': dict(facecolor=c_box, alpha=0.5),
         'horizontalalignment': 'center',
         'verticalalignment': 'bottom',
     }
@@ -252,8 +258,8 @@ def add_items_per_beam(m, ax, plot_num):
             Fx = abm.gbv(d['Fx'], beam_idx)
             Fy = abm.gbv(d['Fy'], beam_idx)
             Fz = abm.gbv(d['Fz'], beam_idx)
-            # ax.quiver(x, y, z, Fx, Fy, Fz, color=C.CONC_FORCE)
-            ax.quiver(xd, yd, zd, Fx, Fy, Fz, color=C.CONC_FORCE)
+            # ax.quiver(x, y, z, Fx, Fy, Fz, color=C.FORCE)
+            ax.quiver(xd, yd, zd, Fx, Fy, Fz, color=C.FORCE)
 
         # ----- Moments -----
         if PlotItems.moments.value in to_show:
@@ -261,16 +267,65 @@ def add_items_per_beam(m, ax, plot_num):
             Fx = abm.gbv(d['Mx'], beam_idx)
             Fy = abm.gbv(d['My'], beam_idx)
             Fz = abm.gbv(d['Mz'], beam_idx)
-            # ax.quiver(x, y, z, Fx, Fy, Fz, color=C.CONC_FORCE)
-            ax.quiver(xd, yd, zd, Fx, Fy, Fz, color=C.CONC_FORCE)
+            # ax.quiver(x, y, z, Fx, Fy, Fz, color=C.MOMENT)
+            ax.quiver(xd, yd, zd, Fx, Fy, Fz, color=C.MOMENT)
 
         # ----- Beam index -----
         if PlotItems.beam_index.value in to_show:
             center = ceil(len(x)/2)
             coord = (x[center], y[center], z[center])
-            ax.text(*coord, str(beam_idx), **args_text(m, color=C.BC))
+            ax.text(*coord, str(beam_idx), **args_text(m, c_txt=C.TXT_BEAM_IDX, c_box=C.BOX_BEAM_IDX))
 
         # ----- Named nodes -----
         if PlotItems.node_uids.value in to_show:
             for uid, coord in abm.named_nodes[beam_idx].items():
-                ax.text(*coord, uid, **args_text(m, color=C.BC))
+                ax.text(*coord, uid, **args_text(m, c_txt=C.TXT_NODE_UID, c_box=C.BOX_NODE_UID))
+
+
+def add_boundary_conditions(m, ax, plot_num):
+    to_show = m.get('post_proc').get('plot')[plot_num]
+    if PlotItems.bc.value not in to_show:
+        return
+
+    r = m.results
+    abm = m.results.get('mesh').get('abm')
+    mbc = m.get('bc')
+    deform = r.get('tensors').get('comp:U')
+    ux = deform['ux']
+    uy = deform['uy']
+    uz = deform['uz']
+
+    # Fixed
+    for fix in mbc.iter('fix'):
+        uid = fix['node']
+        xyz = abm.get_point_by_uid(uid)
+        ax.scatter(*xyz, **args_scatter(m, color=C.BOX_BC, marker='s'))
+        if PlotItems.bc_id.value in to_show:
+            bc_id = get_bc_id(fix['fix'])
+            ax.text(*xyz, f'f{bc_id}', **args_text(m, c_txt=C.TXT_BC, c_box=C.BOX_BC))
+
+    for con in mbc.iter('connect'):
+        uid1 = con['node1']
+        uid2 = con['node2']
+        X1 = abm.get_point_by_uid(uid=uid1)
+        X2 = abm.get_point_by_uid(uid=uid2)
+        ux1, uy1, uz1 = abm.gnv(ux, uid1), abm.gnv(uy, uid1), abm.gnv(uz, uid1)
+        ux2, uy2, uz2 = abm.gnv(ux, uid2), abm.gnv(uy, uid2), abm.gnv(uz, uid2)
+        x1 = X1 + [ux1, uy1, uz1]
+        x2 = X2 + [ux2, uy2, uz2]
+        ax.plot(*zip(x1, x2), **args_plot(m, color=C.BOX_BC))
+        if PlotItems.bc_id.value in to_show:
+            bc_id = get_bc_id(con['fix'])
+            ax.text(*(x1+x2)/2, f'c{bc_id}', **args_text(m, c_txt=C.TXT_BC, c_box=C.BOX_BC))
+
+
+def get_bc_id(constraints):
+    id_num = {'ux': 1, 'uy': 2, 'uz': 4, 'tx': 8, 'ty': 16, 'tz': 32, 'all': 63}
+
+    bc_id = 0
+    for constraint in constraints:
+        bc_id += id_num[constraint]
+        if bc_id == id_num['all']:
+            break
+
+    return bc_id

@@ -1,8 +1,6 @@
 # TODO
 
 ## Plotting
-* Add back plotting functionality
-    - Constraints
 * Create matrix plot (see 0.3.2)
 * Compute and plot centre of mass, and mass of individual beams
 * Plot inertia loads --> `F_accel`
@@ -25,7 +23,7 @@
 * Check if two nodes are "too close" to each other
 
 ## Assembly
-* (!!!) Add tests for multipoint-constraints + Add plot items...
+* (!!!) Add tests for multipoint-constraints
 * Use sparse matrices
 
 ## Misc

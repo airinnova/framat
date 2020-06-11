@@ -469,5 +469,4 @@ class AbstractBeamMesh:
         uid_last = uids[-1]
         idx1 = self.glob_nums[uid_first]
         idx2 = self.glob_nums[uid_last]
-        # breakpoint()
         return vector[idx1:idx2+1]
