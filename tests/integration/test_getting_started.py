@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import os
 from pathlib import Path
+import os
+import shutil
 
 # Suppress Matplotlib figure
 from matplotlib import pyplot as plt
@@ -21,7 +22,7 @@ def rerun_and_save_plots(model, fname):
 
     old_fname = Path(r.get('files').get('plots')[0])
     new_fname = os.path.join(os.path.dirname(old_fname), fname)
-    os.rename(old_fname, new_fname)
+    shutil.move(old_fname, new_fname)
 
 
 def test_cantilever():

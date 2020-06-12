@@ -24,6 +24,7 @@
 ## Assembly
 * (!!!) Add tests for multipoint-constraints
 * Use sparse matrices
+    - https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.coo_matrix.html
 
 ## Misc
 * Test run multiprocessing
