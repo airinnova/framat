@@ -1,7 +1,6 @@
 # TODO
 
 ## Plotting
-* Create matrix plot (see 0.3.2)
 * Compute and plot centre of mass, and mass of individual beams
 * Plot inertia loads --> `F_accel`
 * Plot accel vector
@@ -71,7 +70,6 @@
 
 ## Understand
 * $1/2 U^T * K * U$ equivalent to $0.5 * F * U$?
-* B matrix cannot have "lines of zeros"
 * Can there be multiple constraints in one node (e.g. rigid connector and fixed in 3D space)?
 * Stranger things:
     - Mismatched input properties can lead to unexpected behaviour:
