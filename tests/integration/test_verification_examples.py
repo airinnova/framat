@@ -48,7 +48,7 @@ def get_horseshoe_model(load_case):
         beam.add('point_load', {'at': 'b', 'load': [+0.1, +0.2, +0.3, 0, 0, 0]})
         beam.add('point_load', {'at': 'c', 'load': [-0.1, -0.2, -0.3, 0, 0, 0]})
 
-    # model.set_feature('post_proc').add('plot', ['undeformed', 'nodes'])
+    model.set_feature('post_proc')
     return model
 
 

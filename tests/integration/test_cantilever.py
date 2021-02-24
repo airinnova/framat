@@ -32,6 +32,7 @@ def get_cantilever_model():
     beam.add('point_load', {'at': 'tip', 'load': [0, 0, -1, 0, 0, 0]})
 
     model.set_feature('bc').add('fix', {'node': 'root', 'fix': ['all']})
+    model.set_feature('post_proc')
     return model
 
 
