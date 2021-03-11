@@ -2,7 +2,7 @@ Sphinx==3.5.1
 codecov==2.1.11
 commonlibs>=0.4.0
 matplotlib>=3.0.2
-model-framework
+model-framework>=0.0.20
 numpy==1.20.1
 pytest-cov==2.11.1
 pytest==6.2.2

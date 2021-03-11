@@ -238,13 +238,13 @@ schema_mass = {'mass': {'type': S.pos_number}, 'node': S.pos_int}
 fspec = FeatureSpec()
 
 for p in Element.PROP_TYPES:
-    fspec.add_prop_spec(p, S.pos_number)
+    fspec.add_prop_spec(p, S.pos_number, max_items=1)
 
-fspec.add_prop_spec('up', S.vector3x1)
-fspec.add_prop_spec('point_load', schema_load, singleton=False)
-fspec.add_prop_spec('distr_load', schema_load, singleton=False)
-fspec.add_prop_spec('dist_load', schema_load, singleton=False)
-fspec.add_prop_spec('point_mass', schema_mass, singleton=False)
+fspec.add_prop_spec('up', S.vector3x1, max_items=1)
+fspec.add_prop_spec('point_load', schema_load)
+fspec.add_prop_spec('distr_load', schema_load)
+fspec.add_prop_spec('dist_load', schema_load)
+fspec.add_prop_spec('point_mass', schema_mass)
 
 # =================================
 

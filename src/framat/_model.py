@@ -64,26 +64,25 @@ fspec = FeatureSpec()
 fspec.add_prop_spec(
     'E',
     S.pos_number,
-    required=True,
+    max_items=1,
     doc="Young's modulus [N/m²]"
 )
 fspec.add_prop_spec(
     'G',
     S.pos_number,
-    required=True,
+    max_items=1,
     doc="Shear modulus [N/m²]"
 )
 fspec.add_prop_spec(
     'rho',
     S.pos_number,
-    required=True,
+    max_items=1,
     doc="Density [kg/m³]"
 )
 mspec.add_feature_spec(
     'material',
     fspec,
-    singleton=False,
-    required=False,
+    required=0,
     doc=tmp_doc.format(X='material'),
     uid_required=True,
 )
@@ -93,32 +92,31 @@ fspec = FeatureSpec()
 fspec.add_prop_spec(
     'A',
     S.pos_number,
-    required=True,
+    max_items=1,
     doc="Area [m²]"
 )
 fspec.add_prop_spec(
     'Iy',
     S.pos_number,
-    required=True,
+    max_items=1,
     doc="Second moment of area about the local y-axis [m⁴]"
 )
 fspec.add_prop_spec(
     'Iz',
     S.pos_number,
-    required=True,
+    max_items=1,
     doc="Second moment of area about the local z-axis [m⁴]"
 )
 fspec.add_prop_spec(
     'J',
     S.pos_number,
-    required=True,
+    max_items=1,
     doc="Torsional constant [m⁴]"
 )
 mspec.add_feature_spec(
     'cross_section',
     fspec,
-    singleton=False,
-    required=False,
+    required=0,
     doc=tmp_doc.format(X='cross section'),
     uid_required=True,
 )
@@ -132,7 +130,6 @@ fspec = FeatureSpec()
 fspec.add_prop_spec(
     'node',
     S.vector3x1,
-    singleton=False,
     doc="Add a named beam node, and defines its coordinates in a global \
          coordinate system. A beam requires at least two nodes. Note that you \
          must provide a UID.",
@@ -146,7 +143,6 @@ fspec.add_prop_spec(
         'to': S.string,
         'up': S.vector3x1
     },
-    singleton=False,
     doc=(
         tmp_doc.format(X='beam cross section orientation') +
         "The key 'up' is followed by a list (vector) indicating the direction \
@@ -162,7 +158,7 @@ fspec.add_prop_spec(
         'to': S.string,
         'uid': S.string
     },
-    singleton=False,
+    required=0,
     doc=(
         tmp_doc.format(X='material') +
         "The key 'uid' must refer to a material UID defined in the 'material' feature."
@@ -171,7 +167,6 @@ fspec.add_prop_spec(
 fspec.add_prop_spec(
     'cross_section',
     {'$required_keys': ['from', 'to', 'uid'], 'from': S.string, 'to': S.string, 'uid': S.string},
-    singleton=False,
     doc=tmp_doc.format(X='cross section') +
     "The key 'uid' must refer to a cross section UID defined in the 'cross_section' feature.",
 )
@@ -183,7 +178,7 @@ fspec.add_prop_spec(
         'load': S.vector6x1,
         'local_sys': {'type': bool}
     },
-    singleton=False,
+    required=0,
     doc="Add a point load to a specific node."
 )
 fspec.add_prop_spec(
@@ -193,7 +188,7 @@ fspec.add_prop_spec(
         'at': S.string,
         'mass': S.pos_int,
     },
-    singleton=False,
+    required=0,
     doc="Add a point mass to a specific node."
 )
 fspec.add_prop_spec(
@@ -205,13 +200,13 @@ fspec.add_prop_spec(
         'load': S.vector6x1,
         'local_sys': {'type': bool}
     },
-    singleton=False,
+    required=0,
     doc="Add a distributed load."
 )
 fspec.add_prop_spec(
     'nelem',
     S.pos_int,
-    singleton=True,
+    max_items=1,
     doc="Define the number of element for the beam object. The number will \
          apply to the whole polygonal chain. Note that the number is only \
          approximate, and the actual element number is determined by the \
@@ -220,8 +215,7 @@ fspec.add_prop_spec(
 mspec.add_feature_spec(
     'beam',
     fspec,
-    singleton=False,
-    required=False,
+    required=1,
     doc="With the 'beam' feature you can add as many beams as needed for your \
          model. The beam geometry is defined with so-called 'named nodes'. \
          These are special nodes which have a UID and which together make up a \
@@ -250,7 +244,7 @@ fspec.add_prop_spec(
         'node': S.string,
         **schema_fix,
     },
-    singleton=False,
+    required=0,
     doc="Fix degrees of freedom (DOF) at a specific named beam node. Specify \
          which node to fix with the correct node UID. In addition, you must \
          also speficy which DOFs to fix. To constrain *all* DOFs, set \
@@ -264,7 +258,7 @@ fspec.add_prop_spec(
         'node2': S.string,
         **schema_fix,
     },
-    singleton=False,
+    required=0,
     doc="Connect two beam nodes with a rigid connection. Specify the two nodes \
          to connect with the keys 'node1' and 'node2' followed by the \
          respective UIDs. Use the 'fix' key to constrain 'all' DOFs, or \
@@ -274,8 +268,7 @@ fspec.add_prop_spec(
 mspec.add_feature_spec(
     'bc',
     fspec,
-    singleton=True,
-    required=True,
+    max_items=1,
     doc="The boundary condition (bc) feature allows you to constrain the beam \
          model. Both single point and multipoint constraints (MPC) can be set \
          up. Note that the beam structure must be at least 'statically \
@@ -299,20 +292,21 @@ fspec.add_prop_spec(
         'scale_deformation': S.pos_number,
         'deform_loads': {'type': bool},
     },
+    required=0,
+    max_items=1,
     doc="Define general plot settings."
 )
 fspec.add_prop_spec(
     'plot',
     {'type': list, 'allowed_items': PlotItems.to_list()},
-    singleton=False,
+    required=0,
     doc="Add a plot. You may add as many plots as you like. List the parts to \
          show in the plot."
 )
 mspec.add_feature_spec(
     'post_proc',
     fspec,
-    singleton=True,
-    required=True,
+    max_items=1,
     doc="Post-processing.",
 )
 
@@ -326,25 +320,25 @@ fspec = FeatureSpec()
 fspec.add_prop_spec(
     'abm',
     {'type': AbstractBeamMesh},
-    singleton=True,
+    max_items=1,
     doc="Abstract beam mesh"
 )
 rspec.add_feature_spec(
     'mesh',
     fspec,
-    singleton=True,
-    required=False,
+    required=0,
+    max_items=1,
     doc="Mesh data."
 )
 
 # ===== Deformation =====
 fspec = FeatureSpec()
-fspec.add_prop_spec('K', {'type': np.ndarray}, doc="Stiffness matrix.")
-fspec.add_prop_spec('M', {'type': np.ndarray}, doc="Mass matrix.")
-fspec.add_prop_spec('B', {'type': np.ndarray}, doc="Constraint matrix.")
-fspec.add_prop_spec('F', {'type': np.ndarray}, doc="External load vector.")
-fspec.add_prop_spec('F_react', {'type': np.ndarray}, doc="Reaction forces at constrained nodes.")
-fspec.add_prop_spec('U', {'type': np.ndarray}, doc="Displacement vector (solution).")
+fspec.add_prop_spec('K', {'type': np.ndarray}, doc="Stiffness matrix.", max_items=1)
+fspec.add_prop_spec('M', {'type': np.ndarray}, doc="Mass matrix.", max_items=1)
+fspec.add_prop_spec('B', {'type': np.ndarray}, doc="Constraint matrix.", max_items=1)
+fspec.add_prop_spec('F', {'type': np.ndarray}, doc="External load vector.", max_items=1)
+fspec.add_prop_spec('F_react', {'type': np.ndarray}, doc="Reaction forces at constrained nodes.", max_items=1)
+fspec.add_prop_spec('U', {'type': np.ndarray}, doc="Displacement vector (solution).", max_items=1)
 fspec.add_prop_spec(
     'comp:U',
     {
@@ -355,6 +349,7 @@ fspec.add_prop_spec(
         'thy': {'type': np.ndarray},
         'thz': {'type': np.ndarray},
     },
+    max_items=1,
     doc="Displacement components"
 )
 fspec.add_prop_spec(
@@ -367,12 +362,13 @@ fspec.add_prop_spec(
         'My': {'type': np.ndarray},
         'Mz': {'type': np.ndarray},
     },
+    max_items=1,
     doc="Force components"
 )
 rspec.add_feature_spec(
     'tensors',
     fspec,
-    singleton=True,
+    max_items=1,
     doc="System tensors."
 )
 mspec.results = rspec
@@ -382,14 +378,14 @@ fspec = FeatureSpec()
 fspec.add_prop_spec(
     'plots',
     {'type': list, 'item_types': str},
-    singleton=True,
+    max_items=1,
     doc="List of created plot files"
 )
 rspec.add_feature_spec(
     'files',
     fspec,
-    singleton=True,
-    required=False,
+    required=0,
+    max_items=1,
     doc="File data"
 )
 
