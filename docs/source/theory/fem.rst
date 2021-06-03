@@ -1,4 +1,4 @@
-.. _sec_fem_formulation:
+.. _sec_theory_fem:
 
 FEM formulation
 ===============
@@ -383,7 +383,7 @@ Generally, loads may be formulated as being concentrated on a specific node or a
     \end{pmatrix}
 
 
-The distributed loads (:math:`q_x`, :math:`q_y`, :math:`q_z`, :math:`m_x`, :math:`m_y` and :math:`m_z` as defined in :ref:`sec_theory`) are assumed to be *constant* over the length of the element. Therefore, it may be necessary to use a finer discretisation if varying distributed loads are to be modelled accurately.
+The distributed loads (:math:`q_x`, :math:`q_y`, :math:`q_z`, :math:`m_x`, :math:`m_y` and :math:`m_z` as defined in :ref:`sec_theory_introduction`) are assumed to be *constant* over the length of the element. Therefore, it may be necessary to use a finer discretisation if varying distributed loads are to be modelled accurately.
 
 Transformation into the global system
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

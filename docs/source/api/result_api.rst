@@ -38,15 +38,15 @@ Mesh data.
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
-   :alt: singleton
+   :alt: max_items
 
-*Singleton*: True
+*Maximum number*: 1
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
    :alt: required
 
-*Required*: False
+*Required*: False (0)
 
 Property: abm
 ~~~~~~~~~~~~~
@@ -67,15 +67,15 @@ Abstract beam mesh
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
-   :alt: singleton
+   :alt: max_items
 
-*Singleton*: True
+*Maximum number*: 1
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
    :alt: required
 
-*Required*: False
+*Required*: True (1)
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
    :align: left
@@ -98,15 +98,15 @@ System tensors.
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
-   :alt: singleton
+   :alt: max_items
 
-*Singleton*: True
+*Maximum number*: 1
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
    :alt: required
 
-*Required*: True
+*Required*: True (1)
 
 Property: K
 ~~~~~~~~~~~
@@ -127,15 +127,15 @@ Stiffness matrix.
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
-   :alt: singleton
+   :alt: max_items
 
-*Singleton*: True
+*Maximum number*: 1
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
    :alt: required
 
-*Required*: False
+*Required*: True (1)
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
    :align: left
@@ -143,9 +143,9 @@ Stiffness matrix.
 
 *Schema*:
 
-======== =======================
-**type** <class 'numpy.ndarray'>
-======== =======================
+======== =====================================
+**type** <class 'scipy.sparse.csr.csr_matrix'>
+======== =====================================
 
 Property: M
 ~~~~~~~~~~~
@@ -166,15 +166,15 @@ Mass matrix.
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
-   :alt: singleton
+   :alt: max_items
 
-*Singleton*: True
+*Maximum number*: 1
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
    :alt: required
 
-*Required*: False
+*Required*: True (1)
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
    :align: left
@@ -182,9 +182,9 @@ Mass matrix.
 
 *Schema*:
 
-======== =======================
-**type** <class 'numpy.ndarray'>
-======== =======================
+======== =====================================
+**type** <class 'scipy.sparse.csr.csr_matrix'>
+======== =====================================
 
 Property: B
 ~~~~~~~~~~~
@@ -205,15 +205,15 @@ Constraint matrix.
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
-   :alt: singleton
+   :alt: max_items
 
-*Singleton*: True
+*Maximum number*: 1
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
    :alt: required
 
-*Required*: False
+*Required*: True (1)
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
    :align: left
@@ -244,15 +244,15 @@ External load vector.
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
-   :alt: singleton
+   :alt: max_items
 
-*Singleton*: True
+*Maximum number*: 1
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
    :alt: required
 
-*Required*: False
+*Required*: True (1)
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
    :align: left
@@ -283,15 +283,15 @@ Reaction forces at constrained nodes.
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
-   :alt: singleton
+   :alt: max_items
 
-*Singleton*: True
+*Maximum number*: 1
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
    :alt: required
 
-*Required*: False
+*Required*: True (1)
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
    :align: left
@@ -322,15 +322,15 @@ Displacement vector (solution).
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
-   :alt: singleton
+   :alt: max_items
 
-*Singleton*: True
+*Maximum number*: 1
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
    :alt: required
 
-*Required*: False
+*Required*: True (1)
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
    :align: left
@@ -361,15 +361,15 @@ Displacement components
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
-   :alt: singleton
+   :alt: max_items
 
-*Singleton*: True
+*Maximum number*: 1
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
    :alt: required
 
-*Required*: False
+*Required*: True (1)
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
    :align: left
@@ -405,15 +405,15 @@ Force components
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
-   :alt: singleton
+   :alt: max_items
 
-*Singleton*: True
+*Maximum number*: 1
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
    :alt: required
 
-*Required*: False
+*Required*: True (1)
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
    :align: left
@@ -441,15 +441,15 @@ File data
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
-   :alt: singleton
+   :alt: max_items
 
-*Singleton*: True
+*Maximum number*: 1
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
    :alt: required
 
-*Required*: False
+*Required*: False (0)
 
 Property: plots
 ~~~~~~~~~~~~~~~
@@ -470,15 +470,15 @@ List of created plot files
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
-   :alt: singleton
+   :alt: max_items
 
-*Singleton*: True
+*Maximum number*: 1
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
    :alt: required
 
-*Required*: False
+*Required*: True (1)
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
    :align: left

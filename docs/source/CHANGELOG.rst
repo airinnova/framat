@@ -12,6 +12,11 @@ Added
 
 * Minor model definition update
 
+Changed
+~~~~~~~
+
+* Improved matrix assembly
+
 [0.4.0] -- 2020-06-02
 ---------------------
 

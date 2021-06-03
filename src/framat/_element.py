@@ -31,6 +31,8 @@ from commonlibs.math.vectors import unit_vector, direction_cosine, vector_reject
 
 logger = logging.getLogger(__name__)
 
+# TODO: Use flattened representation?
+
 
 class GlobalSystem:
     Origin = np.array([0, 0, 0])

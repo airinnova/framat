@@ -39,15 +39,15 @@ The *material* feature is optional and allows to define sets of constant        
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
-   :alt: singleton
+   :alt: max_items
 
-*Singleton*: False
+*Maximum number*: inf
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
    :alt: required
 
-*Required*: False
+*Required*: False (0)
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
@@ -74,15 +74,15 @@ Young's modulus [N/m²]
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
-   :alt: singleton
+   :alt: max_items
 
-*Singleton*: True
+*Maximum number*: 1
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
    :alt: required
 
-*Required*: True
+*Required*: True (1)
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
    :align: left
@@ -114,15 +114,15 @@ Shear modulus [N/m²]
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
-   :alt: singleton
+   :alt: max_items
 
-*Singleton*: True
+*Maximum number*: 1
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
    :alt: required
 
-*Required*: True
+*Required*: True (1)
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
    :align: left
@@ -154,15 +154,15 @@ Density [kg/m³]
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
-   :alt: singleton
+   :alt: max_items
 
-*Singleton*: True
+*Maximum number*: 1
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
    :alt: required
 
-*Required*: True
+*Required*: True (1)
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
    :align: left
@@ -186,15 +186,15 @@ The *cross section* feature is optional and allows to define sets of constant   
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
-   :alt: singleton
+   :alt: max_items
 
-*Singleton*: False
+*Maximum number*: inf
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
    :alt: required
 
-*Required*: False
+*Required*: False (0)
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
@@ -221,15 +221,15 @@ Area [m²]
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
-   :alt: singleton
+   :alt: max_items
 
-*Singleton*: True
+*Maximum number*: 1
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
    :alt: required
 
-*Required*: True
+*Required*: True (1)
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
    :align: left
@@ -261,15 +261,15 @@ Second moment of area about the local y-axis [m⁴]
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
-   :alt: singleton
+   :alt: max_items
 
-*Singleton*: True
+*Maximum number*: 1
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
    :alt: required
 
-*Required*: True
+*Required*: True (1)
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
    :align: left
@@ -301,15 +301,15 @@ Second moment of area about the local z-axis [m⁴]
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
-   :alt: singleton
+   :alt: max_items
 
-*Singleton*: True
+*Maximum number*: 1
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
    :alt: required
 
-*Required*: True
+*Required*: True (1)
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
    :align: left
@@ -341,15 +341,15 @@ Torsional constant [m⁴]
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
-   :alt: singleton
+   :alt: max_items
 
-*Singleton*: True
+*Maximum number*: 1
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
    :alt: required
 
-*Required*: True
+*Required*: True (1)
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
    :align: left
@@ -373,15 +373,15 @@ With the 'beam' feature you can add as many beams as needed for your          mo
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
-   :alt: singleton
+   :alt: max_items
 
-*Singleton*: False
+*Maximum number*: inf
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
    :alt: required
 
-*Required*: False
+*Required*: True (1)
 
 Property: node
 ~~~~~~~~~~~~~~
@@ -402,15 +402,15 @@ Add a named beam node, and defines its coordinates in a global          coordina
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
-   :alt: singleton
+   :alt: max_items
 
-*Singleton*: False
+*Maximum number*: inf
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
    :alt: required
 
-*Required*: False
+*Required*: True (1)
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
@@ -450,15 +450,15 @@ Define a constant beam cross section orientation for a section of a beam. Refer 
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
-   :alt: singleton
+   :alt: max_items
 
-*Singleton*: False
+*Maximum number*: inf
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
    :alt: required
 
-*Required*: False
+*Required*: True (1)
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
    :align: left
@@ -492,15 +492,15 @@ Define a constant material for a section of a beam. Refer to the start          
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
-   :alt: singleton
+   :alt: max_items
 
-*Singleton*: False
+*Maximum number*: inf
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
    :alt: required
 
-*Required*: False
+*Required*: False (0)
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
    :align: left
@@ -534,15 +534,15 @@ Define a constant cross section for a section of a beam. Refer to the start     
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
-   :alt: singleton
+   :alt: max_items
 
-*Singleton*: False
+*Maximum number*: inf
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
    :alt: required
 
-*Required*: False
+*Required*: True (1)
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
    :align: left
@@ -576,15 +576,15 @@ Add a point load to a specific node.
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
-   :alt: singleton
+   :alt: max_items
 
-*Singleton*: False
+*Maximum number*: inf
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
    :alt: required
 
-*Required*: False
+*Required*: False (0)
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
    :align: left
@@ -618,15 +618,15 @@ Add a point mass to a specific node.
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
-   :alt: singleton
+   :alt: max_items
 
-*Singleton*: False
+*Maximum number*: inf
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
    :alt: required
 
-*Required*: False
+*Required*: False (0)
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
    :align: left
@@ -659,15 +659,15 @@ Add a distributed load.
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
-   :alt: singleton
+   :alt: max_items
 
-*Singleton*: False
+*Maximum number*: inf
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
    :alt: required
 
-*Required*: False
+*Required*: False (0)
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
    :align: left
@@ -702,15 +702,15 @@ Define the number of element for the beam object. The number will          apply
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
-   :alt: singleton
+   :alt: max_items
 
-*Singleton*: True
+*Maximum number*: 1
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
    :alt: required
 
-*Required*: False
+*Required*: True (1)
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
    :align: left
@@ -734,15 +734,15 @@ The boundary condition (bc) feature allows you to constrain the beam          mo
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
-   :alt: singleton
+   :alt: max_items
 
-*Singleton*: True
+*Maximum number*: 1
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
    :alt: required
 
-*Required*: True
+*Required*: True (1)
 
 Property: fix
 ~~~~~~~~~~~~~
@@ -763,15 +763,15 @@ Fix degrees of freedom (DOF) at a specific named beam node. Specify          whi
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
-   :alt: singleton
+   :alt: max_items
 
-*Singleton*: False
+*Maximum number*: inf
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
    :alt: required
 
-*Required*: False
+*Required*: False (0)
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
    :align: left
@@ -804,15 +804,15 @@ Connect two beam nodes with a rigid connection. Specify the two nodes          t
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
-   :alt: singleton
+   :alt: max_items
 
-*Singleton*: False
+*Maximum number*: inf
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
    :alt: required
 
-*Required*: False
+*Required*: False (0)
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
    :align: left
@@ -838,15 +838,15 @@ Post-processing.
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
-   :alt: singleton
+   :alt: max_items
 
-*Singleton*: True
+*Maximum number*: 1
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
    :alt: required
 
-*Required*: True
+*Required*: True (1)
 
 Property: plot_settings
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -867,15 +867,15 @@ Define general plot settings.
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
-   :alt: singleton
+   :alt: max_items
 
-*Singleton*: True
+*Maximum number*: 1
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
    :alt: required
 
-*Required*: False
+*Required*: False (0)
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
    :align: left
@@ -914,15 +914,15 @@ Add a plot. You may add as many plots as you like. List the parts to          sh
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/point.svg
    :align: left
-   :alt: singleton
+   :alt: max_items
 
-*Singleton*: False
+*Maximum number*: inf
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/lifebuoy.svg
    :align: left
    :alt: required
 
-*Required*: False
+*Required*: False (0)
 
 .. image:: https://raw.githubusercontent.com/airinnova/model-framework/master/src/mframework/ressources/icons/clipboard-check.svg
    :align: left

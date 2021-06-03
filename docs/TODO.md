@@ -3,7 +3,7 @@
 ## Plotting
 * Compute and plot centre of mass, and mass of individual beams
 * Plot inertia loads --> `F_accel`
-* Plot accel vector
+* Plot acceleration vector
 * Plot local axes
 * Flag to chose if loads plotted in deformed or undeformed mesh
 
@@ -22,11 +22,9 @@
 
 ## Assembly
 * (!!!) Add tests for multipoint-constraints
-* Use sparse matrices
-    - https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.coo_matrix.html
 
 ## Misc
-* Test run multiprocessing
+* Test multiprocessing
 * Compute elastic energy
 
 ## Testing
@@ -40,7 +38,7 @@
 * Define the element/beam orientation with direction cosines as alternative option
 
 ## Boundary condition modelling
-* Add option for prescribed deformations? ($b$)
+* Add option for prescribed deformations ($b$)
 * Make rigid connector more general (only restrict some dof's on each node)
 * Apply boundary condition over a range of elements
 

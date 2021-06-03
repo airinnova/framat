@@ -29,6 +29,7 @@ import os
 
 from mframework import FeatureSpec, ModelSpec, SchemadictValidators
 import numpy as np
+import scipy.sparse as sparse
 
 from ._meshing import AbstractBeamMesh
 from ._run import run_model
@@ -47,6 +48,7 @@ def is_dir(key, value, comp_value, _):
 # Register custom 'schemadict' types
 SchemadictValidators.register_type(AbstractBeamMesh)
 SchemadictValidators.register_type(np.ndarray)
+SchemadictValidators.register_type(sparse.csr_matrix)
 SchemadictValidators[str]['is_dir'] = is_dir
 
 # =================
@@ -333,8 +335,8 @@ rspec.add_feature_spec(
 
 # ===== Deformation =====
 fspec = FeatureSpec()
-fspec.add_prop_spec('K', {'type': np.ndarray}, doc="Stiffness matrix.", max_items=1)
-fspec.add_prop_spec('M', {'type': np.ndarray}, doc="Mass matrix.", max_items=1)
+fspec.add_prop_spec('K', {'type': sparse.csr_matrix}, doc="Stiffness matrix.", max_items=1)
+fspec.add_prop_spec('M', {'type': sparse.csr_matrix}, doc="Mass matrix.", max_items=1)
 fspec.add_prop_spec('B', {'type': np.ndarray}, doc="Constraint matrix.", max_items=1)
 fspec.add_prop_spec('F', {'type': np.ndarray}, doc="External load vector.", max_items=1)
 fspec.add_prop_spec('F_react', {'type': np.ndarray}, doc="Reaction forces at constrained nodes.", max_items=1)

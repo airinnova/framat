@@ -25,6 +25,7 @@ Solving
 
 import numpy as np
 
+# TODO: Better handling of sparse matrices...
 
 def solve(m):
     static_load_analysis(m)
@@ -80,7 +81,7 @@ def static_load_analysis(m):
     Z = np.zeros((n_lr, n_lr))
 
     A_system = np.block([
-        [K, B.T],
+        [K.toarray(), B.T],
         [B, Z]
     ])
     x_system = np.block([

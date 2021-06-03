@@ -130,8 +130,8 @@ def init_3D_plot(x_lims, y_lims, z_lims):
         :z_lims: (tuple) min and max z-value
     """
 
-    fig = plt.figure(figsize=(10, 10))
-    ax = fig.gca(projection='3d')
+    plt.figure(figsize=(10, 10))
+    ax = plt.axes(projection='3d')
 
     # Avoid setting same min and max value by adding diff
     diff = (-1e-6, 1e-6)

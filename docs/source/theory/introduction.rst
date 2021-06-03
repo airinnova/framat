@@ -1,4 +1,4 @@
-.. _sec_theory:
+.. _sec_theory_introduction:
 
 Introduction
 ============
@@ -132,7 +132,7 @@ It is further noted that rotations :math:`\Theta_y` and :math:`\Theta_z`, assumi
     %%
     \Theta_z = \frac{\text{d}{u_y}}{\text{d}{x}}
 
-Practically, the governing equations are solved using a FE formulation which is well suited for computational analyses. Details on the matrix formulation are covered in :ref:`sec_fem_formulation`.
+Practically, the governing equations are solved using a FE formulation which is well suited for computational analyses. Details on the matrix formulation are covered in :ref:`sec_theory_fem`.
 
 .. note::
 

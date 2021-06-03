@@ -37,8 +37,9 @@ Welcome to |name|'s documentation!
    :maxdepth: 2
    :caption: Theory
 
-   theory/index
+   theory/introduction
    theory/fem
+   theory/assembly
 
 .. toctree::
    :maxdepth: 1

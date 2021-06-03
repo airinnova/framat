@@ -24,11 +24,11 @@ Assembly
 """
 
 import numpy as np
+import scipy.sparse as sparse
 
-from ._util import enumerate_with_step
 from ._element import Element
-
-# TODO: use sparse matrices
+from ._log import logger
+from ._util import enumerate_with_step
 
 
 def create_system_matrices(m):
@@ -46,46 +46,39 @@ def create_system_matrices(m):
 
 
 def create_main_tensors(m):
-    """Create K, M and F"""
+    """
+    Create system tensors K, M and F
+
+    The stiffness matrix K and the mass matrix M are created as sparse matrices
+    """
 
     r = m.results
     abm = m.results.get('mesh').get('abm')
-
-    # Create a stiffness matrix for each beam
-    K_per_beam = []
-    M_per_beam = []
-    F_per_beam = []
-    for i, mbeam in enumerate(m.iter('beam')):
-        ndof_beam = abm.ndofs_beam(i)
-        K_beam = np.zeros((ndof_beam, ndof_beam))
-        M_beam = np.zeros((ndof_beam, ndof_beam))
-        F_beam = np.zeros((ndof_beam, 1))
-
-        for k, abstr_elem in enumerate_with_step(abm.beams[i].values(), step=6):
-            phys_elem = Element.from_abstract_element(abstr_elem)
-            K_beam[k:k+12, k:k+12] += phys_elem.stiffness_matrix_glob
-            M_beam[k:k+12, k:k+12] += phys_elem.mass_matrix_glob
-            F_beam[k:k+12] += phys_elem.load_vector_glob
-
-        K_per_beam.append(K_beam)
-        M_per_beam.append(M_beam)
-        F_per_beam.append(F_beam)
-
     ndof_total = abm.ndofs()
-    K = np.zeros((ndof_total, ndof_total))
-    M = np.zeros((ndof_total, ndof_total))
-    F = np.zeros((ndof_total, 1))
 
-    # Paste each beam tensor into the global tensor
-    paste_range = [0, 0]
-    for K_beam, M_beam, F_beam in zip(K_per_beam, M_per_beam, F_per_beam):
-        rx = K_beam.shape[0]
-        from_r = paste_range[1]
-        to_r = from_r + rx
-        paste_range = [from_r, to_r]
-        K[from_r:to_r, from_r:to_r] = K_beam
-        M[from_r:to_r, from_r:to_r] = M_beam
-        F[from_r:to_r] += F_beam
+    rows = empty(np.uint16)
+    cols = empty(np.uint16)
+    data_K = empty(np.float_)
+    data_M = empty(np.float_)
+    F = np.zeros((ndof_total, 1), dtype=np.float_)
+    idx_start_beam = 0
+
+    for i, mbeam in enumerate(m.iter('beam')):
+        for k, abstr_elem in enumerate_with_step(abm.beams[i].values(), start=idx_start_beam, step=6):
+            idxs = np.arange(k, k+12, 1, dtype=np.uint16)
+            rows = np.append(rows, np.repeat(idxs, 12))
+            cols = np.append(cols, np.tile(idxs, 12))
+
+            phys_elem = Element.from_abstract_element(abstr_elem)
+            data_K = np.append(data_K, phys_elem.stiffness_matrix_glob.flatten())
+            data_M = np.append(data_M, phys_elem.mass_matrix_glob.flatten())
+            F[k:k+12] += phys_elem.load_vector_glob
+
+        idx_start_beam += abm.ndofs_beam(i)
+
+    K = sparse_matrix(data_K, rows, cols)
+    M = sparse_matrix(data_M, rows, cols)
+    logger.info(f"System matrix size: {K.size} elements ({K.size/ndof_total**2:.2%} density)")
 
     rtensors = r.set_feature('tensors')
     rtensors.set('K', K)
@@ -185,3 +178,19 @@ def connect(x1, x2, num_node1, num_node2, ndofs, dof_constraints):
     B[0:6, 6*num_node1:6*num_node1+6] = N1
     B[0:6, 6*num_node2:6*num_node2+6] = N2
     return B
+
+
+def sparse_matrix(data, rows, cols):
+    """
+    Return a compressed sparse matrix
+
+    Duplicate entries are summed together
+    """
+
+    matrix = sparse.coo_matrix((data, (rows, cols)), dtype=np.float_)
+    matrix = sparse.csr_matrix(matrix, dtype=np.float_)
+    return matrix
+
+
+def empty(dtype):
+    return np.array([], dtype=dtype)
