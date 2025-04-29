@@ -58,9 +58,9 @@ def create_main_tensors(m):
 
     rows = empty(np.uint16)
     cols = empty(np.uint16)
-    data_K = empty(np.float_)
-    data_M = empty(np.float_)
-    F = np.zeros((ndof_total, 1), dtype=np.float_)
+    data_K = empty(np.float64)
+    data_M = empty(np.float64)
+    F = np.zeros((ndof_total, 1), dtype=np.float64)
     idx_start_beam = 0
 
     for i, mbeam in enumerate(m.iter('beam')):
@@ -70,7 +70,8 @@ def create_main_tensors(m):
             cols = np.append(cols, np.tile(idxs, 12))
 
             phys_elem = Element.from_abstract_element(abstr_elem)
-            data_K = np.append(data_K, phys_elem.stiffness_matrix_glob.flatten())
+            data_K = np.append(
+                data_K, phys_elem.stiffness_matrix_glob.flatten())
             data_M = np.append(data_M, phys_elem.mass_matrix_glob.flatten())
             F[k:k+12] += phys_elem.load_vector_glob
 
@@ -78,7 +79,8 @@ def create_main_tensors(m):
 
     K = sparse_matrix(data_K, rows, cols)
     M = sparse_matrix(data_M, rows, cols)
-    logger.info(f"System matrix size: {K.size} elements ({K.size/ndof_total**2:.2%} density)")
+    logger.info(
+        f"System matrix size: {K.size} elements ({K.size/ndof_total**2:.2%} density)")
 
     rtensors = r.set_feature('tensors')
     rtensors.set('K', K)
@@ -187,8 +189,8 @@ def sparse_matrix(data, rows, cols):
     Duplicate entries are summed together
     """
 
-    matrix = sparse.coo_matrix((data, (rows, cols)), dtype=np.float_)
-    matrix = sparse.csr_matrix(matrix, dtype=np.float_)
+    matrix = sparse.coo_matrix((data, (rows, cols)), dtype=np.float64)
+    matrix = sparse.csr_matrix(matrix, dtype=np.float64)
     return matrix
 
 
