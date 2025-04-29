@@ -1,0 +1,27 @@
+#       conda env create -f environment.yml
+
+name: framat
+
+channels:
+  - dlr-sc
+  - conda-forge
+  - defaults
+
+dependencies:
+  - python=3.11.11
+  - codecov
+  - numpy
+  - pip
+  - pytest
+  - pytest-cov
+  - scipy
+  - matplotlib
+
+  - pip:
+    - sphinx-rtd-theme
+    - sphinxcontrib-mermaid
+    - tox
+    - schemadict
+    - model-framework
+    - Sphinx
+    - commonlibs
