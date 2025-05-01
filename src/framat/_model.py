@@ -399,6 +399,7 @@ class Builtin(Enum):
 
     CANTILEVER = 'cantilever'
     HELIX = 'helix'
+    SIMPLY_POINT_LOAD = 'simply_supported_point_load'
 
     @classmethod
     def to_list(cls):
@@ -418,6 +419,8 @@ class Model(mspec.user_class):
             return get_example_cantilever()
         elif example == Builtin.HELIX.value:
             return get_example_helix()
+        elif example == Builtin.SIMPLY_POINT_LOAD.value:
+            return get_example_simply_point_load()
         else:
             raise ValueError('unknown model: {example!r}')
 
@@ -498,4 +501,26 @@ def get_example_helix():
     pp = model.set_feature('post_proc')
     pp.set('plot_settings', {'show': True})
     pp.add('plot', ['undeformed', 'deformed', 'nodes', 'forces'])
+    return model
+
+def get_example_simply_point_load():
+    model = init_examples()
+
+    beam = model.add_feature('beam')
+    beam.add('node', [0, 0, 0], uid='a')
+    beam.add('node', [.5, 0, 0], uid='b')
+    beam.add('node', [1, 0, 0], uid='c')
+    beam.set('nelem', 10)
+    beam.add('material', {'from': 'a', 'to': 'c', 'uid': 'dummy'})
+    beam.add('cross_section', {'from': 'a', 'to': 'c', 'uid': 'dummy'})
+    beam.add('orientation', {'from': 'a', 'to': 'c', 'up': [0, 0, 1]})
+    beam.add('point_load', {'at': 'b', 'load': [0, 0, -1, 0, 0, 0]})
+
+    bc = model.set_feature('bc')
+    bc.add('fix', {'node': 'a', 'fix': ['ux', 'uy', 'uz', 'thx', 'thz']})
+    bc.add('fix', {'node': 'c', 'fix': ['uy', 'uz', 'thx', 'thz']})
+
+    pp = model.set_feature('post_proc')
+    pp.set('plot_settings', {'show': True})
+    pp.add('plot', ['undeformed', 'deformed', 'node_uids', 'nodes', 'forces'])
     return model
