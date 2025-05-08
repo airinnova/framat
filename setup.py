@@ -7,7 +7,7 @@ import os
 # See also: https://github.com/kennethreitz/setup.py/blob/master/setup.py
 
 NAME = 'framat'
-VERSION = '0.3'
+VERSION = '0.5'
 AUTHOR = 'Aaron Dettmann'
 EMAIL = 'dettmann@kth.se'
 DESCRIPTION = 'FramAT (Frame Analysis Tool) is a tool for 3D FEM beam analyses'
