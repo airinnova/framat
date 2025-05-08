@@ -24,7 +24,6 @@ Run the model
 """
 
 from . import MODULE_NAME
-from .__version__ import __version__
 from ._assembly import create_system_matrices
 from ._log import logger
 from ._meshing import create_mesh
@@ -40,7 +39,7 @@ def run_model(m):
         :m: model instance
     """
 
-    logger.info(f"===== {MODULE_NAME} {__version__} =====")
+    logger.info(f"===== {MODULE_NAME} =====")
 
     # ----- MESHING -----
     logger.info("Meshing...")
