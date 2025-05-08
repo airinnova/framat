@@ -4,12 +4,10 @@
 import setuptools
 import os
 
-from src.framat.__version__ import __version__
-
 # See also: https://github.com/kennethreitz/setup.py/blob/master/setup.py
 
 NAME = 'framat'
-VERSION = __version__
+VERSION = '0.3'
 AUTHOR = 'Aaron Dettmann'
 EMAIL = 'dettmann@kth.se'
 DESCRIPTION = 'FramAT (Frame Analysis Tool) is a tool for 3D FEM beam analyses'
