@@ -10,7 +10,7 @@
 
 **FramAT** (Frame Analysis Tool) is a tool for FEM beam analyses. Currently FramAT provides a full implementation of 3D Euler-Bernoulli beam theory, also known as standard engineering beam theory.
 
-<img src="https://raw.githubusercontent.com/airinnova/framat/master/docs/source/_static/images/main.png" alt="Example" width="600" />
+![FramAT Logo](https://raw.githubusercontent.com/airinnova/framat/master/docs/source/_static/images/main.png)
 
 ---
 
