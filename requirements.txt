@@ -1,8 +1,8 @@
 sphinx==8.2.3
 codecov==2.1.13
-commonlibs==0.6.3
+commonlibs
 matplotlib==3.10.1
-model-framework==0.0.20
+model-framework
 numpy==2.2.5
 pytest-cov==6.1.1
 pytest==8.3.5
