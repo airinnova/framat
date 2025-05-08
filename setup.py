@@ -23,15 +23,9 @@ REQUIRED = [
     'scipy',
     'model-framework>=0.0.14',
 ]
-README = 'README.rst'
 PACKAGE_DIR = 'src'
 LICENSE = 'Apache License 2.0'
 SCRIPTS = []
-
-here = os.path.abspath(os.path.dirname(__file__))
-
-with open(os.path.join(here, README), "r") as fp:
-    long_description = fp.read()
 
 setuptools.setup(
     name=NAME,
@@ -39,7 +33,8 @@ setuptools.setup(
     author=AUTHOR,
     author_email=EMAIL,
     description=DESCRIPTION,
-    long_description=long_description,
+    long_description=open("README.md").read(),
+    long_description_content_type = "text/markdown",
     url=URL,
     include_package_data=True,
     scripts=SCRIPTS,
@@ -52,7 +47,7 @@ setuptools.setup(
     # See: https://pypi.org/classifiers/
     classifiers=[
         "Programming Language :: Python :: 3",
-        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.11',
         "License :: OSI Approved :: Apache Software License",
         "Operating System :: OS Independent",
         "Environment :: Console",
