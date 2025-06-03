@@ -84,7 +84,7 @@ def create_mesh(m):
         for pdef in mbeam.iter('point_mass'):
             elem = abm.get_by_uid(beam_idx, pdef['at'])
             node_id = 1 if elem.p1.uid == pdef['at'] else 2
-            elem.add('point_mass', {'load': pdef['mass'], 'node': node_id})
+            elem.add('point_mass', {'mass': pdef['mass'], 'node': node_id})
 
     # ----- Summary -----
     logger.info(f"Abstract mesh created")
@@ -233,7 +233,7 @@ class PolygonalChain:
 
 schema_load = {'load': S.vector6x1, 'node': S.pos_int, 'local_sys': {'type': bool}}
 schema_distr_load = {'load': S.vector6x1, 'local_sys': {'type': bool}}
-schema_mass = {'mass': {'type': S.pos_number}, 'node': S.pos_int}
+schema_mass = {'mass': S.pos_number, 'node': S.pos_int}
 
 fspec = FeatureSpec()
 
