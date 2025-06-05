@@ -189,6 +189,7 @@ fspec.add_prop_spec(
         '$required_keys': ['at', 'mass'],
         'at': S.string,
         'mass': S.pos_int,
+        'inertia': S.vector6x1
     },
     required=0,
     doc="Add a point mass to a specific node."
