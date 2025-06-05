@@ -175,7 +175,7 @@ class Element:
             new.add_point_load(d['load'], d['node'], d.get('loc_system', False))
 
         for d in a.iter('point_mass'):
-            new.add_point_mass(d['mass'], d['node'])
+            new.add_point_mass(d['mass'], d.get('inertia', np.zeros(6)), d['node'])
 
         for d in a.iter('distr_load'):
             new.add_distr_load(d['load'], d.get('loc_system', False))
@@ -246,7 +246,7 @@ class Element:
 
         # Ix: "Polar moment of inertia"
         rho = self.properties['rho']
-        Ix = self.properties['Iy'] + self.properties['Iz']
+        Ix = self.properties['J']
         A = self.properties['A']
 
         rx2 = Ix/A
@@ -350,19 +350,29 @@ class Element:
 
         self.load_vector_glob += f_d_elem
 
-    def add_point_mass(self, mass, node_num):
+    def add_point_mass(self, mass, inertia, node_num):
         """
         Add a point load to the element node 1 or 2
 
         Args:
             :mass: mass (scalar)
+            :inertia: Inertia tensor components in global coordinates [Ixx, Iyy, Izz, Ixy, Ixz, Iyz]
             :node_num: node to which mass is added (1, 2)
         """
 
+        Ixx, Iyy, Izz, Ixy, Ixz, Iyz = inertia
+        inertia_tensor = np.array([
+            [Ixx, -Ixy, -Ixz],
+            [-Ixy, Iyy, -Iyz],
+            [-Ixz, -Iyz, Izz]
+        ])
+
         if node_num == 1:
             self.mass_matrix_glob[0:3, 0:3] += mass*np.identity(3)
+            self.mass_matrix_glob[3:6, 3:6] += inertia_tensor
         else:
             self.mass_matrix_glob[6:9, 6:9] += mass*np.identity(3)
+            self.mass_matrix_glob[9:12, 9:12] += inertia_tensor
 
     def shape_function_matrix(self, xi):
         """
