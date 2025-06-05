@@ -175,7 +175,7 @@ class Element:
             new.add_point_load(d['load'], d['node'], d.get('loc_system', False))
 
         for d in a.iter('point_mass'):
-            new.add_point_mass(d['mass'], d['node'])
+            new.add_point_mass(d['mass'], d.get('inertia', np.zeros(6)), d['node'])
 
         for d in a.iter('distr_load'):
             new.add_distr_load(d['load'], d.get('loc_system', False))
@@ -350,14 +350,14 @@ class Element:
 
         self.load_vector_glob += f_d_elem
 
-    def add_point_mass(self, mass, node_num, inertia=[.0, .0, .0, .0, .0, .0]):
+    def add_point_mass(self, mass, inertia, node_num):
         """
         Add a point load to the element node 1 or 2
 
         Args:
             :mass: mass (scalar)
-            :node_num: node to which mass is added (1, 2)
             :inertia: Inertia tensor components in global coordinates [Ixx, Iyy, Izz, Ixy, Ixz, Iyz]
+            :node_num: node to which mass is added (1, 2)
         """
 
         Ixx, Iyy, Izz, Ixy, Ixz, Iyz = inertia
