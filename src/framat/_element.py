@@ -246,7 +246,7 @@ class Element:
 
         # Ix: "Polar moment of inertia"
         rho = self.properties['rho']
-        Ix = self.properties['Iy'] + self.properties['Iz']
+        Ix = self.properties['J']
         A = self.properties['A']
 
         rx2 = Ix/A
