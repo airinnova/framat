@@ -350,19 +350,29 @@ class Element:
 
         self.load_vector_glob += f_d_elem
 
-    def add_point_mass(self, mass, node_num):
+    def add_point_mass(self, mass, node_num, inertia=[.0, .0, .0, .0, .0, .0]):
         """
         Add a point load to the element node 1 or 2
 
         Args:
             :mass: mass (scalar)
             :node_num: node to which mass is added (1, 2)
+            :inertia: Inertia tensor components in global coordinates [Ixx, Iyy, Izz, Ixy, Ixz, Iyz]
         """
+
+        Ixx, Iyy, Izz, Ixy, Ixz, Iyz = inertia
+        inertia_tensor = np.array([
+            [Ixx, -Ixy, -Ixz],
+            [-Ixy, Iyy, -Iyz],
+            [-Ixz, -Iyz, Izz]
+        ])
 
         if node_num == 1:
             self.mass_matrix_glob[0:3, 0:3] += mass*np.identity(3)
+            self.mass_matrix_glob[3:6, 3:6] += inertia_tensor
         else:
             self.mass_matrix_glob[6:9, 6:9] += mass*np.identity(3)
+            self.mass_matrix_glob[9:12, 9:12] += inertia_tensor
 
     def shape_function_matrix(self, xi):
         """
