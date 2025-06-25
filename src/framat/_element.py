@@ -325,6 +325,8 @@ class Element:
             :load: load vector (6x1)
             :loc_system: if True, loads are interpreted as being defined in the local system
         """
+        if not loc_system:
+            load = self.T[:6, :6].T @ load
 
         qx, qy, qz, mx, my, mz = load
         L = self.length
@@ -332,21 +334,35 @@ class Element:
 
         f_d_elem = np.empty((12, 1))
 
-        f_d_elem[0] = qx*L/2
-        f_d_elem[1] = qy*L/2 - mz
-        f_d_elem[2] = qz*L/2 + my
-        f_d_elem[3] = mx*L/2
-        f_d_elem[4] = -qz*L2/12
-        f_d_elem[5] = qy*L2/12
-        f_d_elem[6] = qx*L/2
-        f_d_elem[7] = qy*L/2 + mz
-        f_d_elem[8] = qz*L/2 - my
-        f_d_elem[9] = mx*L/2
-        f_d_elem[10] = qz*L2/12
-        f_d_elem[11] = -qy*L2/12
+        # Distributed force contributions (axial and shear)
+        f_d_elem[0] = qx * L / 2
+        f_d_elem[1] = qy * L / 2
+        f_d_elem[2] = qz * L / 2
 
-        if loc_system:
-            f_d_elem = self.T @ f_d_elem
+        f_d_elem[6] = qx * L / 2
+        f_d_elem[7] = qy * L / 2
+        f_d_elem[8] = qz * L / 2
+
+        # Moments from distributed forces creating bending
+        f_d_elem[4] = -qz * L2 / 12
+        f_d_elem[5] = qy * L2 / 12
+        f_d_elem[10] = qz * L2 / 12
+        f_d_elem[11] = -qy * L2 / 12
+
+        # Distributed moments contributions
+        # mx = torsion (about local x-axis)
+        f_d_elem[3] = mx * L / 2
+        f_d_elem[9] = mx * L / 2
+
+        # my = bending moment about local y-axis
+        f_d_elem[4] += my * L / 2
+        f_d_elem[10] += my * L / 2
+
+        # mz = bending moment about local z-axis
+        f_d_elem[5] += mz * L / 2
+        f_d_elem[11] += mz * L / 2
+
+        f_d_elem = self.T @ f_d_elem
 
         self.load_vector_glob += f_d_elem
 
