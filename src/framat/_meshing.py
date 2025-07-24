@@ -446,6 +446,13 @@ class AbstractBeamMesh:
                 z_min = z_minb
         return (x_min, x_max), (y_min, y_max), (z_min, z_max)
 
+    def get_rel_coord(self, beam_idx):
+        """Return an array (n, ) with all node relative span position"""
+        beam = self.beams[beam_idx]
+        coords = [beam[0].p1.rel_coord]  # Start with first node
+        coords += [elem.p2.rel_coord for elem in beam.values()]
+        return np.array(coords)
+
     def gnv(self, vector, uid):
         """
         Return the nodal value from a given vector (e.g. displacement or load)
