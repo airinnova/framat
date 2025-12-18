@@ -131,7 +131,7 @@ def fix_dof(node_number, total_ndof, dof_constraints):
     """
 
     B = np.array([])
-    pos_dict = {'ux': 0, 'uy': 1, 'uz': 2, 'tx': 3, 'ty': 4, 'tz': 5}
+    pos_dict = {'ux': 0, 'uy': 1, 'uz': 2, 'thx': 3, 'thy': 4, 'thz': 5}
 
     for constraint in dof_constraints:
         if constraint == 'all':
